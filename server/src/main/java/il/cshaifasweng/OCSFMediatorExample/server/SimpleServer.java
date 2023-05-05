@@ -6,6 +6,8 @@ import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class SimpleServer extends AbstractServer {
@@ -47,20 +49,39 @@ public class SimpleServer extends AbstractServer {
 				message.setMessage("Hello World!");
 				client.sendToClient(message);
 			}
-			else if(request.startsWith("send Submitters IDs")){
+			else if(request.startsWith("send Submitters IDs"))
+			{
+				message.setMessage("212272751, 314659756");
+				client.sendToClient(message);
 				//add code here to send submitters IDs to client
 			}
-			else if (request.startsWith("send Submitters")){
-				//add code here to send submitters names to client
+			else if (request.startsWith("send Submitters"))
+			{
+				message.setMessage("Rami Sima'an, Yazan Yehya");
+				client.sendToClient(message);
 			}
-			else if (request.equals("what’s the time?")) {
+			else if (request.equals("what's the time?")) {
+
+				LocalDateTime format = message.getTimeStamp();
+				DateTimeFormatter date = DateTimeFormatter.ofPattern("HH:mm:ss");
+				message.setMessage(format.format(date));
+				client.sendToClient(message);
 				//add code here to send the time to client
 			}
-			else if (request.startsWith("multiply")){
+			else if (request.startsWith("multiply"))
+			{
+				String s = message.getMessage();
+				String[] str = s.substring(9).split("\\*");
+				int n = Integer.parseInt(str[0].trim());
+				int m = Integer.parseInt(str[1].trim());
+				s = Integer.toString(n*m);
+				message.setMessage(s);
+				client.sendToClient(message);
 				//add code here to multiply 2 numbers received in the message and send result back to client
 				//(use substring method as shown above)
 				//message format: "multiply n*m"
 			}else{
+				client.sendToClient(message);
 				//add code here to send received message to all clients.
 				//The string we received in the message is the message we will send back to all clients subscribed.
 				//Example:
@@ -72,7 +93,11 @@ public class SimpleServer extends AbstractServer {
 			e1.printStackTrace();
 		}
 	}
-
+	public static String baseConversion(String number, int sBase, int dBase)
+	{
+		return Integer.toString(
+				Integer.parseInt(number, sBase), dBase).toUpperCase();
+	}
 	public void sendToAllClients(Message message) {
 		try {
 			for (SubscribedClient SubscribedClient : SubscribersList) {
