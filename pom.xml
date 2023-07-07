@@ -22,6 +22,16 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-mxj-db-files</artifactId>
+				<version>5.0.12</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-jdbc3-testing</artifactId>
+				<version>5.4.12.final</version>
+			</dependency>
+			<dependency>
 				<groupId>il.cshaifasweng.OCSFMediatorExample</groupId>
 				<artifactId>entities</artifactId>
 				<version>${project.version}</version>

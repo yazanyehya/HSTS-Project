@@ -1,118 +1,177 @@
-package il.cshaifasweng.OCSFMediatorExample.client;
-
-
-import java.io.IOException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.util.Duration;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
-public class PrimaryController {
-
-	@FXML
-	private TextField submitterID1;
-
-	@FXML
-	private TextField submitterID2;
-
-	@FXML
-	private TextField timeTF;
-
-	@FXML
-	private TextField MessageTF;
-
-	@FXML
-	private Button SendBtn;
-
-	@FXML
-	private TextField DataFromServerTF;
-
-	private int msgId;
-
-	@FXML
-	void sendMessage(ActionEvent event) {
-		try {
-			Message message = new Message(msgId++, MessageTF.getText());
-			MessageTF.clear();
-			SimpleClient.getClient().sendToServer(message);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@Subscribe
-	public void setDataFromServerTF(MessageEvent event) {
-		DataFromServerTF.setText(event.getMessage().getMessage());
-	}
-
-	@Subscribe
-	public void setSubmittersTF(UpdateMessageEvent event) {
-		submitterID1.setText(event.getMessage().getData().substring(0,9));
-		submitterID2.setText(event.getMessage().getData().substring(11,20));
-	}
-
-	@Subscribe
-	public void getStarterData(NewSubscriberEvent event) {
-		try {
-			Message message = new Message(msgId, "send Submitters IDs");
-			SimpleClient.getClient().sendToServer(message);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@Subscribe
-	public void errorEvent(ErrorEvent event){
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-		Platform.runLater(() -> {
-			Alert alert = new Alert(Alert.AlertType.ERROR,
-					String.format("Message:\nId: %d\nData: %s\nTimestamp: %s\n",
-							event.getMessage().getId(),
-							event.getMessage().getMessage(),
-							event.getMessage().getTimeStamp().format(dtf))
-			);
-			alert.setTitle("Error!");
-			alert.setHeaderText("Error:");
-			alert.show();
-		});
-	}
-
-	@FXML
-	void initialize() {
-		EventBus.getDefault().register(this);
-		MessageTF.clear();
-		DataFromServerTF.clear();
-		msgId=0;
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-		Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
-			LocalTime currentTime = LocalTime.now();
-			timeTF.setText(currentTime.format(dtf));
-		}),
-				new KeyFrame(Duration.seconds(1))
-		);
-		clock.setCycleCount(Animation.INDEFINITE);
-		clock.play();
-		try {
-			Message message = new Message(msgId, "add client");
-			SimpleClient.getClient().sendToServer(message);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-}
+//package il.cshaifasweng.OCSFMediatorExample.client;
+//import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+//import il.cshaifasweng.OCSFMediatorExample.entities.Student;
+//import javafx.application.Platform;
+//import javafx.collections.FXCollections;
+//import javafx.collections.ObservableList;
+//import javafx.event.ActionEvent;
+//import javafx.fxml.FXML;
+//import javafx.scene.control.*;
+//import javafx.scene.text.Text;
+//import org.greenrobot.eventbus.EventBus;
+//import org.greenrobot.eventbus.Subscribe;
+//
+//import java.io.IOException;
+//import java.util.List;
+//import java.util.Optional;
+//
+//public class PrimaryController {
+//	private Text text;
+//
+//	@FXML
+//	private Button getAllStudentsBtn;
+//
+//	@FXML
+//	private Button updateBtn;
+//
+//	@FXML
+//	private Button getGradesBtn;
+//
+//	@FXML
+//	private ListView<Student> viewAllStudents;
+//
+//	@FXML
+//	private TextField viewGrades;
+//
+//	@FXML
+//	private TextField viewGrades1;
+//
+//	@FXML
+//	void getAllStudents(ActionEvent event) throws IOException {
+//		Message message = new Message(getAllStudentsBtn.getText(), null) ;
+//		SimpleClient.getClient().sendToServer(message);
+//
+//	}
+//
+//	@FXML
+//	void getGrades(ActionEvent event) throws IOException {
+//		Student studentSel =viewAllStudents.getSelectionModel().getSelectedItem();
+//		if(studentSel != null){
+//			Message message = new Message(getGradesBtn.getText(), studentSel) ;
+//			SimpleClient.getClient().sendToServer(message);}
+//		else {
+//			Alert alert = new Alert(Alert.AlertType.ERROR);
+//			alert.setTitle("No student selected");
+//			alert.setHeaderText("Please select a student to update");
+//			alert.showAndWait();
+//		}
+//	}
+//
+//	@FXML
+//	void updateBtn(ActionEvent event) throws IOException {
+//		Student studentSel = viewAllStudents.getSelectionModel().getSelectedItem();
+//		if (studentSel != null) {
+//			ChoiceDialog<String> dialog = new ChoiceDialog<>("English", "Math");
+//			dialog.setTitle("Update Score");
+//			dialog.setHeaderText("Choose a subject to update");
+//			dialog.setContentText("Subject:");
+//			Student finalStudentSel = studentSel;
+//			dialog.showAndWait().ifPresent(subject -> {
+//				TextInputDialog dialog2 = new TextInputDialog();
+//				dialog2.setTitle("Update Score");
+//				dialog2.setHeaderText("Enter the new score");
+//				dialog2.setContentText("New Score:");
+//				dialog2.showAndWait().ifPresent(scoreStr -> {
+//					try {
+//						int score = Integer.parseInt(scoreStr);
+//						while (score < 0 || score > 100) {
+//							Alert alert = new Alert(Alert.AlertType.ERROR);
+//							alert.setTitle("Invalid Score");
+//							alert.setHeaderText("Score must be between 0 and 100");
+//							alert.showAndWait();
+//							Optional<String> input = dialog2.showAndWait();
+//							if (input.isPresent()) {
+//								score = Integer.parseInt(input.get());
+//							} else {
+//								// Handle case when dialog is closed without input
+//								score = -1; // Set an invalid score to exit the loop
+//      							break;
+//}
+//						}
+//
+//						Message message = new Message(updateBtn.getText(), studentSel);
+//						message.setNewScore(score);
+//						message.setSubject(subject);
+//						SimpleClient.getClient().sendToServer(message);
+//
+//
+//
+//					} catch (NumberFormatException e) {
+//						Alert alert = new Alert(Alert.AlertType.ERROR);
+//						alert.setTitle("Invalid Score");
+//						alert.setHeaderText("Score must be a number");
+//						alert.showAndWait();
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//				});
+//			});
+//		} else {
+//			Alert alert = new Alert(Alert.AlertType.ERROR);
+//			alert.setTitle("No student selected");
+//			alert.setHeaderText("Please select a student to update");
+//			alert.showAndWait();
+//}
+//	}
+//	@Subscribe
+//	public void newMessageArrived(Message message)
+//	{
+//		String rply = message.getOperation();
+//
+//		if (rply.equals("Get all Students"))
+//		{
+//			List<Student> students = (List<Student>)message.getMessage();
+//			updateListView(students);
+//		}else if(rply.equals("get grades")){
+//			Student studentSel = (Student) message.getMessage();
+//			if (studentSel != null)
+//			{
+//				Platform.runLater(()->{
+//// Create a dialog box to allow the user to choose which subject they want to view
+//				ChoiceDialog<String> dialog = new ChoiceDialog<>("English", "Math");
+//
+//				dialog.setTitle("Select Subject");
+//				dialog.setHeaderText(null);
+//				dialog.setContentText("Please select the subject:");
+//
+//// Get the user's choice and update the text field accordingly
+//				Optional<String> result = dialog.showAndWait();
+//				result.ifPresent(subject ->
+//				{
+//					if (subject.equals("English"))
+//					{
+//						//viewGrades.setText("English Grade : " + studentSel.getEnglishScore());
+//					} else if (subject.equals("Math"))
+//					{
+//						//viewGrades.setText("Math Grade : " + studentSel.getMathScore());
+//					}
+//
+//				});
+//				});
+//		}
+//
+//	} else if(rply.equals("update")) {
+//			showSuccessAlert("Grade updated Successfully");
+//
+//		}
+//	}
+//	private void updateListView(List<Student> students){
+//		ObservableList<Student> studentList = FXCollections.observableArrayList(students);
+//		viewAllStudents.setItems(studentList);
+//	}
+//
+//	@FXML
+//	void initialize() {
+//		EventBus.getDefault().register(this);
+//
+//	}
+//	public static void showSuccessAlert(String message){
+//		Platform.runLater(()->{
+//				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//				alert.setTitle("success");
+//				alert.setHeaderText(null);
+//				alert.setContentText(message);
+//				alert.showAndWait();
+//		});
+//
+//}}

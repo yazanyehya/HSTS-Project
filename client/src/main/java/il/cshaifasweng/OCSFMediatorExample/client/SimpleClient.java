@@ -1,32 +1,86 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 
-public class SimpleClient extends AbstractClient {
-	
-	private static SimpleClient client = null;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
-	private SimpleClient(String host, int port) {
-		super(host, port);
+public class SimpleClient extends AbstractClient {
+
+	private static SimpleClient client = null;
+	private Socket clientSocket;
+	private ObjectOutputStream outputStream;
+
+	private static User user = null;
+
+	private SimpleClient(String localhost, int port) {
+		super(port);
+		try {
+			clientSocket = new Socket(localhost, port);
+			outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public User getUser() {
+		if (user == null) {
+			// Create a default user object if user is null
+			user = new User();
+			user.setUsername("Guest");
+			user.setLoggedIn(false);
+		}
+		return user;
 	}
 
 	@Override
-	protected void handleMessageFromServer(Object msg) {
+	protected void handleMessageFromServer(Object msg)
+	{
 		Message message = (Message) msg;
-		if(message.getMessage().equals("update submitters IDs")){
-			EventBus.getDefault().post(new UpdateMessageEvent(message));
-		}else if(message.getMessage().equals("client added successfully")){
-			EventBus.getDefault().post(new NewSubscriberEvent(message));
-		}else if(message.getMessage().equals("Error! we got an empty message")){
-			EventBus.getDefault().post(new ErrorEvent(message));
-		}else {
-			EventBus.getDefault().post(new MessageEvent(message));
+
+		if(message.getTitle().equals("Login")){
+			user = (User) ((Message) msg).getBody();
+			EventBus.getDefault().post(msg);
+		}
+		else if(message.getTitle().equals("already logged in")){
+			user = (User) ((Message) msg).getBody();
+			EventBus.getDefault().post(new AlreadyLoggedIn((Message)msg));
+		}
+		else if(message.getTitle().equals("createQuestion"))
+		{
+			EventBus.getDefault().post(new QuestionEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("changeToQuestionBoundry"))
+		{
+			EventBus.getDefault().post(new ChangeToQuestionBoundry((Message) msg));
+		}
+		else if(message.getTitle().equals("changeToExamBoundry"))
+		{
+			EventBus.getDefault().post(new ChangeToExamBoundry((Message) msg));
+		}
+		else if(message.getTitle().equals("pressBack"))
+		{
+			EventBus.getDefault().post(new PressBackEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("Logout"))
+		{
+			System.out.println("event bus logout");
+			EventBus.getDefault().post(new LogoutEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("createExam"))
+		{
+			EventBus.getDefault().post(new SelectQuestionEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("saveExam"))
+		{
+			EventBus.getDefault().post(new saveExamEvent((Message)msg));
 		}
 	}
-	
 	public static SimpleClient getClient() {
 		if (client == null) {
 			client = new SimpleClient("localhost", 3000);

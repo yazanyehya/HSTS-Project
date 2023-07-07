@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.BoxBlur?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="900.0" prefWidth="900.0" stylesheets="@designs.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginBoundry">
+   <children>
+      <Text layoutX="100.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome To HSTS" wrappingWidth="369.68896484375">
+         <font>
+            <Font name="American Typewriter" size="39.0" />
+         </font></Text>
+      <TextField fx:id="usernameTxt" layoutX="239.0" layoutY="156.0" onAction="#usernameAction" prefHeight="56.0" prefWidth="220.0" promptText="username" stylesheets="@designs.css" />
+      <TextField fx:id="passwordTxt" layoutX="239.0" layoutY="225.0" onAction="#passwordAction" prefHeight="56.0" prefWidth="220.0" promptText="password" stylesheets="@designs.css" />
+      <Button fx:id="loginBtn" layoutX="190.0" layoutY="375.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="56.0" prefWidth="71.0" stylesheets="@designs.css" text="Login" />
+      <Label layoutX="69.0" layoutY="166.0" stylesheets="@designs.css" text="Username:">
+         <font>
+            <Font name="American Typewriter" size="31.0" />
+         </font>
+      </Label>
+      <Label layoutX="77.0" layoutY="235.0" stylesheets="@designs.css" text="Password:">
+         <font>
+            <Font name="American Typewriter" size="31.0" />
+         </font>
+      </Label>
+   </children>
+   <effect>
+      <BoxBlur height="0.0" width="0.0" />
+   </effect>
+</AnchorPane>

@@ -530,10 +530,9 @@ public abstract class AbstractServer implements Runnable
    *  sent the message.
    */
   protected abstract void handleMessageFromClient(
-    Object msg, ConnectionToClient client);
+    Object msg, ConnectionToClient client) throws Exception;
 
 
-// METHODS TO BE USED FROM WITHIN THE FRAMEWORK ONLY ----------------
 
   /**
    * Receives a command sent from the client to the server.
@@ -548,8 +547,7 @@ public abstract class AbstractServer implements Runnable
    *  sent the message.
    */
   final synchronized void receiveMessageFromClient(
-    Object msg, ConnectionToClient client)
-  {
+    Object msg, ConnectionToClient client) throws Exception {
     this.handleMessageFromClient(msg, client);
   }
 }

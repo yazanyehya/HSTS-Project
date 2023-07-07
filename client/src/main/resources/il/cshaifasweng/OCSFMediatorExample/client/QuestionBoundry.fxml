@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.QuestionBoundry">
+   <children>
+      <TextField fx:id="questionTextTXT" layoutX="90.0" layoutY="106.0" onAction="#questionTextAction" prefHeight="26.0" prefWidth="471.0" promptText="Question text" />
+      <RadioButton fx:id="optionA" layoutX="101.0" layoutY="168.0" mnemonicParsing="false" onAction="#optionAAction" text="a.">
+         <toggleGroup>
+            <ToggleGroup fx:id="chooseAnswer" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="optionB" layoutX="101.0" layoutY="210.0" mnemonicParsing="false" onAction="#optionBAction" text="b." toggleGroup="$chooseAnswer" />
+      <RadioButton fx:id="optionC" layoutX="101.0" layoutY="252.0" mnemonicParsing="false" onAction="#optionCAction" text="c." toggleGroup="$chooseAnswer" />
+      <RadioButton fx:id="optionD" layoutX="101.0" layoutY="300.0" mnemonicParsing="false" onAction="#optionDAction" text="d." toggleGroup="$chooseAnswer" />
+      <TextField fx:id="answerA" layoutX="161.0" layoutY="170.0" onAction="#answerAAction" prefHeight="26.0" prefWidth="393.0" promptText="answer A" />
+      <TextField fx:id="answerB" layoutX="162.0" layoutY="213.0" onAction="#answerBAction" prefHeight="26.0" prefWidth="393.0" promptText="answer B" />
+      <TextField fx:id="answerC" layoutX="158.0" layoutY="255.0" onAction="#answerCAction" prefHeight="26.0" prefWidth="399.0" promptText="answer C" />
+      <TextField fx:id="answerD" layoutX="158.0" layoutY="302.0" onAction="#answerDAction" prefHeight="26.0" prefWidth="399.0" promptText="answer D" />
+      <Button fx:id="saveBtn" layoutX="162.0" layoutY="352.0" mnemonicParsing="false" onAction="#saveAction" stylesheets="@designs.css" text="SAVE" textFill="#8a0c0c" />
+      <Button fx:id="backBtn" layoutX="339.0" layoutY="352.0" mnemonicParsing="false" onAction="#backAction" stylesheets="@designs.css" text="BACK" />
+      <ComboBox fx:id="selectCourse" layoutX="90.0" layoutY="64.0" onAction="#selectCourseAction" prefWidth="150.0" promptText="Select Course" />
+   </children>
+</AnchorPane>
