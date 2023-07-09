@@ -21,6 +21,10 @@ public class Course implements Serializable
     @JoinColumn(name = "subject_id")
     private List<Question> listOfQuestions;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "course_id")
+    private List<Exam> listOfExams;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "course_question",

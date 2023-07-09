@@ -1,6 +1,5 @@
-package il.cshaifasweng.OCSFMediatorExample.server;
+package il.cshaifasweng.OCSFMediatorExample.Controller;
 
-import com.mysql.cj.xdevapi.Client;
 import il.cshaifasweng.OCSFMediatorExample.client.AlreadyLoggedIn;
 import il.cshaifasweng.OCSFMediatorExample.client.LoginBoundry;
 import il.cshaifasweng.OCSFMediatorExample.client.SimpleChatClient;
@@ -8,9 +7,6 @@ import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
@@ -18,8 +14,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
-
-import static il.cshaifasweng.OCSFMediatorExample.client.SimpleChatClient.loadFXML;
 
 public class LoginController
 {
@@ -99,7 +93,7 @@ public class LoginController
             // Login failure
             showAlertDialog(AlertType.ERROR, "Login Failed", "you are already logged in.");
         });
-        EventBus.getDefault().unregister(this);
+        //EventBus.getDefault().unregister(this);
     }
     public void login(String username, String password)
     {

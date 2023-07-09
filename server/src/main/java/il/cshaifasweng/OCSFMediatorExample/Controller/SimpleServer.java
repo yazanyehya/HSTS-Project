@@ -1,10 +1,8 @@
-package il.cshaifasweng.OCSFMediatorExample.server;
-import il.cshaifasweng.OCSFMediatorExample.client.SimpleChatClient;
-import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
+package il.cshaifasweng.OCSFMediatorExample.Controller;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
-import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
-import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
-import il.cshaifasweng.OCSFMediatorExample.server.ocsf.SubscribedClient;
+import il.cshaifasweng.OCSFMediatorExample.Controller.ocsf.AbstractServer;
+import il.cshaifasweng.OCSFMediatorExample.Controller.ocsf.ConnectionToClient;
+import il.cshaifasweng.OCSFMediatorExample.Controller.ocsf.SubscribedClient;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,9 +18,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 public class SimpleServer extends AbstractServer {
 
@@ -56,12 +54,16 @@ public class SimpleServer extends AbstractServer {
 //		session.save(physics);
 //		session.save(electronics);
 //		session.save(teacher);
-		Course Clanguage = new Course("gym");
-		Subject ComputerScenice = new Subject("benchPress");
-		Teacher rami = new Teacher("David", "Laid", "davidlaid7", "123", 1,ComputerScenice);
+		Course Clanguage = new Course("football");
+		Subject ComputerScenice = new Subject("sports");
+		Teacher rami = new Teacher("Cristiano", "Ronaldo", "cr7", "123", 1,ComputerScenice);
+		Teacher benzema = new Teacher("Karim", "Benzema", "kb9", "123", 1,ComputerScenice);
 		Clanguage.getListOfTeachers().add(rami);
 		rami.setSubject(ComputerScenice);
+		Clanguage.getListOfTeachers().add(benzema);
+		benzema.setSubject(ComputerScenice);
 		session.save(rami);
+		session.save(benzema);
 		session.save(Clanguage);
 		session.save(ComputerScenice);
 		session.flush();
@@ -118,6 +120,19 @@ public class SimpleServer extends AbstractServer {
 			return questions;
 		}
 	}
+	public List<Exam> getExamsForCourse(Course course) {
+		// Create a Hibernate session
+		try (Session session = getSessionFactory().openSession()) {
+			// Create a query to fetch the questions for the given course ID
+			String hql = "FROM Exam e WHERE e.course.name = :courseName";
+			Query query = session.createQuery(hql, Exam.class);
+			query.setParameter("courseName", course.getName());
+
+			// Execute the query and retrieve the list of questions
+			List<Exam> exams = query.getResultList();
+			return exams;
+		}
+	}
 
 	//	public User getUserByUsername(String username, String password) {
 //		//Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -149,6 +164,20 @@ public class SimpleServer extends AbstractServer {
 //			session.close();
 //	}
 //		}
+
+	public List<Subject> getSubjectsForTeacher(Teacher teacher) {
+		try (Session session = getSessionFactory().openSession()) {
+			// Create a query to fetch the subjects for the given teacher ID
+			String hql = "SELECT s FROM Subject s JOIN s.listOfTeachers t WHERE t.id = :teacherId";
+			Query query = session.createQuery(hql, Subject.class);
+			query.setParameter("teacherId", teacher.getId());
+
+			// Execute the query and retrieve the list of subjects
+			List<Subject> subjects = query.getResultList();
+			return subjects;
+		}
+	}
+
 	@Override
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) throws IOException {
 		System.out.println("incline bench press111");
@@ -178,9 +207,99 @@ public class SimpleServer extends AbstractServer {
 			SubscribedClient newSub = new SubscribedClient(client);
 			SubscribersList.add(newSub);
 		}
-		else if("changeToQuestionBoundry".equals(message.getTitle()) || "pressBack".equals(message.getTitle()) || "changeToExamBoundry".equals(message.getTitle()))
+		else if("changeToQuestionBoundry".equals(message.getTitle()) || "pressBack".equals(message.getTitle()) || "changeToExamBoundry".equals(message.getTitle()) ||"changeToEditQuestionBoundry".equals(message.getTitle()))
 		{
 			client.sendToClient(message);
+		}
+		else if("getSubjects".equals(message.getTitle()))
+		{
+			Teacher teacher = (Teacher)message.getBody();
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				List<Subject> list = getSubjectsForTeacher(teacher);
+				for (Subject s : list)
+				{
+					System.out.println(s.getName() + "+ size: " + list.size());
+				}
+				Message resMessage = new Message("getSubjects", list);
+				client.sendToClient(resMessage);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+		}
+		else if("showQuestions".equals(message.getTitle()) || "getAllQuestions".equals(message.getTitle()))
+		{
+			Course course = (Course) message.getBody();
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				List<Question> list = getQuestionsForCourse(course);
+				System.out.println("size of list = " + list.size());
+				if ("getAllQuestions".equals(message.getTitle()))
+				{
+					for (Question l : list)
+					{
+						l.setScore(0);
+					}
+				}
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if("showExams".equals(message.getTitle()))
+		{
+			Course course = (Course) message.getBody();
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				List<Exam> list = getExamsForCourse(course);
+				System.out.println("size of list = " + list.size());
+				Message resMessage = new Message("showExams", list);
+				client.sendToClient(resMessage);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if("editSelectedQuestion".equals(message.getTitle()))
+		{
+			client.sendToClient(message);
+		}
+		else if("editSelectedExam".equals(message.getTitle()))
+		{
+			try
+			{
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				System.out.println("editSelectedExam");
+				Exam exam = (Exam) message.getBody();
+				List<Question> list = exam.getListOfQuestions();
+				for (Question l : list)
+				{
+					System.out.println(l.getQText() + "   score: ");
+				}
+				Message resMessage = new Message("editSelectedExam", list);
+				client.sendToClient(resMessage);
+
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 		else if ("Logout".equals(message.getTitle()))
 		{
@@ -204,28 +323,22 @@ public class SimpleServer extends AbstractServer {
 			}
 			System.out.println("logout");
 		}
-		else if ("createQuestion".equals(message.getTitle())) {
+		else if ("createQuestion".equals(message.getTitle()) || "saveEditedQuestion".equals(message.getTitle()))
+		{
 			try {
-				if (!session.getTransaction().isActive()) {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
 					session = getSessionFactory().openSession();
 					session.beginTransaction();
 				}
 				Question question = (Question) message.getBody();
-				System.out.println(question.getQText());
-				// System.out.println(question.getSubject());
-				System.out.println(question.getAnswer1());
-				System.out.println(question.getAnswer2());
-				System.out.println(question.getAnswer3());
-				System.out.println(question.getAnswer4());
-
-				if (Objects.equals(question.getAnswer1(), "") || Objects.equals(question.getAnswer2(), "") || Objects.equals(question.getAnswer3(), "") || Objects.equals(question.getAnswer4(), "") || question.getSubject() == null) {
-					question = null;
-				} else {
+				if (question != null)
+				{
 					session.save(question);
 					session.getTransaction().commit();
 				}
 				Message responseMessage = new Message(message.getTitle(), question);
 				client.sendToClient(responseMessage);
+				//sendToAllClients(responseMessage);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -258,7 +371,8 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if ("saveExam".equals(message.getTitle())) {
+		else if ("saveExam".equals(message.getTitle()) || "saveEditedExam".equals(message.getTitle()))
+		{
 			System.out.println("incline bench press2");
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
@@ -284,7 +398,7 @@ public class SimpleServer extends AbstractServer {
 				if (examHelper.getExamPeriod() == null ||
 						examHelper.getQuestionHashMap() == null)
 				{
-					Message newMessage = new Message("saveExam", null);
+					Message newMessage = new Message(message.getTitle(), null);
 					client.sendToClient(newMessage);
 					System.out.println("null exam");
 				}
@@ -292,21 +406,28 @@ public class SimpleServer extends AbstractServer {
 				{
 					String examPeriod = examHelper.getExamPeriod();
 					System.out.println("incline bench press4");
-					Exam exam = new Exam(examHelper.getNameOfTeacher(), examPeriod);
+					System.out.println(examHelper.getCourse().getName());
+					Exam exam = new Exam(examHelper.getNameOfTeacher(), examPeriod, examHelper.subject, examHelper.getCourse());
 					System.out.println("incline bench press5");
 					List<Question> list = new ArrayList<>(examHelper.getQuestionHashMap().keySet());
 					exam.setListOfQuestions(list);
-					for (Question L : list)
+					for (Question question : exam.getListOfQuestions()) {
+						// Check if the question exists in the questionHashMap
+						if (examHelper.getQuestionHashMap().containsKey(question)) {
+							int score = examHelper.getQuestionHashMap().get(question);
+							question.setScore(score);
+						}
+					}
+					for (Question q : exam.getListOfQuestions())
 					{
-						if (L != null)
-							System.out.println(L.getQText()+ "cccccc");
+						System.out.println(q.getQText() + " de score: " + q.getScore());
 					}
 					System.out.println("incline bench press6");
 					session.save(exam);
 					System.out.println("incline bench press7");
 					session.getTransaction().commit();
 					System.out.println("saved");
-					Message newMessage = new Message("saveExam", exam);
+					Message newMessage = new Message(message.getTitle(), exam);
 					client.sendToClient(newMessage);
 				}
 			} catch (Exception e) {

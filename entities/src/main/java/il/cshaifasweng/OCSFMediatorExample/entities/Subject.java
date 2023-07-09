@@ -19,6 +19,11 @@ public class Subject implements Serializable
     @JoinColumn(name = "subject_id")
     private List<Question> listOfQuestions;
 
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "subject_id")
+    private List<Exam> listOfExams;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "subject_id")
     private List<Teacher> listOfTeachers;

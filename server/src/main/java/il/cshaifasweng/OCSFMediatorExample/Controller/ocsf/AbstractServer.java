@@ -2,10 +2,9 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com
 
-package il.cshaifasweng.OCSFMediatorExample.server.ocsf;
+package il.cshaifasweng.OCSFMediatorExample.Controller.ocsf;
 
 import java.net.*;
-import java.util.*;
 import java.io.*;
 
 /**

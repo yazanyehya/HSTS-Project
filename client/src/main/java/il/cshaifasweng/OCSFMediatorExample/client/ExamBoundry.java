@@ -1,27 +1,19 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import com.sun.javafx.tk.Toolkit;
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
-import il.cshaifasweng.OCSFMediatorExample.server.ExamController;
-import il.cshaifasweng.OCSFMediatorExample.server.ExamController111;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import il.cshaifasweng.OCSFMediatorExample.Controller.ExamController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.hibernate.Hibernate;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 
 public class ExamBoundry{
@@ -104,7 +96,7 @@ public class ExamBoundry{
         examController = new ExamController(this);
         this.setExamController(examController);
         Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
-        Hibernate.initialize(teacher.getCourses());
+        //Hibernate.initialize(teacher.getCourses());
         ObservableList<Course> courses = FXCollections.observableArrayList(teacher.getCourses());
         chooseCourse.setItems(courses);
 

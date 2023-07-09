@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Questions")
@@ -30,8 +31,8 @@ public class Question implements Serializable
     @Column
     private String answer4;
 
-
-    private transient IntegerProperty score;
+    @Column
+    private Integer score;
 
     @Column
     private String correctAnswer;
@@ -65,25 +66,38 @@ public class Question implements Serializable
         this.teacher = teacher;
         this.course = course;
         this.correctAnswer = correctAnswer;
-        this.score = new SimpleIntegerProperty();
+        this.score = 0;
 
     }
-    public int getScore() {
-        return score.get();
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Question other = (Question) obj;
+        return Objects.equals(id, other.id);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(qText);
+    }
     public Boolean getSelected() {
         return selected;
     }
+
+    public int getScore() {
+        return score != null ? score : 0; // Return 0 as the default value if score is null
+    }
+
     public void setScore(int score) {
-        this.score.set(score);
+        this.score = score;
     }
-    public IntegerProperty scoreProperty() {
-        if (score == null) {
-            score = new SimpleIntegerProperty();
-        }
-        return score;
-    }
+
+
     public BooleanProperty selectedProperty() {
         if (selected == null) {
             selected = false; // Set a default value if null

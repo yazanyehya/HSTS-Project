@@ -59,6 +59,45 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new ChangeToQuestionBoundry((Message) msg));
 		}
+		else if(message.getTitle().equals("getAllQuestions"))
+		{
+			System.out.println("getAllQuestionsEvent");
+			EventBus.getDefault().post(new GetAllQuestionEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("saveEditedQuestion"))
+		{
+			EventBus.getDefault().post(new SaveEditedQuestionEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("saveEditedExam"))
+		{
+			EventBus.getDefault().post(new SaveEditedExamEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getSubjects"))
+		{
+			System.out.println("event get subjects");
+			EventBus.getDefault().post(new GetSubjectsEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("showQuestions"))
+		{
+			System.out.println("event get subjects");
+			EventBus.getDefault().post(new ShowQuestionsEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("showExams"))
+		{
+			EventBus.getDefault().post(new ShowExamsEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("changeToEditQuestionBoundry"))
+		{
+			EventBus.getDefault().post(new ChangeToEditQuestionEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("editSelectedQuestion"))
+		{
+			EventBus.getDefault().post(new EditSelectedQuestionEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("editSelectedExam"))
+		{
+			EventBus.getDefault().post(new EditSelectedExamEvent((Message) msg));
+		}
 		else if(message.getTitle().equals("changeToExamBoundry"))
 		{
 			EventBus.getDefault().post(new ChangeToExamBoundry((Message) msg));

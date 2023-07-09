@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.server;
+package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
@@ -45,10 +45,10 @@ public class ExamController111 implements Serializable
     public void saveExam() throws IOException
     {
         System.out.println("incline bench press1");
-        ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), SimpleClient.getClient().getUser().getFirstName() + " " + SimpleClient.getClient().getUser().getLastName(), getQuestionHashMap());
-        Message message = new Message("saveExam",examHelper);
+        //ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), SimpleClient.getClient().getUser().getFirstName() + " " + SimpleClient.getClient().getUser().getLastName(), getQuestionHashMap());
+        //Message message = new Message("saveExam",examHelper);
         System.out.println("incline bench press11");
-        SimpleClient.getClient().sendToServer(message);
+       // SimpleClient.getClient().sendToServer(message);
     }
     public ExamBoundry getExamBoundry() {
         return examBoundry;
@@ -99,7 +99,7 @@ public class ExamController111 implements Serializable
                 // Third column: Score
                 TextField scoreField = new TextField();
                 scoreField.setPrefWidth(50);
-                scoreField.textProperty().bindBidirectional(question.scoreProperty(), new NumberStringConverter());
+                //scoreField.textProperty().bindBidirectional(question.scoreProperty(), new NumberStringConverter());
 
                 Region region1 = new Region();
                 Region region2 = new Region();

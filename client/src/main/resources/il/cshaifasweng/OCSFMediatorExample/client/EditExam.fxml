@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.EditExamBoundry">
+   <children>
+      <ComboBox fx:id="selectSubject" layoutX="55.0" layoutY="186.0" onAction="#selectSubjectAction" prefHeight="26.0" prefWidth="150.0" promptText="Select Subject" styleClass="ComboBox" stylesheets="@designs.css" />
+      <ComboBox fx:id="selectCourse" layoutX="55.0" layoutY="275.0" onAction="#selectCourseAction" prefWidth="150.0" promptText="Select Course" styleClass="ComboBox" stylesheets="@designs.css" />
+      <Button fx:id="showExamBtn" layoutX="55.0" layoutY="360.0" mnemonicParsing="false" onAction="#showExamAction" prefHeight="30.0" prefWidth="150.0" styleClass="ComboBox" stylesheets="@designs.css" text="Show Exams" />
+      <ListView fx:id="listViewE" layoutX="299.0" layoutY="186.0" prefHeight="579.0" prefWidth="528.0" />
+      <Button fx:id="editBtn" layoutX="75.0" layoutY="827.0" mnemonicParsing="false" onAction="#editAction" prefHeight="30.0" prefWidth="150.0" stylesheets="@designs.css" text="Edit" />
+      <Button fx:id="backBtn" layoutX="305.0" layoutY="830.0" mnemonicParsing="false" onAction="#backAction" prefHeight="30.0" prefWidth="150.0" styleClass="ComboBox" stylesheets="@designs.css" text="Back" />
+      <Label layoutX="331.0" layoutY="94.0" styleClass="Label" stylesheets="@designs.css" text="Edit Exams">
+         <font>
+            <Font name="American Typewriter" size="43.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

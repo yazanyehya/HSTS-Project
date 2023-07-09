@@ -13,8 +13,8 @@
          </font></Text>
       <Button fx:id="createAnQuestionBtn" layoutX="40.0" layoutY="96.0" mnemonicParsing="false" onAction="#createAnQuestionAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Create a Question" AnchorPane.topAnchor="96.0" />
       <Button fx:id="createAnExamBtn" layoutX="320.0" layoutY="96.0" mnemonicParsing="false" onAction="#createAnExamAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Create an Exam" />
-      <Button fx:id="viewAllExamsBtn" layoutX="320.0" layoutY="241.0" mnemonicParsing="false" onAction="#viewAllExamsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="View All Exams" />
-      <Button fx:id="viewAllQuestionsBtn" layoutX="40.0" layoutY="241.0" mnemonicParsing="false" onAction="#viewAllQuestionsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="View All Questions" />
+      <Button fx:id="EditExamsBtn" layoutX="320.0" layoutY="241.0" mnemonicParsing="false" onAction="#EditExamsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Edit Exams" />
+      <Button fx:id="EditQuestionsBtn" layoutX="40.0" layoutY="241.0" mnemonicParsing="false" onAction="#EditQuestionsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Edit Questions" />
       <Button fx:id="logoutBtn" layoutX="448.0" layoutY="355.0" mnemonicParsing="false" onAction="#logoutAction" stylesheets="@designs.css" text="logout" />
    </children>
 </AnchorPane>

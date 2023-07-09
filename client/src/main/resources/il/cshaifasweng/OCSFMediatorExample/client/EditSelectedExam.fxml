@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="1075.0" prefWidth="1211.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.EditSelectedExamBoundry">
+   <children>
+      <ComboBox fx:id="chooseCourse" layoutX="24.0" layoutY="46.0" onAction="#chooseCourseAction" prefHeight="26.0" prefWidth="180.0" promptText="              Choose Course" styleClass="ComboBox" stylesheets="@designs.css" />
+      <TextField fx:id="examPeriod" layoutX="282.0" layoutY="78.0" onAction="#examPeriodAction" prefHeight="26.0" prefWidth="179.0" promptText="            Enter Exam Period" />
+      <ComboBox fx:id="examType" layoutX="24.0" layoutY="110.0" onAction="#examTypeAction" prefHeight="26.0" prefWidth="181.0" promptText="                Type of Exam" styleClass="ComboBox" stylesheets="@designs.css" />
+      <Button fx:id="backBtn" layoutX="53.0" layoutY="1004.0" mnemonicParsing="false" onAction="#backAction" prefHeight="48.0" prefWidth="124.0" stylesheets="@designs.css" text="Back" />
+      <Button fx:id="showBtn" layoutX="193.0" layoutY="172.0" mnemonicParsing="false" onAction="#showAction" prefHeight="48.0" prefWidth="179.0" stylesheets="@designs.css" text="Show Questions" />
+      <VBox layoutX="35.0" layoutY="237.0" prefHeight="700.0" prefWidth="542.0">
+         <children>
+            <HBox prefHeight="30.0" prefWidth="542.0">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="145.0" />
+                  <Label prefHeight="30.0" prefWidth="688.0" styleClass="Label" stylesheets="@designs.css" text="                                   Current Questions In Exam">
+                     <font>
+                        <Font name="American Typewriter" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="54.0" prefWidth="296.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="54.0" prefWidth="191.0" styleClass="Label" stylesheets="@designs.css" text="Question" textAlignment="RIGHT" textOverrun="WORD_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font name="American Typewriter" size="21.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="54.0" prefWidth="357.0" styleClass="Label" stylesheets="@designs.css" text="                                      Score" textAlignment="RIGHT" textOverrun="WORD_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <ListView fx:id="questionListView" prefHeight="295.0" prefWidth="542.0" />
+            <HBox prefHeight="30.0" prefWidth="542.0">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="145.0" />
+                  <Label prefHeight="30.0" prefWidth="688.0" styleClass="Label" stylesheets="@designs.css" text="                                    All Available Questions">
+                     <font>
+                        <Font size="21.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="49.0" prefWidth="542.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="54.0" prefWidth="191.0" styleClass="Label" stylesheets="@designs.css" text="Question" textAlignment="RIGHT" textOverrun="WORD_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="54.0" prefWidth="357.0" styleClass="Label" stylesheets="@designs.css" text="                                      Score" textAlignment="RIGHT" textOverrun="WORD_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <ListView fx:id="listOfAllQuestions" prefHeight="318.0" prefWidth="542.0" />
+         </children>
+      </VBox>
+      <VBox layoutX="623.0" layoutY="237.0" prefHeight="371.0" prefWidth="542.0">
+         <children>
+            <HBox prefHeight="30.0" prefWidth="271.0">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="145.0" />
+                  <Label prefHeight="30.0" prefWidth="688.0" styleClass="Label" stylesheets="@designs.css" text="                      Choosen Questions for Edited Exam">
+                     <font>
+                        <Font name="American Typewriter" size="21.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="54.0" prefWidth="296.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="54.0" prefWidth="191.0" styleClass="Label" stylesheets="@designs.css" text="Question" textAlignment="RIGHT" textOverrun="WORD_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font name="American Typewriter" size="22.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="54.0" prefWidth="357.0" styleClass="Label" stylesheets="@designs.css" text="                                   Score" textAlignment="RIGHT" textOverrun="WORD_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font name="American Typewriter" size="22.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <ListView prefHeight="420.0" prefWidth="542.0" />
+            <HBox prefHeight="104.0" prefWidth="542.0" />
+         </children>
+      </VBox>
+      <Button fx:id="saveBtn" layoutX="802.0" layoutY="626.0" mnemonicParsing="false" onAction="#saveExam" prefHeight="48.0" prefWidth="164.0" stylesheets="@designs.css" text="Confirm Edit">
+         <font>
+            <Font name="American Typewriter" size="20.0" />
+         </font>
+      </Button>
+      <Button fx:id="selectBtn" layoutX="216.0" layoutY="949.0" mnemonicParsing="false" onAction="#ConfirmSelect" stylesheets="@designs.css" text="Confirm Select" />
+   </children>
+</AnchorPane>

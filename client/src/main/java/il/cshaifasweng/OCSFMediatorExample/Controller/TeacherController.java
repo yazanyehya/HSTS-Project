@@ -1,9 +1,8 @@
-package il.cshaifasweng.OCSFMediatorExample.server;
+package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -29,6 +28,11 @@ public class TeacherController
     {
 
         Message message = new Message("changeToQuestionBoundry", null);
+        SimpleClient.getClient().sendToServer(message);
+    }
+    public void changeToEditQuestionBoundry() throws IOException
+    {
+        Message message = new Message("changeToEditQuestionBoundry", null);
         SimpleClient.getClient().sendToServer(message);
     }
     public void changeToExamBoundry() throws IOException
@@ -58,6 +62,30 @@ public class TeacherController
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("ExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @Subscribe
+    public void handleChangeToEditQuestionBoundry(ChangeToEditQuestionEvent editQuestionBoundry)
+    {
+        EventBus.getDefault().unregister(this);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditQuestion");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @Subscribe
+    public void handleChangeToEditExamBoundry(ChangeToEditQuestionEvent editQuestionBoundry)
+    {
+        EventBus.getDefault().unregister(this);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditQuestion");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -111,5 +139,17 @@ public class TeacherController
 
     public void setTeacherBoundry(TeacherBoundry teacherBoundry) {
         this.teacherBoundry = teacherBoundry;
+    }
+
+    public void changeToEditExamBoundry()
+    {
+        EventBus.getDefault().unregister(this);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

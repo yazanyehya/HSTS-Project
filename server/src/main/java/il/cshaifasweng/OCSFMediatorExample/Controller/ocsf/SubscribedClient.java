@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.server.ocsf;
+package il.cshaifasweng.OCSFMediatorExample.Controller.ocsf;
 
 public class SubscribedClient {
     private ConnectionToClient client;

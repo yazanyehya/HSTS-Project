@@ -1,11 +1,9 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import com.mysql.cj.xdevapi.Client;
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
-import il.cshaifasweng.OCSFMediatorExample.server.QuestionController;
-import il.cshaifasweng.OCSFMediatorExample.server.TeacherController;
+import il.cshaifasweng.OCSFMediatorExample.Controller.QuestionController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.greenrobot.eventbus.EventBus;
 import org.hibernate.Hibernate;
 
 import java.io.IOException;
@@ -61,6 +58,22 @@ public class QuestionBoundry {
     private ComboBox<Course> selectCourse;
 
     private QuestionController questionController;
+
+    public TextField getAnswerD() {
+        return answerD;
+    }
+
+    public TextField getAnswerC() {
+        return answerC;
+    }
+
+    public TextField getAnswerB() {
+        return answerB;
+    }
+
+    public TextField getAnswerA() {
+        return answerA;
+    }
 
     @FXML
     void answerAAction(ActionEvent event)
@@ -159,15 +172,20 @@ public class QuestionBoundry {
     void saveAction(ActionEvent event)
     {
         RadioButton selectedRadioButton = (RadioButton) chooseAnswer.getSelectedToggle();
-        String correctAnswer = selectedRadioButton.getText();
-
+        Question question;
+        String correctAnswer = "";
         Course selectedCourse = selectCourse.getValue();
-        if (selectedCourse == null) {
-            // Handle the case when no course is selected
-            return;
+        if (selectedRadioButton == null || selectedCourse == null || Objects.equals(getAnswerA().getText(), "") || Objects.equals(getAnswerB().getText(), "") || Objects.equals(getAnswerC().getText(), "") || Objects.equals(getAnswerD().getText(), ""))
+        {
+            question = null;
         }
-        questionController.createQuestion(new Question(questionTextTXT.getText(), answerA.getText(), answerB.getText()
-                , answerC.getText(), answerD.getText(), ((Teacher) SimpleClient.getClient().getUser()).getSubject(), (Teacher) SimpleClient.getClient().getUser(), correctAnswer,selectedCourse));
+        else
+        {
+            correctAnswer = selectedRadioButton.getText();
+            question = new Question(questionTextTXT.getText(), answerA.getText(), answerB.getText()
+                    , answerC.getText(), answerD.getText(), ((Teacher) SimpleClient.getClient().getUser()).getSubject(), (Teacher) SimpleClient.getClient().getUser(), correctAnswer,selectedCourse);
+        }
+        questionController.createQuestion(question);
     }
 
     @FXML

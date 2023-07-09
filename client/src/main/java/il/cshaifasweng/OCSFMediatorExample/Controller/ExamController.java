@@ -1,9 +1,10 @@
-package il.cshaifasweng.OCSFMediatorExample.server;
+package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
+import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -50,11 +51,11 @@ public class ExamController
         // Assign the selected questions to the questionHashMap
         System.out.println(selectedQuestions.size());
         for (Question question : selectedQuestions) {
-            System.out.println(question.getQText());
-            questionHashMap.put(question, 0); // Set a default score of 0 for each selected question
+            System.out.println(question.getQText() + "  score: " + question.getScore());
+            questionHashMap.put(question, question.getScore()); // Set a default score of 0 for each selected question
         }
 
-        ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), SimpleClient.getClient().getUser().getFirstName(), questionHashMap);
+        ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), questionHashMap, ((Teacher)SimpleClient.getClient().getUser()).getSubject(), ((Teacher)SimpleClient.getClient().getUser()).getCourses().get(0));
         Message message = new Message("saveExam", examHelper);
         SimpleClient.getClient().sendToServer(message);
     }
@@ -72,6 +73,7 @@ public class ExamController
     private class ScoredQuestionListCell extends ListCell<Question> {
         private TextField scoreField;
         private boolean firstRow;
+
         ScoredQuestionListCell(boolean firstRow) {
             this.firstRow = firstRow;
         }
@@ -83,19 +85,10 @@ public class ExamController
                 setText(null);
                 setGraphic(null);
             } else {
-
-
-
                 HBox container = new HBox();
                 container.setAlignment(Pos.CENTER_LEFT);
-                // Top row: Labels
+                container.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: black;");
 
-                // First column: Select (Checkbox)
-                CheckBox checkBox = new CheckBox();
-                checkBox.selectedProperty().bindBidirectional(question.selectedProperty());
-
-
-                // Second column: Question
                 Label questionTextLabel = new Label(question.getQText());
                 Label answer1 = new Label(question.getAnswer1());
                 Label answer2 = new Label(question.getAnswer2());
@@ -103,10 +96,17 @@ public class ExamController
                 Label answer4 = new Label(question.getAnswer4());
                 VBox questionVBox = new VBox(questionTextLabel, answer1, answer2, answer3, answer4);
 
-                // Third column: Score
                 TextField scoreField = new TextField();
                 scoreField.setPrefWidth(50);
-                scoreField.textProperty().bindBidirectional(question.scoreProperty(), new NumberStringConverter());
+                scoreField.setText(Integer.toString(question.getScore()));
+                scoreField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    try {
+                        int score = Integer.parseInt(newValue);
+                        question.setScore(score);
+                    } catch (NumberFormatException e) {
+                        // Handle invalid input
+                    }
+                });
 
                 Region region1 = new Region();
                 Region region2 = new Region();
@@ -115,13 +115,11 @@ public class ExamController
                 HBox.setHgrow(region2, Priority.ALWAYS);
                 HBox.setHgrow(region3, Priority.ALWAYS);
 
-                // Add question components to container
-                container.getChildren().addAll(checkBox, region2,questionVBox, region3, scoreField);
+                container.getChildren().addAll(region2, questionVBox, region3, scoreField);
 
                 setGraphic(container);
             }
         }
-
     }
 
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {

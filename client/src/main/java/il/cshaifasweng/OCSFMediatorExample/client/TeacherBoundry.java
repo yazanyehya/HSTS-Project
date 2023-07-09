@@ -1,12 +1,9 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.server.LoginController;
-import il.cshaifasweng.OCSFMediatorExample.server.TeacherController;
+import il.cshaifasweng.OCSFMediatorExample.Controller.TeacherController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -19,10 +16,10 @@ public class TeacherBoundry {
     private Button createAnQuestionBtn;
 
     @FXML
-    private Button viewAllExamsBtn;
+    private Button EditExamsBtn;
 
     @FXML
-    private Button viewAllQuestionsBtn;
+    private Button EditQuestionsBtn;
 
     @FXML
     private Button logoutBtn;
@@ -48,14 +45,15 @@ public class TeacherBoundry {
     }
 
     @FXML
-    void viewAllExamsAction(ActionEvent event) throws IOException
+    void EditExamsAction(ActionEvent event) throws IOException
     {
+        teacherController.changeToEditExamBoundry();
     }
 
     @FXML
-    void viewAllQuestionsAction(ActionEvent event)
+    void EditQuestionsAction(ActionEvent event) throws IOException
     {
-
+        teacherController.changeToEditQuestionBoundry();
     }
 
     public void setTeacherController(TeacherController teacherController) {

@@ -42,7 +42,7 @@
 					<artifactId>exec-maven-plugin</artifactId>
 					<version>1.6.0</version>
 					<configuration>
-						<mainClass>il.cshaifasweng.OCSFMediatorExample.server.SimpleChatServer</mainClass>
+						<mainClass>il.cshaifasweng.OCSFMediatorExample.Controller.SimpleChatServer</mainClass>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -55,7 +55,7 @@
                         </descriptorRefs>
                         <archive>
                             <manifest>
-                                <mainClass>il.cshaifasweng.OCSFMediatorExample.server.SimpleChatServer</mainClass>
+                                <mainClass>il.cshaifasweng.OCSFMediatorExample.Controller.SimpleChatServer</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

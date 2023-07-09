@@ -1,6 +1,5 @@
-package il.cshaifasweng.OCSFMediatorExample.server;
+package il.cshaifasweng.OCSFMediatorExample.Controller;
 
-import il.cshaifasweng.OCSFMediatorExample.client.LoginBoundry;
 import il.cshaifasweng.OCSFMediatorExample.client.StudentBoundry;
 import org.greenrobot.eventbus.EventBus;
 
