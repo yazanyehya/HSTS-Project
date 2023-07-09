@@ -108,8 +108,7 @@ public class EditSelectedExamBoundry {
     }
 
     @FXML
-    void showAction(ActionEvent event)
-    {
+    void showAction(ActionEvent event) throws IOException {
         editSelectedExamController.getAllQuestions();
     }
     @FXML
