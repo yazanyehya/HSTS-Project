@@ -13,25 +13,22 @@ public class Teacher extends User implements Serializable
     @JoinColumn(name = "teacher_id")
     private List<Question> listOfQuestions;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
-
     @ManyToMany(mappedBy = "listOfTeachers", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Subject> subjects;
+
+    @ManyToMany(mappedBy = "listOfTeachers", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses;
 
     public List<Course> getCourses() {
         return courses;
     }
 
-    public Subject getSubject() {
-        return subject;
-    }
+    public List<Subject> getSubjects(){return subjects;}
 
-    public Teacher(String firstName, String lastName, String username, String password, int whoAreYou, Subject subject)
+    public Teacher(String firstName, String lastName, String username, String password, int whoAreYou)
     {
         super(firstName, lastName, username, password, whoAreYou, false);
-        this.subject = subject;
+        this.subjects = new ArrayList<Subject>();
         this.listOfQuestions = new ArrayList<Question>();
         this.courses = new ArrayList<Course>();
     }
@@ -48,7 +45,11 @@ public class Teacher extends User implements Serializable
         this.listOfQuestions = listOfQuestions;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
     }
 }

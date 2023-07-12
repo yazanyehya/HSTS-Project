@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
+import il.cshaifasweng.OCSFMediatorExample.entities.Subject;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ExamController;
 import javafx.collections.FXCollections;
@@ -28,9 +29,17 @@ public class ExamBoundry{
     private ComboBox<Course> chooseCourse;
 
     @FXML
+    private ComboBox<Subject> selectSubject;
+
+
+    @FXML
     private ListView<Question> questionListView;
 
+    @FXML
+    private TextArea commentStudet;
 
+    @FXML
+    private TextArea commentTeacher;
     @FXML
     private Button selectBtn;
 
@@ -87,19 +96,59 @@ public class ExamBoundry{
         return questionListView;
     }
 
+    public ComboBox<Subject> getSelectSubject() {
+        return selectSubject;
+    }
+
+    public TextArea getCommentStudet() {
+        return commentStudet;
+    }
+
+    public TextArea getCommentTeacher() {
+        return commentTeacher;
+    }
 
     @FXML
-    void initialize() {
+    void initialize() throws IOException {
 
         questionListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         examPeriod.setText("");
         examController = new ExamController(this);
         this.setExamController(examController);
-        Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
-        //Hibernate.initialize(teacher.getCourses());
-        ObservableList<Course> courses = FXCollections.observableArrayList(teacher.getCourses());
-        chooseCourse.setItems(courses);
+        chooseCourse.setVisible(false);
+        examController.getSubjects();
 
+        selectSubject.setCellFactory(new Callback<ListView<Subject>, ListCell<Subject>>() {
+            @Override
+            public ListCell<Subject> call(ListView<Subject> param) {
+                return new ListCell<Subject>() {
+                    @Override
+                    protected void updateItem(Subject item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.getName());
+                        } else {
+                            setText("");
+                        }
+                    }
+                };
+            }
+        });
+        selectSubject.setConverter(new StringConverter<Subject>() {
+            @Override
+            public String toString(Subject course) {
+                if (course == null) {
+                    return null;
+                }
+                return course.getName();
+            }
+
+            @Override
+            public Subject fromString(String string) {
+                // This method is not used in this example, so you can leave it empty
+                return null;
+            }
+        });
         // Set the cell factory to display the course name
         chooseCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
             @Override
@@ -171,4 +220,11 @@ public class ExamBoundry{
         // Handle course selection action
 
     }
+    @FXML
+    void selectSubjectAction(ActionEvent event) throws IOException
+    {
+        examController.getCourses(selectSubject.getSelectionModel().getSelectedItem());
+        chooseCourse.setVisible(true);
+    }
+
 }

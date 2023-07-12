@@ -14,15 +14,19 @@ public class Exam implements Serializable
     private int id;
 
     @Column(name = "teacherName")
-    private String teacherName;
+    private String username;
     @Column(name = "examPeriod")
     private String examPeriod;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private String teacherComments;
+
+    private String studentComments;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id")
     private Course course;
 
@@ -43,13 +47,16 @@ public class Exam implements Serializable
     )
 
     private List<Student> listOfStudents;
-    public Exam(String teacherName, String examPeriod, Subject subject, Course course)
+    public Exam(String username, String examPeriod, Subject subject, Course course, String teacherComments, String studentComments)
     {
-        this.teacherName = teacherName;
+        this.username = username;
         this.examPeriod = examPeriod;
         this.listOfQuestions = new ArrayList<Question>();
         this.subject = subject;
         this.course = course;
+        this.teacherComments = teacherComments;
+        this.studentComments = studentComments;
+
     }
 
     public String getExamPeriod() {
@@ -68,8 +75,8 @@ public class Exam implements Serializable
         this.subject = subject;
     }
 
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
+    public String getUsername() {
+        return username;
     }
 
     public void setCourse(Course course) {
@@ -92,8 +99,8 @@ public class Exam implements Serializable
         return subject;
     }
 
-    public String getTeacherName() {
-        return teacherName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Course getCourse() {
@@ -112,4 +119,21 @@ public class Exam implements Serializable
     public void setListOfQuestions(List<Question> listOfQuestions) {
         this.listOfQuestions = listOfQuestions;
     }
+
+    public String getStudentComments() {
+        return studentComments;
+    }
+
+    public void setStudentComments(String studentComments) {
+        this.studentComments = studentComments;
+    }
+
+    public void setTeacherComments(String teacherComments) {
+        this.teacherComments = teacherComments;
+    }
+
+    public String getTeacherComments() {
+        return teacherComments;
+    }
+
 }

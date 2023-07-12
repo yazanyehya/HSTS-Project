@@ -59,6 +59,40 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new ChangeToQuestionBoundry((Message) msg));
 		}
+		else if(message.getTitle().equals("getSubjectsForTeacher"))
+		{
+			EventBus.getDefault().post(new GetSubjectsForTeacherEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getSubjectsForTeacherExam"))
+		{
+			EventBus.getDefault().post(new GetSubjectsForTeacherExamEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getCoursesForSubjects"))
+		{
+			EventBus.getDefault().post(new GetCoursesForSubjectsEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getCoursesForSubjectsEQ"))
+		{
+			EventBus.getDefault().post(new GetCoursesForSubjectsEventEQ((Message) msg));
+		}
+	else if(message.getTitle().equals("getCoursesForSubjectsExam"))
+	{
+		EventBus.getDefault().post(new GetCoursesForSubjectsExamEvent((Message) msg));
+	}
+		else if(message.getTitle().equals("getSubjectsForTeacherEQ"))
+		{
+			EventBus.getDefault().post(new GetSubjectsForTeacherEventEQ((Message) msg));
+		}
+		else if(message.getTitle().equals("getCoursesForSubjects"))
+		{
+			EventBus.getDefault().post(new GetCoursesForSubjectsEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getCourses"))
+		{
+			EventBus.getDefault().post(new GetCoursesEvent((Message) msg));
+		}
 		else if(message.getTitle().equals("getAllQuestions"))
 		{
 			System.out.println("getAllQuestionsEvent");

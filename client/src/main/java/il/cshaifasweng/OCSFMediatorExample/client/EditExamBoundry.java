@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -42,6 +43,7 @@ public class EditExamBoundry {
             try {
                 System.out.println("back edit exam");
                 SimpleChatClient.switchScreen("teacherBoundry");
+                EventBus.getDefault().unregister(editExamController);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -95,8 +97,8 @@ public class EditExamBoundry {
     }
 
     @FXML
-    void selectSubjectAction(ActionEvent event)
-    {
+    void selectSubjectAction(ActionEvent event) throws IOException {
+        editExamController.getCourses(selectSubject.getSelectionModel().getSelectedItem());
         selectCourse.setVisible(true);
     }
 
@@ -113,12 +115,7 @@ public class EditExamBoundry {
 
         selectCourse.setVisible(false);
         showExamBtn.setVisible(false);
-
-        Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
-
-        editExamController.getSubjects(teacher);
-        ObservableList<Course> courses = FXCollections.observableArrayList(teacher.getCourses());
-        selectCourse.setItems(courses);
+        editExamController.getSubjects();
         selectCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
             @Override
             public ListCell<Course> call(ListView<Course> param) {

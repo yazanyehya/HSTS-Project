@@ -10,11 +10,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EditSelectedExamBoundry {
@@ -24,19 +30,25 @@ public class EditSelectedExamBoundry {
     private Button backBtn;
 
     @FXML
-    private ComboBox<Course> chooseCourse;
+    private TextArea commentStudet;
+
+    @FXML
+    private TextArea commentTeacher;
 
     @FXML
     private TextField examPeriod;
 
     @FXML
-    private ComboBox<String> examType;
+    private ListView<Question> listOfAllQuestions;
 
     @FXML
     private ListView<Question> questionListView;
 
     @FXML
-    private ListView<Question> listOfAllQuestions;
+    private ListView<Question> selectedQuestions;
+
+    @FXML
+    private ComboBox<Course> chooseCourse;
 
     @FXML
     private Button saveBtn;
@@ -57,9 +69,7 @@ public class EditSelectedExamBoundry {
 
         questionListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listOfAllQuestions.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
-        ObservableList<Course> courses = FXCollections.observableArrayList(teacher.getCourses());
-        chooseCourse.setItems(courses);
+
         chooseCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
             @Override
             public ListCell<Course> call(ListView<Course> param) {
@@ -76,7 +86,6 @@ public class EditSelectedExamBoundry {
                 };
             }
         });
-
         chooseCourse.setConverter(new StringConverter<Course>() {
             @Override
             public String toString(Course course) {
@@ -108,7 +117,8 @@ public class EditSelectedExamBoundry {
     }
 
     @FXML
-    void showAction(ActionEvent event) throws IOException {
+    void showAction(ActionEvent event) throws IOException
+    {
         editSelectedExamController.getAllQuestions();
     }
     @FXML
@@ -132,12 +142,14 @@ public class EditSelectedExamBoundry {
     @FXML
     void saveExam(ActionEvent event) throws IOException
     {
-        List<Question> selectedQuestions = (List<Question>) getQuestionListView().getSelectionModel().getSelectedItems();
         System.out.println("incline bench press");
-        editSelectedExamController.saveExam(selectedQuestions);
+        editSelectedExamController.saveExam(selectedQuestions.getItems());
         System.out.println("incline smith bench press");
     }
 
+    public ListView<Question> getSelectedQuestions() {
+        return selectedQuestions;
+    }
 
     public ListView<Question> getQuestionListView() {
         return questionListView;
@@ -155,16 +167,8 @@ public class EditSelectedExamBoundry {
         return examPeriod;
     }
 
-    public ComboBox<Course> getChooseCourse() {
-        return chooseCourse;
-    }
-
     public Button getSelectBtn() {
         return selectBtn;
-    }
-
-    public ComboBox<String> getExamType() {
-        return examType;
     }
 
     public EditSelectedExamController getEditSelectedExamController() {
@@ -191,16 +195,21 @@ public class EditSelectedExamBoundry {
         this.questionListView = questionListView;
     }
 
-    public void setChooseCourse(ComboBox<Course> chooseCourse) {
-        this.chooseCourse = chooseCourse;
-    }
 
     public void setEditSelectedExamController(EditSelectedExamController editSelectedExamController) {
         this.editSelectedExamController = editSelectedExamController;
     }
 
-    public void setExamType(ComboBox<String> examType) {
-        this.examType = examType;
+    public TextArea getCommentTeacher() {
+        return commentTeacher;
+    }
+
+    public void setCommentStudet(TextArea commentStudet) {
+        this.commentStudet = commentStudet;
+    }
+
+    public TextArea getCommentStudet() {
+        return commentStudet;
     }
 
     public ListView<Question> getListOfAllQuestions() {
@@ -210,9 +219,72 @@ public class EditSelectedExamBoundry {
     public void setListOfAllQuestions(ListView<Question> listOfAllQuestions) {
         this.listOfAllQuestions = listOfAllQuestions;
     }
+    private class ScoredQuestionListCell extends ListCell<Question> {
+        private TextField scoreField;
+        private boolean firstRow;
 
-    public void ConfirmSelect(ActionEvent actionEvent) throws IOException
-    {
+        ScoredQuestionListCell(boolean firstRow) {
+            this.firstRow = firstRow;
+        }
 
+        @Override
+        protected void updateItem(Question question, boolean empty) {
+            super.updateItem(question, empty);
+            if (empty || question == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                HBox container = new HBox();
+                container.setAlignment(Pos.CENTER_LEFT);
+                container.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: black;");
+
+                Label questionTextLabel = new Label(question.getQText());
+                Label answer1 = new Label(question.getAnswer1());
+                Label answer2 = new Label(question.getAnswer2());
+                Label answer3 = new Label(question.getAnswer3());
+                Label answer4 = new Label(question.getAnswer4());
+                VBox questionVBox = new VBox(questionTextLabel, answer1, answer2, answer3, answer4);
+
+                TextField scoreField = new TextField();
+                scoreField.setPrefWidth(50);
+                scoreField.setText(Integer.toString(question.getScore()));
+                scoreField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    try {
+                        int score = Integer.parseInt(newValue);
+                        question.setScore(score);
+                    } catch (NumberFormatException e) {
+                        // Handle invalid input
+                    }
+                });
+
+                Region region1 = new Region();
+                Region region2 = new Region();
+                Region region3 = new Region();
+                HBox.setHgrow(region1, Priority.ALWAYS);
+                HBox.setHgrow(region2, Priority.ALWAYS);
+                HBox.setHgrow(region3, Priority.ALWAYS);
+
+                container.getChildren().addAll(region2, questionVBox, region3, scoreField);
+
+                setGraphic(container);
+            }
+        }
+    }
+    public void ConfirmSelect(ActionEvent actionEvent) throws IOException {
+        List<Question> selectedFromQuestionList = questionListView.getSelectionModel().getSelectedItems();
+        List<Question> selectedFromAllQuestionsList = listOfAllQuestions.getSelectionModel().getSelectedItems();
+
+        List<Question> combinedList = new ArrayList<>();
+        combinedList.addAll(selectedFromQuestionList);
+        combinedList.addAll(selectedFromAllQuestionsList);
+
+        ObservableList<Question> observableCombinedList = FXCollections.observableArrayList(combinedList);
+        selectedQuestions.setItems(observableCombinedList);
+        selectedQuestions.setCellFactory(param -> new ScoredQuestionListCell(false));
+    }
+
+
+    public ComboBox<Course> getChooseCourse() {
+        return chooseCourse;
     }
 }

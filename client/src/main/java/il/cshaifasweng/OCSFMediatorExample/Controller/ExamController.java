@@ -1,10 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
-import il.cshaifasweng.OCSFMediatorExample.entities.Course;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.Question;
-import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -55,7 +52,7 @@ public class ExamController
             questionHashMap.put(question, question.getScore()); // Set a default score of 0 for each selected question
         }
 
-        ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), questionHashMap, ((Teacher)SimpleClient.getClient().getUser()).getSubject(), ((Teacher)SimpleClient.getClient().getUser()).getCourses().get(0));
+        ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), questionHashMap, examBoundry.getSelectSubject().getValue().getName(), examBoundry.getChooseCourse().getValue().getName(), examBoundry.getCommentTeacher().getText(), examBoundry.getCommentStudet().getText());
         Message message = new Message("saveExam", examHelper);
         SimpleClient.getClient().sendToServer(message);
     }
@@ -69,6 +66,40 @@ public class ExamController
     {
         Message message = new Message("pressBack", null);
         SimpleClient.getClient().sendToServer(message);
+    }
+
+    public void getSubjects() throws IOException
+    {
+        Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
+        Message message = new Message("getSubjectsForTeacherExam", teacher);
+        SimpleClient.getClient().sendToServer(message);
+    }
+    @Subscribe
+    public void handleGetSubjectsForTeacherEQ(GetSubjectsForTeacherExamEvent getSubjectsForTeacherExamEvent)
+    {
+        List<Subject> subjects = (List<Subject>)getSubjectsForTeacherExamEvent.getMessage().getBody();
+
+        Platform.runLater(() -> {
+            // Set the items for the ComboBox
+            ObservableList<Subject> subjectObservableList = FXCollections.observableArrayList(subjects);
+            examBoundry.getSelectSubject().setItems(subjectObservableList);
+        });
+    }
+    public void getCourses(Subject selectedItem) throws IOException
+    {
+        Message message = new Message("getCoursesForSubjectsExam", selectedItem);
+        SimpleClient.getClient().sendToServer(message);
+    }
+    @Subscribe
+    public void handleCoursesForSubjectEQ(GetCoursesForSubjectsExamEvent getCoursesForSubjectsExamEvent)
+    {
+        List<Course> courses = (List<Course>)getCoursesForSubjectsExamEvent.getMessage().getBody();
+
+        Platform.runLater(() -> {
+            // Set the items for the ComboBox
+            ObservableList<Course> courseObservableList = FXCollections.observableArrayList(courses);
+            examBoundry.getChooseCourse().setItems(courseObservableList);
+        });
     }
     private class ScoredQuestionListCell extends ListCell<Question> {
         private TextField scoreField;
@@ -147,19 +178,39 @@ public class ExamController
     public void handleSaveExamEvent(saveExamEvent saveExamEvent)
     {
 
-        if (saveExamEvent.getMessage().getBody() == null) {
+        String s = "";
+        Exam exam = (Exam)saveExamEvent.getMessage().getBody();
+        double sum = 0;
+        for (Question q : exam.getListOfQuestions())
+        {
+            if (q.getScore() <= 0)
+            {
+                exam = null;
+                s = "At least one Question has 0 score";
+            }
+            sum += q.getScore();
+        }
+        if (s == "At least one Question has 0 score")
+        {
             Platform.runLater(() -> {
                 // Login failure
-                showAlertDialog(Alert.AlertType.ERROR, "Error", "One of the Field is not assigned");
+                showAlertDialog(Alert.AlertType.ERROR, "Error","At least one Question has 0 score!");
             });
-        } else {
-            if (saveExamEvent.getMessage().getTitle().equals("saveExam"))
-            {
-                Platform.runLater(() -> {
-                    // Login success
-                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
-                });
-            }
+
+        }
+        else if (sum != 100 && s == "")
+        {
+            Platform.runLater(() -> {
+                // Login failure
+                showAlertDialog(Alert.AlertType.ERROR, "Error","Total sum of Question Score is not equal to 100!");
+            });
+        }
+        else
+        {
+            Platform.runLater(() -> {
+                // Login success
+                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
+            });
         }
     }
     @Subscribe
@@ -167,6 +218,14 @@ public class ExamController
         Object body = selectQuestionEvent.getMessage().getBody();
         if (body instanceof List) {
             List<?> list = (List<?>) body;
+            if (list.isEmpty())
+            {
+                Platform.runLater(() -> {
+                    // Login failure
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "There are no Available Questions for this course, Go create a few");
+                    //EventBus.getDefault().unregister(this);
+                });
+            }
             if (!list.isEmpty() && list.get(0) instanceof Question) {
                 List<Question> listOfQuestions = (List<Question>) body;
                 ObservableList<Question> questionList = FXCollections.observableArrayList(listOfQuestions);

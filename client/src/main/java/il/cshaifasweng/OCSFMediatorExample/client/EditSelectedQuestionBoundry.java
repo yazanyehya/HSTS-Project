@@ -2,6 +2,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
+import il.cshaifasweng.OCSFMediatorExample.entities.Subject;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
 import il.cshaifasweng.OCSFMediatorExample.Controller.EditSelectedQuestionController;
 import javafx.application.Platform;
@@ -14,6 +15,8 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class EditSelectedQuestionBoundry {
@@ -55,7 +58,12 @@ public class EditSelectedQuestionBoundry {
     private Button saveBtn;
 
     @FXML
-    private ComboBox<Course> selectCourse;
+    private ListView<Course> courseList;
+
+    @FXML
+    private ComboBox<Subject> selectSubject;
+    @FXML
+    private Button showCourseBtn;
 
     private EditSelectedQuestionController editSelectedQuestionController;
     @FXML
@@ -121,26 +129,50 @@ public class EditSelectedQuestionBoundry {
         RadioButton selectedRadioButton = (RadioButton) chooseAnswer.getSelectedToggle();
         Question question;
         String correctAnswer = "";
-        Course selectedCourse = selectCourse.getValue();
-        if (selectedRadioButton == null || selectedCourse == null || Objects.equals(getAnswerA().getText(), "") || Objects.equals(getAnswerB().getText(), "") || Objects.equals(getAnswerC().getText(), "") || Objects.equals(getAnswerD().getText(), ""))
+        List<Course> selectedCourses = courseList.getSelectionModel().getSelectedItems();
+        List<String> courses = new ArrayList<>();
+
+        for (Course c : selectedCourses)
         {
-            question = null;
+            courses.add(c.getName());
+        }
+        Subject selectedSubject = selectSubject.getValue();
+        List<String> list = new ArrayList<>();
+        if (selectedRadioButton == null || selectedCourses == null || Objects.equals(getAnswerA().getText(), "") || Objects.equals(getAnswerB().getText(), "") || Objects.equals(getAnswerC().getText(), "") || Objects.equals(getAnswerD().getText(), "") || selectedSubject == null )
+        {
+            list = null;
         }
         else
         {
             correctAnswer = selectedRadioButton.getText();
-            question = new Question(questionTextTXT.getText(), answerA.getText(), answerB.getText()
-                    , answerC.getText(), answerD.getText(), ((Teacher) SimpleClient.getClient().getUser()).getSubject(), (Teacher) SimpleClient.getClient().getUser(), correctAnswer,selectedCourse);
-        }
+//            question = new Question(questionTextTXT.getText(), answerA.getText(), answerB.getText()
+//                    , answerC.getText(), answerD.getText(), selectedSubject, (Teacher) SimpleClient.getClient().getUser(), correctAnswer);
+            list.add(questionTextTXT.getText());
+            list.add(answerA.getText());
+            list.add(answerB.getText());
+            list.add(answerC.getText());
+            list.add(answerD.getText());
+            list.add(selectedSubject.getName());
+            list.add(((Teacher) SimpleClient.getClient().getUser()).getUsername());
+            list.add(correctAnswer);
+            for (String s : courses)
+            {
+                list.add(s);
+            }
 
-        editSelectedQuestionController.saveQuestion(question);
+        }
+        editSelectedQuestionController.saveQuestion(list);
     }
 
     @FXML
-    void selectCourseAction(ActionEvent event) {
+    void selectCourseAction(ActionEvent event) throws IOException
+    {
+        editSelectedQuestionController.getCourse(selectSubject.getSelectionModel().getSelectedItem());
+    }
+    @FXML
+    void selectSubjectAction(ActionEvent event) {
 
     }
-
     public Button getBackBtn() {
         return backBtn;
     }
@@ -149,9 +181,6 @@ public class EditSelectedQuestionBoundry {
         return saveBtn;
     }
 
-    public ComboBox<Course> getSelectCourse() {
-        return selectCourse;
-    }
 
     public ToggleGroup getChooseAnswer() {
         return chooseAnswer;
@@ -193,8 +222,24 @@ public class EditSelectedQuestionBoundry {
         return questionTextTXT;
     }
 
-    public void setSelectCourse(ComboBox<Course> selectCourse) {
-        this.selectCourse = selectCourse;
+    public ListView<Course> getCourseList() {
+        return courseList;
+    }
+
+    public Button getShowCourseBtn() {
+        return showCourseBtn;
+    }
+
+    public void setShowCourseBtn(Button showCourseBtn) {
+        this.showCourseBtn = showCourseBtn;
+    }
+
+    public void setSelectSubject(ComboBox<Subject> selectSubject) {
+        this.selectSubject = selectSubject;
+    }
+
+    public void setCourseList(ListView<Course> courseList) {
+        this.courseList = courseList;
     }
 
     public void setBackBtn(Button backBtn) {
@@ -245,6 +290,10 @@ public class EditSelectedQuestionBoundry {
         this.saveBtn = saveBtn;
     }
 
+    public ComboBox<Subject> getSelectSubject() {
+        return selectSubject;
+    }
+
     public void setEditSelectedQuestionController(EditSelectedQuestionController editSelectedQuestionController) {
         this.editSelectedQuestionController = editSelectedQuestionController;
     }
@@ -252,23 +301,19 @@ public class EditSelectedQuestionBoundry {
     public EditSelectedQuestionController getEditSelectedQuestionController() {
         return editSelectedQuestionController;
     }
+    private void populateCourseComboBox() {
+        Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
 
-    public void initialize()
-    {
-        editSelectedQuestionController = new EditSelectedQuestionController(this);
-        this.setEditSelectedQuestionController(editSelectedQuestionController);
+        //ObservableList<Course> courses = FXCollections.observableArrayList(teacher.getCourses());
+        //selectCourse.setItems(courses);
 
-        Teacher teacher = (Teacher)SimpleClient.getClient().getUser();
-
-
-        ObservableList<Course> courses = FXCollections.observableArrayList(teacher.getCourses());
-        selectCourse.setItems(courses);
-        selectCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
+        // Set the cell factory to display the course name
+        selectSubject.setCellFactory(new Callback<ListView<Subject>, ListCell<Subject>>() {
             @Override
-            public ListCell<Course> call(ListView<Course> param) {
-                return new ListCell<Course>() {
+            public ListCell<Subject> call(ListView<Subject> param) {
+                return new ListCell<Subject>() {
                     @Override
-                    protected void updateItem(Course item, boolean empty) {
+                    protected void updateItem(Subject item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
                             setText(item.getName());
@@ -279,10 +324,9 @@ public class EditSelectedQuestionBoundry {
                 };
             }
         });
-
-        selectCourse.setConverter(new StringConverter<Course>() {
+        selectSubject.setConverter(new StringConverter<Subject>() {
             @Override
-            public String toString(Course course) {
+            public String toString(Subject course) {
                 if (course == null) {
                     return null;
                 }
@@ -290,10 +334,20 @@ public class EditSelectedQuestionBoundry {
             }
 
             @Override
-            public Course fromString(String string) {
+            public Subject fromString(String string) {
                 // This method is not used in this example, so you can leave it empty
                 return null;
             }
         });
+
+
+    }
+    public void initialize() throws IOException {
+        editSelectedQuestionController = new EditSelectedQuestionController(this);
+        this.setEditSelectedQuestionController(editSelectedQuestionController);
+        courseList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        //selectCourse.getSelectionModel().getSelectedItem()
+        editSelectedQuestionController.getSubjects();
+        populateCourseComboBox();
     }
 }

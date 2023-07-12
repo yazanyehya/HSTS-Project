@@ -1,10 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
-import il.cshaifasweng.OCSFMediatorExample.entities.Exam;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.Question;
-import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,14 +22,17 @@ import java.util.stream.Collectors;
 public class EditSelectedExamController
 {
     EditSelectedExamBoundry editSelectedExamBoundry;
-    private HashMap<Question, Integer> questionHashMap;
+    private HashMap<Question, Integer> questionHashMap1;
+    private HashMap<Question, Integer> questionHashMap2;
     private List<Question> listQ;
+    private String course;
+    private String subject;
 
     public EditSelectedExamController(EditSelectedExamBoundry editSelectedExamBoundry)
     {
         EventBus.getDefault().register(this);
         this.editSelectedExamBoundry = editSelectedExamBoundry;
-        this.questionHashMap = new HashMap<>();
+        this.questionHashMap1 = new HashMap<>();
     }
 
     public void getAllQuestions() throws IOException {
@@ -56,6 +56,7 @@ public class EditSelectedExamController
                 setText(null);
                 setGraphic(null);
             } else {
+                System.out.println(question.getQText() + "  " + question.getScore());
                 HBox container = new HBox();
                 container.setAlignment(Pos.CENTER_LEFT);
                 container.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: black;");
@@ -74,6 +75,7 @@ public class EditSelectedExamController
                     try {
                         int score = Integer.parseInt(newValue);
                         question.setScore(score);
+                        System.out.println(question.getQText() + "  " + question.getScore());
                     } catch (NumberFormatException e) {
                         // Handle invalid input
                     }
@@ -92,22 +94,57 @@ public class EditSelectedExamController
             }
         }
     }
+
+
     @Subscribe
     public void handleEditSelectedExam(EditSelectedExamEvent editSelectedExamEvent)
     {
         System.out.println("EditSelectedExamEvent");
-        List<Question> list = ( List<Question>)editSelectedExamEvent.getMessage().getBody();
+        Exam exam = (Exam)editSelectedExamEvent.getMessage().getBody();
+        List<Question> list = exam.getListOfQuestions();
         listQ = new ArrayList<Question>();
+        List<Question> clones = new ArrayList<Question>();
+        System.out.println("viewing old exam");
         for (Question l : list)
         {
-            listQ.add(l);
+            Question q = l.clone();
+            q.setScore(l.getScore());
+            clones.add(q);
+            listQ.add(q);
         }
-        ObservableList<Question> questionList = FXCollections.observableArrayList(list);
+        ObservableList<Question> questionList = FXCollections.observableArrayList(clones);
         editSelectedExamBoundry.getQuestionListView().setItems(questionList);
         editSelectedExamBoundry.getQuestionListView().setCellFactory(param -> {
+            System.out.println("selecting questions");
+            for (Question l : list)
+            {
+                System.out.println(l.getQText()  + " after " + l.getScore());
+            }
             return new EditSelectedExamController.ScoredQuestionListCell(false);
         });
-
+        editSelectedExamBoundry.getExamPeriod().setText(exam.getExamPeriod());
+        editSelectedExamBoundry.getCommentStudet().setText(exam.getStudentComments());
+        editSelectedExamBoundry.getCommentTeacher().setText(exam.getTeacherComments());
+        subject = exam.getSubject().getName();
+        course = exam.getCourse().getName();
+        Platform.runLater(() -> {
+            // Set the items for the ComboBox
+            ObservableList<Course> courseObservableList = FXCollections.observableArrayList(exam.getCourse());
+            editSelectedExamBoundry.getChooseCourse().setItems(courseObservableList);
+        });
+    }
+    private boolean checkQuestion(Question q1)
+    {
+        for (Question q2 : listQ)
+        {
+            if (Objects.equals(q1.getqText(), q2.getqText()) && Objects.equals(q1.getAnswer1(), q2.getAnswer1())
+                    && Objects.equals(q1.getAnswer2(), q2.getAnswer2()) && Objects.equals(q1.getAnswer3(), q2.getAnswer3())
+                    && Objects.equals(q1.getAnswer4(), q2.getAnswer4()) && Objects.equals(q1.getCorrectAnswer(), q2.getCorrectAnswer()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     @Subscribe
     public void handleGetAllQuestionsEvent(GetAllQuestionEvent getAllQuestionEvent) {
@@ -115,15 +152,23 @@ public class EditSelectedExamController
         //List<Question> selectedQuestions = new ArrayList<>(editSelectedExamBoundry.getQuestionListView().getSelectionModel().getSelectedItems());
         System.out.println("ramiss" + listQ.size());
         // Create a new list to store the questions that are not selected
-        List<Question> remainingQuestions = new ArrayList<>();
+        List<Question> remainingQuestions = new ArrayList<Question>();
 
         // Iterate over allQuestions and add only the questions that are not selected to remainingQuestions
-        for (Question question : allQuestions) {
-            if (!listQ.contains(question))
+        for (Question question : allQuestions)
+        {
+            if(!checkQuestion(question))
             {
-                System.out.println("kkk");
-                remainingQuestions.add(question);
+                remainingQuestions.add(question.clone());
             }
+        }
+        if (remainingQuestions.isEmpty())
+        {
+            Platform.runLater(() -> {
+                // Login failure
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "There are no more Available Questions for this course, Go create a few");
+                //EventBus.getDefault().unregister(this);
+            });
         }
         System.out.println(remainingQuestions);
         // Set the remainingQuestions as the items of editSelectedExamBoundry.getListOfAllQuestions()
@@ -148,20 +193,41 @@ public class EditSelectedExamController
     public void handleSaveEditedExam(SaveEditedExamEvent saveEditedExamEvent)
     {
         System.out.println("notify client that editexam is saved");
-        if (saveEditedExamEvent.getMessage().getBody() == null)
+        String s = "";
+        Exam exam = (Exam)saveEditedExamEvent.getMessage().getBody();
+        double sum = 0;
+        for (Question q : exam.getListOfQuestions())
+        {
+            if (q.getScore() <= 0)
+            {
+                exam = null;
+                s = "At least one Question has 0 score";
+            }
+            sum += q.getScore();
+        }
+        if (s == "At least one Question has 0 score")
         {
             Platform.runLater(() -> {
                 // Login failure
-                showAlertDialog(Alert.AlertType.ERROR, "Error", "One of the Field is not assigned");
+                showAlertDialog(Alert.AlertType.ERROR, "Error","At least one Question has 0 score!");
+                editSelectedExamBoundry.getSelectedQuestions().getItems().clear();
             });
-        } else {
-            if (saveEditedExamEvent.getMessage().getTitle().equals("saveEditedExam"))
-            {
+
+        }
+        else if (sum != 100 && s == "")
+        {
+            Platform.runLater(() -> {
+                // Login failure
+                showAlertDialog(Alert.AlertType.ERROR, "Error","Total sum of Question Score is not equal to 100!");
+                editSelectedExamBoundry.getSelectedQuestions().getItems().clear();
+            });
+        }
+        else
+        {
                 Platform.runLater(() -> {
                     // Login success
                     showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
                 });
-            }
         }
     }
     public void saveExam(List<Question> selectedQuestions) throws IOException {
@@ -180,10 +246,10 @@ public class EditSelectedExamController
         System.out.println(selectedQuestions.size());
         for (Question question : selectedQuestions) {
             System.out.println(question.getQText() + "  score: " + question.getScore());
-            questionHashMap.put(question, question.getScore()); // Set a default score of 0 for each selected question
+            questionHashMap1.put(question, question.getScore()); // Set a default score of 0 for each selected question
         }
 
-        ExamHelper examHelper = new ExamHelper(editSelectedExamBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), questionHashMap, ((Teacher)SimpleClient.getClient().getUser()).getSubject(), ((Teacher)SimpleClient.getClient().getUser()).getCourses().get(0));
+        ExamHelper examHelper = new ExamHelper(editSelectedExamBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), questionHashMap1, subject, course, editSelectedExamBoundry.getCommentTeacher().getText(), editSelectedExamBoundry.getCommentStudet().getText());
         Message message = new Message("saveEditedExam", examHelper);
         SimpleClient.getClient().sendToServer(message);
     }

@@ -10,21 +10,25 @@ import java.util.HashMap;
 public class ExamHelper implements Serializable
 {
     String examPeriod;
-    String nameOfTeacher;
+    String username;
     HashMap<Question, Integer> questionHashMap;
-    Subject subject;
-    Course course;
+    String subject;
+    String course;
+    String teacherComments;
+    String allComments;
 
-    public ExamHelper(String examPeriod, String nameOfTeacher, HashMap<Question, Integer> questionHashMap, Subject subject, Course course)
+    public ExamHelper(String examPeriod, String username, HashMap<Question, Integer> questionHashMap, String subject, String course, String teacherComments, String allComments)
     {
         this.examPeriod = examPeriod;
-        this.nameOfTeacher = nameOfTeacher;
+        this.username = username;
         this.questionHashMap = questionHashMap;
         this.subject = subject;
         this.course =course;
+        this.teacherComments = teacherComments;
+        this.allComments = allComments;
     }
 
-    public Course getCourse() {
+    public String getCourse() {
         return course;
     }
 
@@ -32,16 +36,32 @@ public class ExamHelper implements Serializable
         this.examPeriod = examPeriod;
     }
 
-    public void setNameOfTeacher(String nameOfTeacher) {
-        this.nameOfTeacher = nameOfTeacher;
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getExamPeriod() {
         return examPeriod;
     }
 
-    public String getNameOfTeacher() {
-        return nameOfTeacher;
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setQuestionHashMap(HashMap<Question, Integer> questionHashMap) {
+        this.questionHashMap = questionHashMap;
     }
 
     public HashMap<Question, Integer> getQuestionHashMap() {

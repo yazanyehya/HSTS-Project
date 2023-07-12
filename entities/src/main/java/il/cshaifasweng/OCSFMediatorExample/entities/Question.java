@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import org.hibernate.Hibernate;
 
 
 import javax.persistence.*;
@@ -35,6 +36,8 @@ public class Question implements Serializable
     private Integer score;
 
     @Column
+    private String isClone;
+    @Column
     private String correctAnswer;
 
     @Column(name = "selected")
@@ -47,28 +50,60 @@ public class Question implements Serializable
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @ManyToMany(mappedBy = "listOfQuestions", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Course> course;
 
-    public Question(String qText, String answer1, String answer2, String answer3, String answer4, Subject subject, Teacher teacher, String correctAnswer, Course course)
+    public Question(String qText, String answer1, String answer2, String answer3, String answer4, Subject subject, Teacher teacher,String correctAnswer, List<Course> courseList, String isclone)
     {
         this.qText = qText;
         this.answer1 = answer1;
         this.answer2 = answer2;
         this.answer3 = answer3;
         this.answer4 = answer4;
-        this.subject = subject;
+        this.setSubject(subject);
         this.teacher = teacher;
-        this.course = course;
+        this.course = new ArrayList<Course>();
+        System.out.println("im here courses");
+        this.setCourse(courseList);
+        System.out.println("after im here courses");
+        this.exams = new ArrayList<Exam>();
         this.correctAnswer = correctAnswer;
         this.score = 0;
+        this.isClone = isclone;
+
 
     }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public void setExams(List<Exam> exams) {
+        this.exams = exams;
+    }
+
+    public Question clone() {
+        Question clonedQuestion = new Question();
+        clonedQuestion.setId(0);
+        clonedQuestion.setqText(this.qText);
+        clonedQuestion.setAnswer1(this.answer1);
+        clonedQuestion.setAnswer2(this.answer2);
+        clonedQuestion.setAnswer3(this.answer3);
+        clonedQuestion.setAnswer4(this.answer4);
+        clonedQuestion.setCorrectAnswer(this.correctAnswer);
+        //clonedQuestion.setTeacher(this.teacher);
+        //clonedQuestion.setSubject(this.subject);
+        clonedQuestion.setScore(0);
+        //clonedQuestion.setCourse(this.course);
+        clonedQuestion.isClone = "yes";
+        //clonedQuestion.setSelected(this.selected);
+        return clonedQuestion;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -78,6 +113,7 @@ public class Question implements Serializable
             return false;
         }
         Question other = (Question) obj;
+        System.out.println("id = " + id+ " other.id =  " + other.id);
         return Objects.equals(id, other.id);
     }
 
@@ -135,8 +171,10 @@ public class Question implements Serializable
         return subject;
     }
 
-    public void setSubject(Subject subject) {
+    public void setSubject(Subject subject)
+    {
         this.subject = subject;
+        subject.getListOfQuestions().add(this);
     }
 
     public int getId() {
@@ -163,6 +201,13 @@ public class Question implements Serializable
         return qText;
     }
 
+    public String getqText() {
+        return qText;
+    }
+
+    public List<Exam> getExams() {
+        return exams;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -186,5 +231,17 @@ public class Question implements Serializable
 
     public void setqText(String qText) {
         this.qText = qText;
+    }
+
+    public List<Course> getCourse() {
+        return course;
+    }
+
+    public void setCourse(List<Course> course) {
+        this.course = course;
+        for (Course c : course)
+        {
+            c.getListOfQuestions().add(this);
+        }
     }
 }

@@ -15,17 +15,24 @@ public class Subject implements Serializable
     @Column
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
     private List<Question> listOfQuestions;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id")
+    private List<Course> courses;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private List<Exam> listOfExams;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "subject_id")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "subject_teacher",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "teacher_id")
+    )
     private List<Teacher> listOfTeachers;
 
     public Subject(String name)
@@ -33,11 +40,13 @@ public class Subject implements Serializable
         this.name = name;
         listOfQuestions = new ArrayList<Question>();
         listOfTeachers = new ArrayList<Teacher>();
+        courses = new ArrayList<Course>();
     }
     public Subject()
     {
         listOfQuestions = new ArrayList<Question>();
         listOfTeachers = new ArrayList<Teacher>();
+        courses = new ArrayList<Course>();
     }
 
     public int getId() {
@@ -72,4 +81,11 @@ public class Subject implements Serializable
         this.name = name;
     }
 
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
 }

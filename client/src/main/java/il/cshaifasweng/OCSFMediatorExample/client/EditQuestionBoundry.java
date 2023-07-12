@@ -25,10 +25,13 @@ public class EditQuestionBoundry {
     private ListView<Question> listViewQ;
 
     @FXML
-    private ComboBox<Course> selectCourse;
+    private ListView<Course> courseList;
 
     @FXML
     private ComboBox<Subject> selectSubject;
+
+    @FXML
+    private ComboBox<Course> selectCourse;
 
     @FXML
     private Button showQBtn;
@@ -43,25 +46,10 @@ public class EditQuestionBoundry {
         return editQuestionController;
     }
 
-    @FXML
-    void initialize() throws IOException {
+    private void populateCourseComboBox() {
+        //Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
 
-        editQuestionController = new EditQuestionController(this);
-        this.setEditQuestionController(editQuestionController);
-
-        selectCourse.setVisible(false);
-        showQBtn.setVisible(false);
-        //editBtn.setVisible(false);
-        System.out.println("before getting subjects");
-        Teacher teacher = (Teacher)SimpleClient.getClient().getUser();
-        editQuestionController.getSubjects(teacher);
-        System.out.println("after getting subjects");
-        ObservableList<Course> courses = FXCollections.observableArrayList(teacher.getCourses());
-        selectCourse.setItems(courses);
-
-
-        //ObservableList<Subject> subjects = FXCollections.observableArrayList(teacher.getSubject());
-        //selectSubject.setItems(subjects);
+        // Set the cell factory to display the course name
 
         selectCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
             @Override
@@ -79,7 +67,6 @@ public class EditQuestionBoundry {
                 };
             }
         });
-
         selectCourse.setConverter(new StringConverter<Course>() {
             @Override
             public String toString(Course course) {
@@ -95,6 +82,7 @@ public class EditQuestionBoundry {
                 return null;
             }
         });
+
         selectSubject.setCellFactory(new Callback<ListView<Subject>, ListCell<Subject>>() {
             @Override
             public ListCell<Subject> call(ListView<Subject> param) {
@@ -113,18 +101,32 @@ public class EditQuestionBoundry {
         });
         selectSubject.setConverter(new StringConverter<Subject>() {
             @Override
-            public String toString(Subject subject) {
-                if (subject == null) {
+            public String toString(Subject course) {
+                if (course == null) {
                     return null;
                 }
-                return subject.getName();
+                return course.getName();
             }
 
             @Override
             public Subject fromString(String string) {
+                // This method is not used in this example, so you can leave it empty
                 return null;
             }
         });
+    }
+    @FXML
+    void initialize() throws IOException {
+
+        editQuestionController = new EditQuestionController(this);
+        this.setEditQuestionController(editQuestionController);
+
+        System.out.println("before getting subjects");
+        editQuestionController.getSubjects();
+        populateCourseComboBox();
+
+
+
     }
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
@@ -177,8 +179,8 @@ public class EditQuestionBoundry {
     }
 
     @FXML
-    void selectSubjectAction(ActionEvent event)
-    {
+    void selectSubjectAction(ActionEvent event) throws IOException {
+        editQuestionController.getCourses(selectSubject.getSelectionModel().getSelectedItem());
         selectCourse.setVisible(true);
     }
 
@@ -220,5 +222,9 @@ public class EditQuestionBoundry {
 
     public void setShowQBtn(Button showQBtn) {
         this.showQBtn = showQBtn;
+    }
+
+    public ListView<Course> getCourseList() {
+        return courseList;
     }
 }

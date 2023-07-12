@@ -13,6 +13,8 @@ import javafx.scene.layout.VBox;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+
+
 import java.io.IOException;
 import java.util.List;
 
@@ -33,19 +35,47 @@ public class EditQuestionController {
         return editQuestionBoundry;
     }
 
-    public void getSubjects(Teacher teacher) throws IOException {
-        Message message = new Message("getSubjects", teacher);
+    public void getSubjects() throws IOException
+    {
+        Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
+        Message message = new Message("getSubjectsForTeacherEQ", teacher);
         SimpleClient.getClient().sendToServer(message);
     }
-
     @Subscribe
-    public void handleGetSubjects(GetSubjectsEvent getSubjectsEvent) {
-        System.out.println("fffffffffffffff");
-        List<Subject> list = (List<Subject>) getSubjectsEvent.getMessage().getBody();
-        System.out.println(list.size());
-        ObservableList<Subject> subjects = FXCollections.observableArrayList(list);
-        editQuestionBoundry.getSelectSubject().setItems(subjects);
+    public void handleGetSubjectsForTeacherEQ(GetSubjectsForTeacherEventEQ getSubjectsForTeacherEvent)
+    {
+        List<Subject> subjects = (List<Subject>)getSubjectsForTeacherEvent.getMessage().getBody();
+
+        Platform.runLater(() -> {
+            // Set the items for the ComboBox
+            ObservableList<Subject> subjectObservableList = FXCollections.observableArrayList(subjects);
+            editQuestionBoundry.getSelectSubject().setItems(subjectObservableList);
+        });
     }
+    public void getCourses(Subject selectedItem) throws IOException
+    {
+        Message message = new Message("getCoursesForSubjectsEQ", selectedItem);
+        SimpleClient.getClient().sendToServer(message);
+    }
+    @Subscribe
+    public void handleCoursesForSubjectEQ(GetCoursesForSubjectsEventEQ getCoursesForSubjectsEvent)
+    {
+        List<Course> courses = (List<Course>)getCoursesForSubjectsEvent.getMessage().getBody();
+
+        Platform.runLater(() -> {
+            // Set the items for the ComboBox
+            ObservableList<Course> courseObservableList = FXCollections.observableArrayList(courses);
+            editQuestionBoundry.getSelectCourse().setItems(courseObservableList);
+        });
+    }
+//    @Subscribe
+//    public void handleGetSubjects(GetSubjectsEvent getSubjectsEvent) {
+//        System.out.println("fffffffffffffff");
+//        List<Subject> list = (List<Subject>) getSubjectsEvent.getMessage().getBody();
+//        System.out.println(list.size());
+//        ObservableList<Subject> subjects = FXCollections.observableArrayList(list);
+//        editQuestionBoundry.getSelectSubject().setItems(subjects);
+//    }
 
 
     private class QuestionListCell extends ListCell<Question> {
@@ -93,10 +123,13 @@ public class EditQuestionController {
     public void handleShowQuestions(ShowQuestionsEvent showQuestionsEvent) {
         List<Question> list = (List<Question>) showQuestionsEvent.getMessage().getBody();
         ObservableList<Question> questionList = FXCollections.observableArrayList(list);
-        editQuestionBoundry.getListViewQ().setItems(questionList);
-        editQuestionBoundry.getListViewQ().setCellFactory(param -> {
-            return new EditQuestionController.QuestionListCell(false);
+        Platform.runLater(() -> {
+            editQuestionBoundry.getListViewQ().setItems(questionList);
+            editQuestionBoundry.getListViewQ().setCellFactory(param -> {
+                return new EditQuestionController.QuestionListCell(false);
+            });
         });
     }
+
 }
 

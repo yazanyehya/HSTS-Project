@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
@@ -27,18 +28,39 @@ public class EditExamController
         this.editExamBoundry = editExamBoundry;
     }
 
-    public void getSubjects(Teacher teacher) throws IOException {
+    public void getSubjects() throws IOException {
+        Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
         Message message = new Message("getSubjects", teacher);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
     public void handleGetSubjects(GetSubjectsEvent getSubjectsEvent) {
-        System.out.println("fffffffffffffff");
-        List<Subject> list = (List<Subject>) getSubjectsEvent.getMessage().getBody();
-        System.out.println(list.size());
-        ObservableList<Subject> subjects = FXCollections.observableArrayList(list);
-        editExamBoundry.getSelectSubject().setItems(subjects);
+        List<Subject> subjects = (List<Subject>)getSubjectsEvent.getMessage().getBody();
+
+        Platform.runLater(() -> {
+            // Set the items for the ComboBox
+            ObservableList<Subject> subjectObservableList = FXCollections.observableArrayList(subjects);
+            editExamBoundry.getSelectSubject().setItems(subjectObservableList);
+        });
     }
+
+    public void getCourses(Subject selectedItem) throws IOException
+    {
+        Message message = new Message("getCourses", selectedItem);
+        SimpleClient.getClient().sendToServer(message);
+    }
+    @Subscribe
+    public void handleCoursesForSubjectEQ(GetCoursesEvent getCoursesEvent)
+    {
+        List<Course> courses = (List<Course>)getCoursesEvent.getMessage().getBody();
+
+        Platform.runLater(() -> {
+            // Set the items for the ComboBox
+            ObservableList<Course> courseObservableList = FXCollections.observableArrayList(courses);
+            editExamBoundry.getSelectCourse().setItems(courseObservableList);
+        });
+    }
+
     private class ExamListCell extends ListCell<Exam> {
         private boolean firstRow;
 
@@ -64,12 +86,16 @@ public class EditExamController
 
 
                     // Second column: Exam
-                    Label examTextLabel1 = new Label(exam.getTeacherName());
-                    Label examTextLabel2 = new Label(editExamBoundry.getSelectCourse().getSelectionModel().getSelectedItem().getName());
+                    Label examTextLabel1 = new Label("Creator username: " + exam.getUsername());
+                    Label examTextLabel2 = new Label("Course: " + editExamBoundry.getSelectCourse().getSelectionModel().getSelectedItem().getName());
+                    Label examTextLabel3 = new Label("Subject: " + editExamBoundry.getSelectSubject().getSelectionModel().getSelectedItem().getName());
+                    Label examTextLabel4 = new Label("Exam Period: " + exam.getExamPeriod());
+                    Label examTextLabel5 = new Label("Exam ID: " + exam.getId());
+
                     //Label examTextLabel3 = new Label(exam.getSubject().getName());
                     // Add additional labels or components for exam details if needed
 
-                    VBox examVBox = new VBox(examTextLabel1, examTextLabel2);
+                    VBox examVBox = new VBox(examTextLabel1, examTextLabel3,examTextLabel2, examTextLabel4, examTextLabel5);
                     // Add additional components to the examVBox if needed
 
                     // Add exam components to container
@@ -81,14 +107,33 @@ public class EditExamController
         }
     }
 
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
     @Subscribe
     public void handleShowExams(ShowExamsEvent showExamsEvent)
     {
         List<Exam> list = (List<Exam>) showExamsEvent.getMessage().getBody();
-        ObservableList<Exam> questionList = FXCollections.observableArrayList(list);
-        editExamBoundry.getListViewE().setItems(questionList);
-        editExamBoundry.getListViewE().setCellFactory(param -> {
-            return new EditExamController.ExamListCell(false);
-        });
+        if (list.isEmpty())
+        {
+            Platform.runLater(() -> {
+                // Login failure
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "There are no Available Exams for this course, Go create a few");
+                //EventBus.getDefault().unregister(this);
+            });
+        }
+        else {
+            ObservableList<Exam> questionList = FXCollections.observableArrayList(list);
+            editExamBoundry.getListViewE().setItems(questionList);
+            editExamBoundry.getListViewE().setCellFactory(param -> {
+                return new EditExamController.ExamListCell(false);
+            });
+        }
     }
 }
