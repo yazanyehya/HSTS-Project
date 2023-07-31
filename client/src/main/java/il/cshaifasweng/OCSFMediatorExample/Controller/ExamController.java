@@ -62,12 +62,6 @@ public class ExamController
         Message message = new Message("createExam", course);
         SimpleClient.getClient().sendToServer(message);
     }
-    public void pressBack() throws IOException
-    {
-        Message message = new Message("pressBack", null);
-        SimpleClient.getClient().sendToServer(message);
-    }
-
     public void getSubjects() throws IOException
     {
         Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
@@ -162,18 +156,7 @@ public class ExamController
             alert.showAndWait();
         });
     }
-    @Subscribe
-    public  void handlePressBack(PressBackEvent pressBackEvent)
-    {
-        Platform.runLater(() -> {
-            try {
-                SimpleChatClient.switchScreen("teacherBoundry");
-                EventBus.getDefault().unregister(this);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+
     @Subscribe
     public void handleSaveExamEvent(saveExamEvent saveExamEvent)
     {

@@ -87,8 +87,8 @@ public class EditExamController
 
                     // Second column: Exam
                     Label examTextLabel1 = new Label("Creator username: " + exam.getUsername());
-                    Label examTextLabel2 = new Label("Course: " + editExamBoundry.getSelectCourse().getSelectionModel().getSelectedItem().getName());
-                    Label examTextLabel3 = new Label("Subject: " + editExamBoundry.getSelectSubject().getSelectionModel().getSelectedItem().getName());
+                    Label examTextLabel2 = new Label("Course: " + exam.getCourse().getName());
+                    Label examTextLabel3 = new Label("Subject: " + exam.getSubject().getName());
                     Label examTextLabel4 = new Label("Exam Period: " + exam.getExamPeriod());
                     Label examTextLabel5 = new Label("Exam ID: " + exam.getId());
 

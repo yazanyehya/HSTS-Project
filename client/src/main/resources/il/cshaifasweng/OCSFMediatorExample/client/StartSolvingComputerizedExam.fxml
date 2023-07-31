@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.StartSolvingComputerizedExamBoundry">
+   <children>
+      <VBox fx:id="examContainer" layoutX="111.0" layoutY="84.0" prefHeight="628.0" prefWidth="578.0" />
+      <Button fx:id="finishExamBtn" layoutX="125.0" layoutY="712.0" mnemonicParsing="false" onAction="#finishExamAction" text="Finish Exam" />
+      <Label fx:id="timerLabel" layoutX="611.0" layoutY="44.0" prefHeight="26.0" prefWidth="152.0" />
+   </children>
+</AnchorPane>

@@ -40,6 +40,12 @@ public class Question implements Serializable
     @Column
     private String correctAnswer;
 
+    @Column
+    private String studentAnswer;
+
+    @Column
+    private String answeredCorrectly;
+
     @Column(name = "selected")
     private Boolean selected = false;
 
@@ -74,7 +80,8 @@ public class Question implements Serializable
         this.correctAnswer = correctAnswer;
         this.score = 0;
         this.isClone = isclone;
-
+        studentAnswer = "";
+        this.answeredCorrectly = "no";
 
     }
 
@@ -100,6 +107,8 @@ public class Question implements Serializable
         clonedQuestion.setScore(0);
         //clonedQuestion.setCourse(this.course);
         clonedQuestion.isClone = "yes";
+        clonedQuestion.studentAnswer = "";
+        clonedQuestion.answeredCorrectly = "no";
         //clonedQuestion.setSelected(this.selected);
         return clonedQuestion;
     }
@@ -177,6 +186,14 @@ public class Question implements Serializable
         subject.getListOfQuestions().add(this);
     }
 
+    public void setStudentAnswer(String studentAnswer) {
+        this.studentAnswer = studentAnswer;
+    }
+
+    public String getStudentAnswer() {
+        return studentAnswer;
+    }
+
     public int getId() {
         return id;
     }
@@ -231,6 +248,14 @@ public class Question implements Serializable
 
     public void setqText(String qText) {
         this.qText = qText;
+    }
+
+    public String getAnsweredCorrectly() {
+        return answeredCorrectly;
+    }
+
+    public void setAnsweredCorrectly(String answeredCorrectly) {
+        this.answeredCorrectly = answeredCorrectly;
     }
 
     public List<Course> getCourse() {

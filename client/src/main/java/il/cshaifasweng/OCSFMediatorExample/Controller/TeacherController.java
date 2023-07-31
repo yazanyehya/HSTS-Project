@@ -20,26 +20,6 @@ public class TeacherController
         this.teacherBoundry = teacherBoundry;
     }
 
-    public void createAnQuestionAction()
-    {
-
-    }
-    public void changeToQuestionBoundry() throws IOException
-    {
-
-        Message message = new Message("changeToQuestionBoundry", null);
-        SimpleClient.getClient().sendToServer(message);
-    }
-    public void changeToEditQuestionBoundry() throws IOException
-    {
-        Message message = new Message("changeToEditQuestionBoundry", null);
-        SimpleClient.getClient().sendToServer(message);
-    }
-    public void changeToExamBoundry() throws IOException
-    {
-        Message message = new Message("changeToExamBoundry", null);
-        SimpleClient.getClient().sendToServer(message);
-    }
     public void logOut() throws IOException {
         Message msg = new Message("Logout", SimpleClient.getClient().getUser());
         System.out.println(SimpleClient.getClient().getUser().getUsername());
@@ -55,54 +35,7 @@ public class TeacherController
         });
     }
 
-    @Subscribe
-    public void handleChangeToExamBoundry(ChangeToExamBoundry changeToExamBoundry)
-    {
-        EventBus.getDefault().unregister(this);
-        Platform.runLater(() -> {
-            try {
-                SimpleChatClient.switchScreen("ExamBoundry");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    @Subscribe
-    public void handleChangeToEditQuestionBoundry(ChangeToEditQuestionEvent editQuestionBoundry)
-    {
-        EventBus.getDefault().unregister(this);
-        Platform.runLater(() -> {
-            try {
-                SimpleChatClient.switchScreen("EditQuestion");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    @Subscribe
-    public void handleChangeToEditExamBoundry(ChangeToEditQuestionEvent editQuestionBoundry)
-    {
-        EventBus.getDefault().unregister(this);
-        Platform.runLater(() -> {
-            try {
-                SimpleChatClient.switchScreen("EditQuestion");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    @Subscribe
-    public void handleChangeToQuestionBoundry(ChangeToQuestionBoundry changeToQuestionBoundry) throws IOException
-    {
-        EventBus.getDefault().unregister(this);
-        Platform.runLater(() -> {
-            try {
-                SimpleChatClient.switchScreen("QuestionBoundry");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+
     @Subscribe
     public void handleLogoutEvent(LogoutEvent logoutEvent) {
         System.out.println("logout platform");

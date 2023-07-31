@@ -55,7 +55,7 @@ public class LoginController
                         showAlertDialog(AlertType.INFORMATION, "Login Successful", "Welcome, " + user.getFirstName() + " " + user.getLastName() + "!");
                         if (user.getWhoAreYou() == 0) {
                             try {
-                                SimpleChatClient.switchScreen("StudentBoundry");
+                                SimpleChatClient.switchScreen("studentBoundry");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

@@ -18,6 +18,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ public class EditSelectedExamBoundry {
             try {
                 System.out.println("back edit exam");
                 SimpleChatClient.switchScreen("EditExam");
+                EventBus.getDefault().unregister(editSelectedExamController);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -264,7 +266,7 @@ public class EditSelectedExamBoundry {
                 HBox.setHgrow(region2, Priority.ALWAYS);
                 HBox.setHgrow(region3, Priority.ALWAYS);
 
-                container.getChildren().addAll(region2, questionVBox, region3, scoreField);
+                container.getChildren().addAll(questionVBox, region3, scoreField);
 
                 setGraphic(container);
             }

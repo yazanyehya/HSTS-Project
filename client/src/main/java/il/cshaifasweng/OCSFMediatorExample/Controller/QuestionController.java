@@ -40,11 +40,6 @@ public class QuestionController
             e.printStackTrace();
         }
     }
-    public void pressBack() throws IOException
-    {
-        Message message = new Message("pressBack", null);
-        SimpleClient.getClient().sendToServer(message);
-    }
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(alertType);
@@ -55,18 +50,6 @@ public class QuestionController
         });
     }
 
-    @Subscribe
-    public  void handlePressBack(PressBackEvent pressBackEvent)
-    {
-        EventBus.getDefault().unregister(this);
-        Platform.runLater(() -> {
-            try {
-                SimpleChatClient.switchScreen("teacherBoundry");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
     @Subscribe
     public void handleEvent(QuestionEvent event)
     {

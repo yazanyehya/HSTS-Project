@@ -22,6 +22,8 @@ public class Exam implements Serializable
 
     private String studentComments;
 
+    private String isClone;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "subject_id")
     private Subject subject;
@@ -39,15 +41,7 @@ public class Exam implements Serializable
     @Column(name = "listOfQuestions")
     private List<Question> listOfQuestions;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "exam_student",
-            joinColumns = @JoinColumn(name = "exam_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
-
-    private List<Student> listOfStudents;
-    public Exam(String username, String examPeriod, Subject subject, Course course, String teacherComments, String studentComments)
+    public Exam(String username, String examPeriod, Subject subject, Course course, String teacherComments, String studentComments, String isClone)
     {
         this.username = username;
         this.examPeriod = examPeriod;
@@ -56,9 +50,23 @@ public class Exam implements Serializable
         this.course = course;
         this.teacherComments = teacherComments;
         this.studentComments = studentComments;
+        this.isClone = isClone;
 
     }
-
+    public Exam clone()
+    {
+        Exam exam = new Exam();
+        exam.username = username;
+        exam.course = course;
+        exam.subject = subject;
+        exam.examPeriod = examPeriod;
+        exam.teacherComments = teacherComments;
+        exam.studentComments = studentComments;
+        exam.listOfQuestions = new ArrayList<Question>();
+        exam.id = 0;
+        exam.isClone = "yes";
+        return exam;
+    }
     public String getExamPeriod() {
         return examPeriod;
     }
@@ -81,14 +89,6 @@ public class Exam implements Serializable
 
     public void setCourse(Course course) {
         this.course = course;
-    }
-
-    public void setListOfStudents(List<Student> listOfStudents) {
-        this.listOfStudents = listOfStudents;
-    }
-
-    public List<Student> getListOfStudents() {
-        return listOfStudents;
     }
 
     public int getId() {
@@ -136,4 +136,12 @@ public class Exam implements Serializable
         return teacherComments;
     }
 
+//    public void setReadyExam(ReadyExam readyExam) {
+//        this.readyExam = readyExam;
+//        readyExam.setExam(this);
+//    }
+//
+//    public ReadyExam getReadyExam() {
+//        return readyExam;
+//    }
 }

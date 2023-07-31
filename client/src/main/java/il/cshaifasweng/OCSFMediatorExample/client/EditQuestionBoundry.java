@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -167,6 +168,7 @@ public class EditQuestionBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
+                EventBus.getDefault().unregister(editQuestionController);
             } catch (IOException e) {
                 e.printStackTrace();
             }

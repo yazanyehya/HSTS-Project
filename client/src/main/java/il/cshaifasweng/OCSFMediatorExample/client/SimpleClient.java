@@ -77,13 +77,21 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new GetCoursesForSubjectsEventEQ((Message) msg));
 		}
-	else if(message.getTitle().equals("getCoursesForSubjectsExam"))
-	{
-		EventBus.getDefault().post(new GetCoursesForSubjectsExamEvent((Message) msg));
-	}
+		else if(message.getTitle().equals("getCoursesForSubjectsExam"))
+		{
+			EventBus.getDefault().post(new GetCoursesForSubjectsExamEvent((Message) msg));
+		}
 		else if(message.getTitle().equals("getSubjectsForTeacherEQ"))
 		{
 			EventBus.getDefault().post(new GetSubjectsForTeacherEventEQ((Message) msg));
+		}
+		else if(message.getTitle().equals("getSubjectsForTeacherAE"))
+		{
+			EventBus.getDefault().post(new GetSubjectsForTeacherEventAE((Message) msg));
+		}
+		else if(message.getTitle().equals("getSubjectsForTeacherAPP"))
+		{
+			EventBus.getDefault().post(new GetSubjectsForTeacherAPPEvent((Message) msg));
 		}
 		else if(message.getTitle().equals("getCoursesForSubjects"))
 		{
@@ -92,6 +100,62 @@ public class SimpleClient extends AbstractClient {
 		else if(message.getTitle().equals("getCourses"))
 		{
 			EventBus.getDefault().post(new GetCoursesEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("showExamsAE"))
+		{
+			EventBus.getDefault().post(new ShowExamAEEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("aquireExam"))
+		{
+			EventBus.getDefault().post(new AquireExamEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getCoursesSE"))
+		{
+			EventBus.getDefault().post(new GetCoursesSEEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getCoursesAPP"))
+		{
+			EventBus.getDefault().post(new GetCoursesAPPEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("startExamFailed"))
+		{
+			EventBus.getDefault().post(new StartExamFailedEvent((Message) msg));
+		}
+		else if (message.getTitle().equals("showStudents"))
+		{
+			EventBus.getDefault().post(new ShowStudentsEvent((Message) msg));
+		}
+		else if (message.getTitle().equals("sendToStudent"))
+		{
+			EventBus.getDefault().post(new SendToStudentEvent((Message) msg));
+		}
+		else if (message.getTitle().equals("startExam"))
+		{
+			EventBus.getDefault().post(new StartExamEvent((Message) msg));
+		}
+		else if (message.getTitle().equals("changeToStartExam"))
+		{
+			EventBus.getDefault().post(new ChangeToStartExamEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("showReadyExams"))
+		{
+			EventBus.getDefault().post(new ShowReadyExamsEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("showReadyExamsAPP"))
+		{
+			EventBus.getDefault().post(new ShowReadyExamsAPPEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getSubjectsForTeacherSE"))
+		{
+			EventBus.getDefault().post(new GetSubjectsForTeacherSEEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getCoursesAE"))
+		{
+			EventBus.getDefault().post(new GetCoursesAEEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("SendToPreview"))
+		{
+			EventBus.getDefault().post(new SendToPreviewEvent((Message) msg));
 		}
 		else if(message.getTitle().equals("getAllQuestions"))
 		{
@@ -145,6 +209,14 @@ public class SimpleClient extends AbstractClient {
 			System.out.println("event bus logout");
 			EventBus.getDefault().post(new LogoutEvent((Message)msg));
 		}
+		else if(message.getTitle().equals("LogoutForStudent"))
+		{
+			EventBus.getDefault().post(new LogoutForStudentEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("finishExam"))
+		{
+			EventBus.getDefault().post(new FinishExamEvent((Message)msg));
+		}
 		else if(message.getTitle().equals("createExam"))
 		{
 			EventBus.getDefault().post(new SelectQuestionEvent((Message)msg));
@@ -152,6 +224,23 @@ public class SimpleClient extends AbstractClient {
 		else if(message.getTitle().equals("saveExam"))
 		{
 			EventBus.getDefault().post(new saveExamEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("approveExam"))
+		{
+			EventBus.getDefault().post(new ApproveExamEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("viewGradesForStudent"))
+		{
+			EventBus.getDefault().post(new ViewGradesForStudentEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("showExamsForTeacherCourses") || message.getTitle().equals("viewGradesForTeacherSubjects") || message.getTitle().equals("viewGradesForTeacherCourses") || "ShowExamsForTeacherSubjects".equals(message.getTitle()))
+		{
+			EventBus.getDefault().post(new ViewGradesForTeacherEvent((Message)msg));
+
+		}
+		else if(message.getTitle().equals("ShowReadyExamsForViewGradesForTeacher"))
+		{
+			EventBus.getDefault().post(new ViewGradesForTeacherIIBoundryEvent((Message)msg));
 		}
 	}
 	public static SimpleClient getClient() {

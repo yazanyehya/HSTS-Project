@@ -1,8 +1,10 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
+import il.cshaifasweng.OCSFMediatorExample.client.SimpleChatClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ocsf.ConnectionToClient;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ocsf.SubscribedClient;
+import javafx.application.Platform;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -19,10 +21,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SimpleServer extends AbstractServer {
 
@@ -118,10 +117,28 @@ public class SimpleServer extends AbstractServer {
 		benzema.getCourses().add(calculus);
 		calculus.getListOfTeachers().add(benzema);
 
+		Student lucas = new Student("Lucas", "Vazques", "lv17","123",0);
+		lucas.getCourses().add(football);
+		football.getListOfStudents().add(lucas);
+		lucas.getSubjects().add(sports);
+		sports.getListOfStudents().add(lucas);
+
+		Student mariano = new Student("Mariano", "Diaz", "md25","123",0);
+		mariano.getCourses().add(football);
+		football.getListOfStudents().add(mariano);
+		mariano.getCourses().add(golf);
+		golf.getListOfStudents().add(mariano);
+
+		mariano.getSubjects().add(sports);
+		sports.getListOfStudents().add(mariano);
+
 
 		session.save(cr7);
 		session.save(gBale);
 		session.save(benzema);
+		session.save(lucas);
+		session.save(mariano);
+
 
 		session.save(sports);
 		session.save(math);
@@ -148,7 +165,7 @@ public class SimpleServer extends AbstractServer {
 
 	public User getUserByUsername(String username, String password, Message resMessage) {
 		try {
-			Query query = session.createQuery("FROM User WHERE username = :username", User.class);
+			Query query = session.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
 			query.setParameter("username", username);
 
 			User user = null;
@@ -190,7 +207,7 @@ public class SimpleServer extends AbstractServer {
 		// Create a Hibernate session
 		try (Session session = getSessionFactory().openSession()) {
 			// Create a query to fetch the questions for the given course ID
-			String hql = "FROM Exam e WHERE e.course.name = :courseName";
+			String hql = "SELECT e FROM Exam e WHERE e.course.name = :courseName AND e.isClone = 'no'";
 			Query query = session.createQuery(hql, Exam.class);
 			query.setParameter("courseName", course.getName());
 
@@ -199,7 +216,42 @@ public class SimpleServer extends AbstractServer {
 			return exams;
 		}
 	}
+	public List<ReadyExam> getReadyExamsForCourse(Object[] objects) {
+		// Create a Hibernate session
 
+		try (Session session = getSessionFactory().openSession()) {
+			// Create a query to fetch the ReadyExams with the associated Exam eagerly
+
+			Course course = (Course) objects[0];
+			Teacher teacher = (Teacher) objects[1];
+			String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam WHERE re.exam.course.name = :course AND re.isClone = 'no' AND re.username = : username";
+			Query query = session.createQuery(hql, ReadyExam.class);
+			query.setParameter("course", course.getName());
+			query.setParameter("username",teacher.getUsername());
+
+			// Execute the query and retrieve the list of ReadyExams
+			List<ReadyExam> exams = query.getResultList();
+			return exams;
+		}
+	}
+	public List<ReadyExam> getReadyExamsToApprove(Object[] objects)
+	{
+		// Create a Hibernate session
+		System.out.println("lolllkkkkkkkk");
+		try (Session session = getSessionFactory().openSession()) {
+
+			Course course = (Course) objects[0];
+			Teacher teacher = (Teacher) objects[1];
+			String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam WHERE re.exam.course.name = :course AND re.isClone = 'yes' AND re.approved = 'no' AND re.username = : username";
+			Query query = session.createQuery(hql, ReadyExam.class);
+			query.setParameter("course", course.getName());
+			query.setParameter("username",teacher.getUsername());
+
+			// Execute the query and retrieve the list of ReadyExams
+			List<ReadyExam> exams = query.getResultList();
+			return exams;
+		}
+	}
 	//	public User getUserByUsername(String username, String password) {
 //		//Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 //
@@ -231,6 +283,19 @@ public class SimpleServer extends AbstractServer {
 //	}
 //		}
 
+	public List<Student> getStudentsForCourse(Course course)
+	{
+		try (Session session = getSessionFactory().openSession()) {
+			// Create a query to fetch the subjects for the given teacher ID
+			String hql = "SELECT s FROM Student s JOIN s.courses c WHERE c.id = :courseId";
+			Query query = session.createQuery(hql, Student.class);
+			query.setParameter("courseId", course.getId());
+
+			// Execute the query and retrieve the list of subjects
+			List<Student> students = query.getResultList();
+			return students;
+		}
+	}
 	public List<Subject> getSubjectsForTeacher(Teacher teacher) {
 		try (Session session = getSessionFactory().openSession()) {
 			// Create a query to fetch the subjects for the given teacher ID
@@ -293,10 +358,6 @@ public class SimpleServer extends AbstractServer {
 			SubscribedClient newSub = new SubscribedClient(client);
 			SubscribersList.add(newSub);
 		}
-		else if("changeToQuestionBoundry".equals(message.getTitle()) || "pressBack".equals(message.getTitle()) || "changeToExamBoundry".equals(message.getTitle()) ||"changeToEditQuestionBoundry".equals(message.getTitle()))
-		{
-			client.sendToClient(message);
-		}
 		else if("getSubjects".equals(message.getTitle()))
 		{
 			Teacher teacher = (Teacher)message.getBody();
@@ -355,7 +416,185 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if("showExams".equals(message.getTitle()))
+		else if("showStudents".equals(message.getTitle()))
+		{
+			Course course = (Course) message.getBody();
+
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive())
+				{
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				List<Student> students = getStudentsForCourse(course);
+				Message resMessage = new Message(message.getTitle(), students);
+				client.sendToClient(resMessage);
+
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
+		}
+		else if("sendToStudent".equals(message.getTitle()))
+		{
+			Object[] objects = (Object[])message.getBody();
+			List<String> students = (List<String>)objects[0];
+			ReadyExam readyExam = (ReadyExam)objects[1];
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+//				List<Question> questionList = new ArrayList<Question>();
+//				for (Question q : readyExam.getExam().getListOfQuestions())
+//				{
+//					Question question = q.clone();
+//					question.setScore(q.getScore());
+//					questionList.add(question);
+//					session.save(question);
+//				}
+//				Exam exam = readyExam.getExam().clone();
+//				exam.setListOfQuestions(questionList);
+//				session.save(exam);
+//				ReadyExam readyExam1 = new ReadyExam(readyExam.getExamType(), readyExam.getCourse(), readyExam.getExecutionCode(), exam, "yes");
+//				session.save(readyExam1);
+				String hql = "SELECT re FROM ReadyExam re WHERE re.id = :id";
+				Query query = session.createQuery(hql, ReadyExam.class);
+				query.setParameter("id", readyExam.getId());
+				ReadyExam re = (ReadyExam) query.getSingleResult();
+				for (String str : students)
+				{
+					hql = "SELECT s FROM Student s WHERE s.username = :username";
+					Query query1 = session.createQuery(hql, Student.class);
+					query1.setParameter("username", str);
+					Student student = (Student) query1.getSingleResult();
+					student.getExams().add(re);
+					re.getListOfStudents().add(student);
+					System.out.println("before update");
+					session.update(student);
+					session.flush();
+					System.out.println("after update");
+					session.update(re);
+					session.flush();
+				}
+				//session.save(readyExam1);
+				Message responseMessage = new Message("sendToStudent", null);
+				client.sendToClient(responseMessage);
+			} catch (HibernateException e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
+
+		}
+		else if("changeToStartExam".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive())
+				{
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Object[] objects = (Object[]) message.getBody();
+				String executionCode = (String) objects[0];
+				String id = (String) objects[1];
+				Student student = (Student) objects[2];
+				ReadyExam re = null;
+				String hql = "SELECT e FROM ReadyExam e JOIN e.listOfStudents s WHERE s.username = :username";
+				Query query = session.createQuery(hql, ReadyExam.class);
+				query.setParameter("username", student.getUsername());
+				List<ReadyExam> readyExamList = query.getResultList();
+				for (ReadyExam readyExam : readyExamList)
+				{
+					if (Objects.equals(readyExam.getExecutionCode(), executionCode))
+					{
+						re = readyExam;
+					}
+				}
+				if (re != null && Objects.equals(id, Integer.toString(student.getId())))
+				{
+					Message resMessage = new Message("changeToStartExam", re);
+					client.sendToClient(resMessage);
+				}
+				else
+				{
+					String s = "";
+					if (re == null && Objects.equals(id, Integer.toString(student.getId())))// no available exam
+					{
+						s = "1";
+					}
+					else if(re != null && !Objects.equals(id, Integer.toString(student.getId()))) // wrong id
+					{
+						s = "2";
+					}
+					else
+					{
+						s = "3";
+					}
+					Object obj = new Object[]{s};
+					Message resMessage = new Message("startExamFailed", obj);
+					client.sendToClient(resMessage);
+				}
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
+		}
+		else if("startExam".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+
+				Object[] objects = (Object[]) message.getBody();
+				ReadyExam readyExam = (ReadyExam)objects[0];
+				Student student = (Student)objects[1];
+				List<Question> questionList = new ArrayList<Question>();
+				for (Question q : readyExam.getExam().getListOfQuestions()) {
+					Question question = q.clone();
+					question.setScore(q.getScore());
+					questionList.add(question);
+					session.save(question);
+				}
+				Exam exam = readyExam.getExam().clone();
+				exam.setListOfQuestions(questionList);
+				session.save(exam);
+				ReadyExam readyExam1 = new ReadyExam(readyExam.getExamType(), readyExam.getCourse(), readyExam.getExecutionCode(), exam, "yes", readyExam.getUsername(), readyExam.getExam().getId(), student.getFirstName() + " " + student.getLastName() ,Integer.toString(student.getId()));
+				readyExam1.setExaminee(student.getUsername());
+				session.save(readyExam1);
+				Message responseMessage = new Message(message.getTitle(), readyExam1);
+				client.sendToClient(responseMessage);
+
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
+		}
+		else if("showExams".equals(message.getTitle()) || "showExamsAE".equals(message.getTitle()))
 		{
 			Course course = (Course) message.getBody();
 			try {
@@ -365,7 +604,7 @@ public class SimpleServer extends AbstractServer {
 				}
 				List<Exam> list = getExamsForCourse(course);
 				System.out.println("size of list = " + list.size());
-				Message resMessage = new Message("showExams", list);
+				Message resMessage = new Message(message.getTitle(), list);
 				client.sendToClient(resMessage);
 
 			} catch (Exception e) {
@@ -382,7 +621,7 @@ public class SimpleServer extends AbstractServer {
 		{
 			client.sendToClient(message);
 		}
-		else if ("getSubjectsForTeacher".equals(message.getTitle()) || "getSubjectsForTeacherEQ".equals(message.getTitle()) || "getSubjectsForTeacherExam".equals(message.getTitle()))
+		else if ("getSubjectsForTeacher".equals(message.getTitle()) || "getSubjectsForTeacherEQ".equals(message.getTitle()) || "getSubjectsForTeacherExam".equals(message.getTitle()) || "getSubjectsForTeacherAE".equals(message.getTitle()) || "getSubjectsForTeacherSE".equals(message.getTitle()) || "getSubjectsForTeacherAPP".equals(message.getTitle()) || "viewGradesForTeacherSubjects".equals(message.getTitle()))
 		{
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
@@ -405,7 +644,7 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if ("getCoursesForSubjects".equals(message.getTitle()) || "getCoursesForSubjectsEQ".equals(message.getTitle()) || "getCoursesForSubjectsExam".equals(message.getTitle()) || "getCourses".equals(message.getTitle()))
+		else if ("getCoursesForSubjects".equals(message.getTitle()) || "getCoursesForSubjectsEQ".equals(message.getTitle()) || "getCoursesForSubjectsExam".equals(message.getTitle()) || "getCourses".equals(message.getTitle()) || "getCoursesAE".equals(message.getTitle()) || "getCoursesSE".equals(message.getTitle()) || "getCoursesAPP".equals(message.getTitle()) || "viewGradesForTeacherCourses".equals(message.getTitle()))
 		{
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
@@ -451,8 +690,14 @@ public class SimpleServer extends AbstractServer {
 			{
 				e.printStackTrace();
 			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
 		}
-		else if ("Logout".equals(message.getTitle()))
+		else if ("Logout".equals(message.getTitle()) || "LogoutForStudent".equals(message.getTitle()))
 		{
 			SubscribersList.remove(message.getBody());
 			User temp = (User) message.getBody();
@@ -617,7 +862,7 @@ public class SimpleServer extends AbstractServer {
 					Query query1 = session.createQuery(hql, Course.class);
 					query1.setParameter("course", examHelper.getCourse());
 					Course course = (Course) query1.getSingleResult();
-					Exam exam = new Exam(examHelper.getUsername(), examPeriod, subject, course, examHelper.teacherComments, examHelper.allComments);
+					Exam exam = new Exam(examHelper.getUsername(), examPeriod, subject, course, examHelper.teacherComments, examHelper.allComments, "no");
 					System.out.println("incline bench press5");
 					List<Question> list1 = new ArrayList<Question>(examHelper.getQuestionHashMap().keySet());
 					List<Question> list2 = new ArrayList<Question>();
@@ -656,12 +901,25 @@ public class SimpleServer extends AbstractServer {
 						}
 					}
 					exam.getListOfQuestions().addAll(list2);
+					double sum = 0;
+					boolean flag = true;
 					for (Question q : exam.getListOfQuestions())
 					{
-						System.out.println(q.getQText() + " de score: " + q.getScore());
+						if (q.getScore() <= 0)
+						{
+							flag = false;
+						}
+						sum += q.getScore();
+					}
+					if (sum > 100)
+					{
+						flag = false;
 					}
 					System.out.println("incline bench press6");
-					session.save(exam);
+					if (flag)
+					{
+						session.save(exam);
+					}
 					System.out.println("incline bench press7");
 					session.getTransaction().commit();
 					System.out.println("saved");
@@ -671,6 +929,337 @@ public class SimpleServer extends AbstractServer {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if (message.getTitle().equals("aquireExam"))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive())
+				{
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Object[] objects = (Object[])message.getBody();
+
+				List<Integer> list = (List<Integer>)objects[0];
+				String hql = "SELECT e FROM Exam e WHERE e.id = :id";
+				Query query1 = session.createQuery(hql, Exam.class);
+				query1.setParameter("id", list.get(0));
+				Exam exam = (Exam) query1.getSingleResult();
+				System.out.println(exam.getUsername());
+				String examType = "";
+				if (list.get(1) == -1)
+				{
+					examType = "Manual";
+				}
+				else
+				{
+					examType = "Computerized";
+				}
+				String executionCode = (String) objects[1];
+				Teacher teacher = (Teacher)objects[2];
+				ReadyExam readyExam = new ReadyExam(examType, exam.getCourse().getName(),executionCode,exam, "no", teacher.getUsername(), exam.getId(), "", "");
+				if (readyExam.getExam() == null)
+				{
+					System.out.println("hello bitch");
+				}
+				session.save(readyExam);
+				if (readyExam.getExam() == null)
+				{
+					System.out.println("hello bitch");
+				}
+				Message responseMessage  = new Message(message.getTitle(), readyExam);
+				client.sendToClient(responseMessage);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if (message.getTitle().equals("showReadyExams") || message.getTitle().equals("showReadyExamsAPP"))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive())
+				{
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Object[] objects = (Object[])message.getBody();
+				List<ReadyExam> list = null;
+
+				if (message.getTitle().equals("showReadyExams"))
+				{
+					list = getReadyExamsForCourse(objects);
+				}
+				else
+				{
+					System.out.println("lolllllll");
+					list = getReadyExamsToApprove(objects);
+				}
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if(message.getTitle().equals("finishExam"))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive())
+				{
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Object[] objects = (Object[]) message.getBody();
+				Map<Question,String> map = (Map<Question, String>) objects[0];
+				int examId = Integer.parseInt((String) objects[1]);
+
+				String hql = "SELECT e FROM ReadyExam e WHERE e.id = :id";
+				Query query1 = session.createQuery(hql, ReadyExam.class);
+				query1.setParameter("id", examId);
+				ReadyExam readyExam = (ReadyExam) query1.getSingleResult();
+
+				System.out.println("secrets!");
+				int sum = 0;
+				for (Question q : map.keySet())
+				{
+
+					 hql = "SELECT q FROM Question q WHERE q.id = :id";
+					Query query2 = session.createQuery(hql, Question.class);
+					query2.setParameter("id", q.getId());
+					Question question = (Question) query2.getSingleResult();
+					System.out.println(q.getQText() + ", answer: " + map.get(q));
+
+					// updating student answer
+					question.setStudentAnswer(map.get(q));
+					if (question.getCorrectAnswer().equals(question.getStudentAnswer()))
+					{
+						sum += question.getScore();
+						question.setAnsweredCorrectly("yes");
+					}
+					System.out.println("secrets!!");
+					session.update(question);
+					session.flush();
+					System.out.println("secrets!!!");
+				}
+				readyExam.setGrade(sum);
+				System.out.println("secrets!!!!");
+				session.update(readyExam.getExam());
+				session.flush();
+				System.out.println("secrets!!!!!!");
+				session.update(readyExam);
+				session.flush();
+				System.out.println("secrets!!!!!!!!");
+				client.sendToClient(message);
+
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if("SendToPreview".equals(message.getTitle()))
+		{
+
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				ReadyExam readyExam = (ReadyExam) message.getBody();
+				String hql = "SELECT s FROM Student s WHERE s.username = :username";
+				Query query1 = session.createQuery(hql, Student.class);
+				query1.setParameter("username", readyExam.getExaminee());
+				Student student = (Student) query1.getSingleResult();
+				Object object = new Object[]{readyExam, student};
+				Message message1 = new Message("SendToPreview", object);
+				client.sendToClient(message1);
+
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if("approveExam".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Object[] objects = (Object[]) message.getBody();
+				int id = (Integer) objects[0];
+				int grade = Integer.parseInt((String)objects[1]);
+				String teacherComments = (String)objects[2];
+				String studentComments = (String) objects[3];
+
+				String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam where re.id = :id";
+				Query query1 = session.createQuery(hql, ReadyExam.class);
+				query1.setParameter("id", id);
+				ReadyExam readyExam = (ReadyExam) query1.getSingleResult();
+				readyExam.setGrade(grade);
+				session.flush();
+				readyExam.getExam().setTeacherComments(teacherComments);
+				session.flush();
+				readyExam.getExam().setStudentComments(studentComments);
+				session.update(readyExam.getExam());
+				session.flush();
+				readyExam.setApproved("yes");
+				session.update(readyExam);
+				session.flush();
+				client.sendToClient(message);
+			}catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if("viewGradesForStudent".equals(message.getTitle()))
+		{
+
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Student student = (Student)message.getBody();
+				String username = student.getUsername();
+
+				String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam where re.examinee = :username and re.approved = 'yes'";
+				Query query1 = session.createQuery(hql, ReadyExam.class);
+				query1.setParameter("username", username);
+				List<ReadyExam> list = (List<ReadyExam>) query1.getResultList();
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+
+			}catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if("showExamsForTeacherCourses".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Object[] objects = (Object[]) message.getBody();
+				Course course = (Course) objects[1];
+				Teacher teacher = (Teacher) objects[0];
+				String username = teacher.getUsername();
+				int id = 0;
+				if (course != null)
+				{
+					id = course.getId();
+				}
+				String hql = "SELECT e FROM Exam e where e.username = :username and e.course.id =: id and e.isClone = 'no'";
+				Query query1 = session.createQuery(hql, Exam.class);
+				query1.setParameter("username", username);
+				query1.setParameter("id", id);
+				List<Exam> list = (List<Exam>) query1.getResultList();
+
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+
+			}catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if("ShowExamsForTeacherSubjects".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Object[] objects = (Object[]) message.getBody();
+				Subject subject = (Subject) objects[1];
+				Teacher teacher = (Teacher) objects[0];
+				String username = teacher.getUsername();
+				int id = 0;
+				if (subject != null)
+				{
+					id = subject.getId();
+				}
+				String hql = "SELECT e FROM Exam e where e.username = :username and e.subject.id =: id and e.isClone = 'no'";
+				Query query1 = session.createQuery(hql, Exam.class);
+				query1.setParameter("username", username);
+				query1.setParameter("id", id);
+				List<Exam> list = (List<Exam>) query1.getResultList();
+
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+
+			}catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		}
+		else if("ShowReadyExamsForViewGradesForTeacher".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Exam exam = (Exam)message.getBody();
+				int id = exam.getId();
+				String hql = "SELECT re FROM ReadyExam re where re.originalId =: id and re.approved = 'yes' and re.isClone = 'yes'";
+				Query query1 = session.createQuery(hql, ReadyExam.class);
+				query1.setParameter("id", id);
+				List<ReadyExam> list = (List<ReadyExam>) query1.getResultList();
+
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+
+			}catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally {
 				if (session != null && session.isOpen()) {
 					session.close();
 				}
@@ -741,6 +1330,7 @@ public class SimpleServer extends AbstractServer {
 		configuration.addAnnotatedClass(Teacher.class);
 		configuration.addAnnotatedClass(Subject.class);
 		configuration.addAnnotatedClass(Course.class);
+		configuration.addAnnotatedClass(ReadyExam.class);
 
 		StandardServiceRegistry serviceRegistry= new StandardServiceRegistryBuilder()
 				.applySettings(configuration.getProperties()).build();

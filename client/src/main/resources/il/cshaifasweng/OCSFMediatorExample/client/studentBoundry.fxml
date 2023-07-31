@@ -7,11 +7,12 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.StudentBoundry">
    <children>
-      <Text layoutX="195.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hello Student">
+      <Text fx:id="studentName" layoutX="195.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hello Student">
          <font>
             <Font size="37.0" />
          </font></Text>
       <Button fx:id="ConductAnExamBTN" layoutX="139.0" layoutY="189.0" mnemonicParsing="false" onAction="#conductAnExamAction" text="Conduct an exam" />
       <Button fx:id="viewGradesBTN" layoutX="321.0" layoutY="189.0" mnemonicParsing="false" onAction="#viewGradesAction" text="ViewGrades" />
+      <Button fx:id="logoutBtn" layoutX="252.0" layoutY="275.0" mnemonicParsing="false" onAction="#logoutAction" text="Logout" />
    </children>
 </AnchorPane>

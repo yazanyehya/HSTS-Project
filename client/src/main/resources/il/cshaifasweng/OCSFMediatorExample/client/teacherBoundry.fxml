@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.TeacherBoundry">
    <children>
-      <Text layoutX="132.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome teacher &quot;name&quot;">
+      <Text fx:id="teacherName" layoutX="132.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0">
          <font>
             <Font name="American Typewriter" size="32.0" />
          </font></Text>
@@ -15,6 +15,11 @@
       <Button fx:id="createAnExamBtn" layoutX="320.0" layoutY="96.0" mnemonicParsing="false" onAction="#createAnExamAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Create an Exam" />
       <Button fx:id="EditExamsBtn" layoutX="320.0" layoutY="241.0" mnemonicParsing="false" onAction="#EditExamsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Edit Exams" />
       <Button fx:id="EditQuestionsBtn" layoutX="40.0" layoutY="241.0" mnemonicParsing="false" onAction="#EditQuestionsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Edit Questions" />
-      <Button fx:id="logoutBtn" layoutX="448.0" layoutY="355.0" mnemonicParsing="false" onAction="#logoutAction" stylesheets="@designs.css" text="logout" />
+      <Button fx:id="logoutBtn" layoutX="232.0" layoutY="630.0" mnemonicParsing="false" onAction="#logoutAction" stylesheets="@designs.css" text="logout" />
+      <Button fx:id="aquireExamBtn" layoutX="43.0" layoutY="358.0" mnemonicParsing="false" onAction="#aquireExamAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Aquire Exam From Repository" />
+      <Button fx:id="extraTimeBtn" layoutX="329.0" layoutY="366.0" mnemonicParsing="false" onAction="#extraTimeAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Request Extra Time" />
+      <Button fx:id="sendExamsToStudentsBtn" layoutX="43.0" layoutY="467.0" mnemonicParsing="false" onAction="#sendExamsToStudentsAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Send Exams To Students" />
+      <Button fx:id="approveExamBtn" layoutX="329.0" layoutY="467.0" mnemonicParsing="false" onAction="#approveExamAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Approve Exams" />
+      <Button fx:id="seeResultsBtn" layoutX="43.0" layoutY="561.0" mnemonicParsing="false" onAction="#seeResultsAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="View Grades" />
    </children>
 </AnchorPane>

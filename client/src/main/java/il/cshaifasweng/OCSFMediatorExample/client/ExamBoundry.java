@@ -5,6 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.Subject;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ExamController;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.greenrobot.eventbus.EventBus;
 import org.hibernate.Hibernate;
 
 import java.io.IOException;
@@ -211,7 +213,14 @@ public class ExamBoundry{
 
     @FXML
     void backAction(ActionEvent event) throws IOException {
-        examController.pressBack();
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("teacherBoundry");
+                EventBus.getDefault().unregister(examController);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @FXML

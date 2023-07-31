@@ -5,6 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.Subject;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
 import il.cshaifasweng.OCSFMediatorExample.Controller.QuestionController;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.greenrobot.eventbus.EventBus;
 import org.hibernate.Hibernate;
 
 import java.io.IOException;
@@ -107,7 +109,14 @@ public class QuestionBoundry {
 
     @FXML
     void backAction(ActionEvent event) throws IOException {
-        questionController.pressBack();
+        EventBus.getDefault().unregister(questionController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("teacherBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @FXML
@@ -196,7 +205,26 @@ public class QuestionBoundry {
         }
         else
         {
+            String answer = "";
             correctAnswer = selectedRadioButton.getText();
+
+            if(correctAnswer.equals("a."))
+            {
+                answer = answerA.getText();
+            }
+            else if (correctAnswer.equals("b."))
+            {
+                answer = answerB.getText();
+            }
+            else if (correctAnswer.equals("c."))
+            {
+                answer = answerC.getText();
+            }
+            else if (correctAnswer.equals("d."))
+            {
+                answer = answerD.getText();
+            }
+            correctAnswer = selectedRadioButton.getText() + " " + answer;
 //            question = new Question(questionTextTXT.getText(), answerA.getText(), answerB.getText()
 //                    , answerC.getText(), answerD.getText(), selectedSubject, (Teacher) SimpleClient.getClient().getUser(), correctAnswer);
             list.add(questionTextTXT.getText());

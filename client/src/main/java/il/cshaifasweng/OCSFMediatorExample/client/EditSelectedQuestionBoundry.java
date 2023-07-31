@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class EditSelectedQuestionBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("EditQuestion");
+                EventBus.getDefault().unregister(editSelectedQuestionController);
             } catch (IOException e) {
                 e.printStackTrace();
             }

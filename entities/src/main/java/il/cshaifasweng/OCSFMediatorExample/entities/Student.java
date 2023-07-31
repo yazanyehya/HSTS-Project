@@ -9,16 +9,39 @@ import java.util.List;
 @Table (name="students")
 public class Student  extends User implements Serializable
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
     @ManyToMany(mappedBy = "listOfStudents", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Exam> exams;
+    private List<ReadyExam> exams;
 
-    public Student()
+    @ManyToMany(mappedBy = "listOfStudents", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Subject> subjects;
+
+    @ManyToMany(mappedBy = "listOfStudents", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Course> courses;
+
+
+    public Student(String firstName, String lastName, String username, String password, int whoAreYou)
     {
-        this.exams = new ArrayList<Exam>();
+        super(firstName, lastName, username, password, whoAreYou, false);
+        this.subjects = new ArrayList<Subject>();
+        this.exams = new ArrayList<ReadyExam>();
+        this.courses = new ArrayList<Course>();
+    }
+    public Student(){
+        this.subjects = new ArrayList<Subject>();
+        this.exams = new ArrayList<ReadyExam>();
+        this.courses = new ArrayList<Course>();
     }
 
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public List<ReadyExam> getExams() {
+        return exams;
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
 }

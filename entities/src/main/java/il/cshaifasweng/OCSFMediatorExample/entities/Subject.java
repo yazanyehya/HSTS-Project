@@ -35,11 +35,20 @@ public class Subject implements Serializable
     )
     private List<Teacher> listOfTeachers;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "subject_student",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<Student> listOfStudents;
+
     public Subject(String name)
     {
         this.name = name;
         listOfQuestions = new ArrayList<Question>();
         listOfTeachers = new ArrayList<Teacher>();
+        this.listOfStudents = new ArrayList<Student>();
         courses = new ArrayList<Course>();
     }
     public Subject()
@@ -47,6 +56,8 @@ public class Subject implements Serializable
         listOfQuestions = new ArrayList<Question>();
         listOfTeachers = new ArrayList<Teacher>();
         courses = new ArrayList<Course>();
+        this.listOfStudents = new ArrayList<Student>();
+
     }
 
     public int getId() {
@@ -87,5 +98,9 @@ public class Subject implements Serializable
 
     public void setCourses(List<Course> courses) {
         this.courses = courses;
+    }
+
+    public List<Student> getListOfStudents() {
+        return listOfStudents;
     }
 }
