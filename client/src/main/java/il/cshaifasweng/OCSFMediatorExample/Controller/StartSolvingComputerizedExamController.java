@@ -99,6 +99,7 @@ public class StartSolvingComputerizedExamController
 
         System.out.println("here");
         ReadyExam readyExam = (ReadyExam) startExamEvent.getMessage().getBody();
+        readyExam.setOnGoing("yes");
         startSolvingExamBoundry.setExamPeriod(Integer.parseInt(readyExam.getExam().getExamPeriod()));
         startSolvingExamBoundry.setExamID(Integer.toString(readyExam.getId()));
 

@@ -27,6 +27,10 @@ public class Subject implements Serializable
     @JoinColumn(name = "subject_id")
     private List<Exam> listOfExams;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "principle_id")
+    private Principle principle;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "subject_teacher",
@@ -42,6 +46,14 @@ public class Subject implements Serializable
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     private List<Student> listOfStudents;
+
+    public void setPrinciple(Principle principle) {
+        this.principle = principle;
+    }
+
+    public Principle getPrinciple() {
+        return principle;
+    }
 
     public Subject(String name)
     {

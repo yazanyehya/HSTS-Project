@@ -18,7 +18,10 @@ public class Student  extends User implements Serializable
 
     @ManyToMany(mappedBy = "listOfStudents", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses;
-//
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "principle_id")
+    private Principle principle;
 
     public Student(String firstName, String lastName, String username, String password, int whoAreYou)
     {

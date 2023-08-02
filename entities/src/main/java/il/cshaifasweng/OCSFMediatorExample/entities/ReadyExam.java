@@ -39,7 +39,13 @@ public class ReadyExam implements Serializable
 
     private Integer originalId;
 
+    private Integer readyExamOriginalID;
+
+    private Integer numOfOnGoingExams;
+
     private String FullName;
+
+    private String OnGoing = "no";
 
     private String studentId;
     @OneToOne
@@ -70,7 +76,8 @@ public class ReadyExam implements Serializable
         this.originalId = originalId;
         this.FullName = fullName;
         this.studentId = studentId;
-
+        this.OnGoing = "no";
+        this.setNumOfOnGoingExams(0);
     }
 
     public ReadyExam clone()
@@ -87,6 +94,7 @@ public class ReadyExam implements Serializable
         readyExam.examinee = examinee;
         readyExam.FullName = FullName;
         readyExam.studentId = studentId;
+        readyExam.OnGoing = "no";
         return readyExam;
     }
     public String getUsername() {
@@ -102,6 +110,13 @@ public class ReadyExam implements Serializable
 
     }
 
+    public String getOnGoing() {
+        return OnGoing;
+    }
+
+    public void setOnGoing(String onGoing) {
+        OnGoing = onGoing;
+    }
 
     public String getApproved() {
         return approved;
@@ -202,5 +217,21 @@ public class ReadyExam implements Serializable
 
     public void setApproved(String approved) {
         this.approved = approved;
+    }
+
+    public void setReadyExamOriginalID(Integer readyExamOriginalID) {
+        this.readyExamOriginalID = readyExamOriginalID;
+    }
+
+    public Integer getReadyExamOriginalID() {
+        return readyExamOriginalID;
+    }
+
+    public void setNumOfOnGoingExams(Integer numOfOnGoingExams) {
+        this.numOfOnGoingExams = numOfOnGoingExams;
+    }
+
+    public Integer getNumOfOnGoingExams() {
+        return numOfOnGoingExams;
     }
 }

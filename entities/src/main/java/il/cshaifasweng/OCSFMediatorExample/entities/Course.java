@@ -34,6 +34,10 @@ public class Course implements Serializable
     @JoinColumn(name = "course_id")
     private Subject subject;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "principle_id")
+    private Principle principle;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "course_teacher",
@@ -106,5 +110,25 @@ public class Course implements Serializable
 
     public List<Student> getListOfStudents() {
         return listOfStudents;
+    }
+
+    public List<Exam> getListOfExams() {
+        return listOfExams;
+    }
+
+    public Principle getPrinciple() {
+        return principle;
+    }
+
+    public void setListOfStudents(List<Student> listOfStudents) {
+        this.listOfStudents = listOfStudents;
+    }
+
+    public void setListOfExams(List<Exam> listOfExams) {
+        this.listOfExams = listOfExams;
+    }
+
+    public void setPrinciple(Principle principle) {
+        this.principle = principle;
     }
 }

@@ -103,7 +103,7 @@ public class AquireExamBoundry {
         }
         else
         {
-            listViewE.setVisible(true);
+            selectedExam.setVisible(true);
             Exam exam = listViewE.getSelectionModel().getSelectedItem();
             List<Question> list = exam.getListOfQuestions();
             ObservableList<Question> questionList = FXCollections.observableArrayList(list);

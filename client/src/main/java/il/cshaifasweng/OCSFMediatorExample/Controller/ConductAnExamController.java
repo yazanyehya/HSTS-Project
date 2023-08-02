@@ -49,26 +49,30 @@ public class ConductAnExamController
     public void handleShowExam(ChangeToStartExamEvent changeToStartExamEvent) throws IOException {
         ReadyExam readyExam = (ReadyExam)changeToStartExamEvent.getMessage().getBody();
 
+        Student student = (Student) SimpleClient.getClient().getUser();
+        Object object = new Object[]{readyExam, student};
+        Message resMessage = new Message("startExam", object);
         Platform.runLater(() -> {
             try {
                 EventBus.getDefault().unregister(this);
                 if (readyExam.getExamType().equals("Manual"))
                 {
+                    resMessage.setTitle("StartSolvingManualExam");
+                    SimpleClient.getClient().sendToServer(resMessage);
                     SimpleChatClient.switchScreen("StartSolvingManualExam");
+
 
                 }
                 else
                 {
+                    resMessage.setTitle("StartSolvingComputerizedExam");
+                    SimpleClient.getClient().sendToServer(resMessage);
                     SimpleChatClient.switchScreen("StartSolvingComputerizedExam");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-        Student student = (Student) SimpleClient.getClient().getUser();
-        Object object = new Object[]{readyExam, student};
-        Message resMessage = new Message("startExam", object);
-        SimpleClient.getClient().sendToServer(resMessage);
     }
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {

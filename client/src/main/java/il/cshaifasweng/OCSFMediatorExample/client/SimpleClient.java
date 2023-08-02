@@ -129,7 +129,7 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new SendToStudentEvent((Message) msg));
 		}
-		else if (message.getTitle().equals("startExam"))
+		else if (message.getTitle().equals("StartSolvingComputerizedExam"))
 		{
 			EventBus.getDefault().post(new StartExamEvent((Message) msg));
 		}
@@ -242,6 +242,105 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new ViewGradesForTeacherIIBoundryEvent((Message)msg));
 		}
+		else if(message.getTitle().equals("StartSolvingManualExam"))
+		{
+			EventBus.getDefault().post(new StartSolvingManualExamEvent((Message)msg));
+
+		}
+		else if(message.getTitle().equals("Logout principle"))
+		{
+			System.out.println("event bus logout");
+			EventBus.getDefault().post(new PrincipleLogoutEvent((Message)msg));
+		}
+
+		else if (message.getTitle().equals("showQuestionsForPrinciple"))
+		{
+			System.out.println("event get subjects");
+			EventBus.getDefault().post(new ShowQuestionsForPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getSubjectsForPrinciple"))
+		{
+			EventBus.getDefault().post(new GetSubjectsForPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getCoursesForSubjectsPrinciple"))
+		{
+			EventBus.getDefault().post(new GetCoursesForSubjectsPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getExamQuestions"))
+		{
+			EventBus.getDefault().post(new GetExamQuestionsEvent((Message) msg));
+		}
+		else if (message.getTitle().equals("showExamsForPrinciple"))
+		{
+			EventBus.getDefault().post(new ShowExamsForPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getSubjectsForPrincipleExams"))
+		{
+			System.out.println("event get subjects");
+			EventBus.getDefault().post(new GetSubjectsForPrincipleExamsEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("GetCoursesForSubjectsPrincipleExams"))
+		{
+			EventBus.getDefault().post(new GetCoursesForSubjectsPrincipleExamsEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getStudentsGradesForPrinciple"))
+		{
+			EventBus.getDefault().post(new GetStudentsGradesForPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getTeachersForPrinciple"))
+		{
+			EventBus.getDefault().post(new GetTeachersForPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("GetExamsForTeacherPrinciple"))
+		{
+			EventBus.getDefault().post(new GetExamsForTeacherPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getExamQuestions"))
+		{
+			EventBus.getDefault().post(new GetExamQuestionsEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getCoursesForPrinciple"))
+		{
+			EventBus.getDefault().post(new GetCoursesForPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getExamsForCoursePrinciple"))
+		{
+			EventBus.getDefault().post(new GetExamsForCoursePrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getExamsForStudentPrinciple"))
+		{
+			EventBus.getDefault().post(new GetExamsForStudentPrincipleEvent((Message) msg));
+		}
+
+		else if(message.getTitle().equals("getStudentsForPrinciple"))
+		{
+			EventBus.getDefault().post(new GetStudentsForPrincipleEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("GetOnGoingExamsForExtraTime"))
+		{
+			EventBus.getDefault().post(new ExtraTimeEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("AskPrincipleForExtraTime"))
+		{
+			EventBus.getDefault().post(new ExtraTimeEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("refreshTable"))
+		{
+			EventBus.getDefault().post(new ExtraTimeEvent((Message) msg));
+		}
+
 	}
 	public static SimpleClient getClient() {
 		if (client == null) {

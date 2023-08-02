@@ -19,6 +19,11 @@ public class Teacher extends User implements Serializable
     @ManyToMany(mappedBy = "listOfTeachers", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "principle_id")
+    private Principle principle;
+
+
     public List<Course> getCourses() {
         return courses;
     }
@@ -51,5 +56,11 @@ public class Teacher extends User implements Serializable
 
     public void setSubjects(List<Subject> subjects) {
         this.subjects = subjects;
+    }
+    public Principle getPrinciple() {
+        return principle;
+    }
+    public void setPrinciple(Principle principle) {
+        this.principle = principle;
     }
 }

@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.TeacherController;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -151,8 +152,18 @@ public class TeacherBoundry {
     }
 
     @FXML
-    void extraTimeAction(ActionEvent event) {
-
+    void extraTimeAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(teacherController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTime");
+                Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @FXML

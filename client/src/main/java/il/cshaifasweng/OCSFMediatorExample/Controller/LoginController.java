@@ -62,7 +62,14 @@ public class LoginController
                         }
                         else if (user.getWhoAreYou() == 1) {
                             try {
-                                SimpleChatClient.switchScreen("TeacherBoundry");
+                                SimpleChatClient.switchScreen("teacherBoundry");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else if (user.getWhoAreYou() == 2) {
+                            try {
+                                SimpleChatClient.switchScreen("PrincipleBoundry");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
