@@ -1,8 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
-import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeBoundry;
+import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeTeacherBoundry;
 import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeEvent;
-import il.cshaifasweng.OCSFMediatorExample.client.RefreshTableEvent;
 import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
@@ -20,28 +19,17 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.IOException;
 import java.util.List;
 
-public class ExtraTimeController
+public class ExtraTimeTeacherController
 {
-    private ExtraTimeBoundry extraTimeBoundry;
+    private ExtraTimeTeacherBoundry extraTimeBoundry;
 
-    public ExtraTimeController(ExtraTimeBoundry extraTimeBoundry)
+    public ExtraTimeTeacherController(ExtraTimeTeacherBoundry extraTimeBoundry)
     {
         EventBus.getDefault().register(this);
         this.extraTimeBoundry = extraTimeBoundry;
     }
 
-    @Subscribe
-    public void handleRefreshEvent(RefreshTableEvent refreshTableEvent)
-    {
-        System.out.println("lolllllllll teacher");
-        if ("refreshTable".equals(refreshTableEvent.getMessage().getTitle()))
-        {
-            System.out.println("im here bitch");
-           Platform.runLater(()->{
-               extraTimeBoundry.getTable().refresh();
-           });
-        }
-    }
+
     @Subscribe
     public void handleExtraTimeEvent(ExtraTimeEvent extraTimeEvent)
     {
@@ -52,8 +40,8 @@ public class ExtraTimeController
             extraTimeBoundry.getExamIdCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("readyExamOriginalID"));
             extraTimeBoundry.getNumberOfExaminees().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("numOfOnGoingExams"));
             extraTimeBoundry.getCourseCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("course"));
-            extraTimeBoundry.getPressForExtraTimeCol().setCellFactory(column -> new ExtraTimeController.ButtonCell());
-
+            extraTimeBoundry.getPressForExtraTimeCol().setCellFactory(column -> new ExtraTimeTeacherController.ButtonCell());
+            extraTimeBoundry.getStatusCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("extraTimeApproved"));
             extraTimeBoundry.getTable().getItems().addAll(list);
         }
         else if("AskPrincipleForExtraTime".equals(extraTimeEvent.getMessage().getTitle()))
@@ -69,6 +57,20 @@ public class ExtraTimeController
             extraTimeBoundry.getTable().getItems().clear();
             extraTimeBoundry.getTable().getItems().addAll(list);
             extraTimeBoundry.getTable().refresh();
+        }
+        else if(extraTimeEvent.getMessage().getTitle().equals("DenyExtraTimeRequest"))
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.WARNING, "Notice", "Extra time request has been denied");
+
+            });
+        }
+        else if (extraTimeEvent.getMessage().getTitle().equals("ApproveExtraTimeRequest"))
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.WARNING, "Notice", "Extra time request has been apporved");
+
+            });
         }
     }
     private class ButtonCell extends TableCell<ReadyExam, Button> {

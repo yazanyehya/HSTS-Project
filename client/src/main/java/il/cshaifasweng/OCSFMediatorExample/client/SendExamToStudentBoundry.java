@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -155,13 +156,11 @@ public class SendExamToStudentBoundry {
             region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
             HBox hBox1 = new HBox(region3);
             vBox.getChildren().addAll(hBox,studentDetails,hBox1, questions);
-            AnchorPane pane = new AnchorPane();
-            pane.setStyle("-fx-border-color: #FFFFFF; -fx-border-width: 1px 1px 1px 1px");
-            vBox.setStyle("-fx-background-color: #FFFFFF");
-            pane.getChildren().add(vBox);
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setContent(vBox);
             // Create a new stage and set the VBox as its root
             Stage previewStage = new Stage();
-            previewStage.setScene(new Scene(pane));
+            previewStage.setScene(new Scene(scrollPane));
             previewStage.setHeight(800);
             previewStage.setWidth(800);
 

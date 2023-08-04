@@ -99,4 +99,11 @@ public class StartSolvingComputerizedExamBoundry
 
     }
 
+    public Button getFinishExamBtn() {
+        return finishExamBtn;
+    }
+
+    public void setFinishExamBtn(Button finishExamBtn) {
+        this.finishExamBtn = finishExamBtn;
+    }
 }

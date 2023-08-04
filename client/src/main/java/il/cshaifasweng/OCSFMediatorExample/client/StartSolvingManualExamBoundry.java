@@ -5,6 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -47,9 +48,12 @@ public class StartSolvingManualExamBoundry {
 
     private String examID;
     private String finished = "no";
+
+    private String downloaded = "no";
     @FXML
     void downloadAction(ActionEvent event)
     {
+        downloaded = "yes";
         List<String> questions = new ArrayList<>();
         questions.add("Question 1: What is the capital of France?");
         questions.add("Question 2: What is 2 + 2?");
@@ -79,52 +83,60 @@ public class StartSolvingManualExamBoundry {
     @FXML
     void submitAction(ActionEvent event)
     {
-        try {
-            finished = "yes";
-            // Read the Word document that the user has filled out
-            Object object = examID;
-            Message message2 = new Message("SetOnGoingToFalse",object);
-            SimpleClient.getClient().sendToServer(message2);
-            File file = new File("target/" + documentName);
-            XWPFDocument document = new XWPFDocument(new FileInputStream(file));
-
-            // Extract the answers from the Word document
-            List<String> answers = new ArrayList<>();
-            for (XWPFParagraph paragraph : document.getParagraphs()) {
-                String answer = paragraph.getText();
-                // Add some logic to filter out the questions and only get the answers.
-                // You might need to implement custom logic here based on the structure of your Word document.
-                // For example, you can use some keywords to identify the answers.
-
-                // Add the extracted answer to the answers list
-                answers.add(answer);
-            }
-
-            // Process the answers as needed
-            // For example, you might want to compare the answers with the correct answers, calculate the score, etc.
-            // Implement your custom logic here.
-
-            // Print the extracted answers (just for demonstration purposes)
-            System.out.println("Extracted Answers:");
-            for (String answer : answers) {
-                System.out.println(answer);
-            }
-
-            // Close the document
-            document.close();
-            EventBus.getDefault().unregister(startSolvingManualExamController);
-            Platform.runLater(() -> {
-                try {
-                    SimpleChatClient.switchScreen("ConductAnExam");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        if (downloaded == "no")
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "You must download the exam before the submittion");
             });
+        }
+        else {
+            try {
+                finished = "yes";
+                // Read the Word document that the user has filled out
+                Object object = examID;
+                Message message2 = new Message("SetOnGoingToFalse", object);
+                SimpleClient.getClient().sendToServer(message2);
+                File file = new File("target/" + documentName);
+                XWPFDocument document = new XWPFDocument(new FileInputStream(file));
 
-            // Implement your custom logic for handling the submitted answers here
+                // Extract the answers from the Word document
+                List<String> answers = new ArrayList<>();
+                for (XWPFParagraph paragraph : document.getParagraphs()) {
+                    String answer = paragraph.getText();
+                    // Add some logic to filter out the questions and only get the answers.
+                    // You might need to implement custom logic here based on the structure of your Word document.
+                    // For example, you can use some keywords to identify the answers.
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                    // Add the extracted answer to the answers list
+                    answers.add(answer);
+                }
+
+                // Process the answers as needed
+                // For example, you might want to compare the answers with the correct answers, calculate the score, etc.
+                // Implement your custom logic here.
+
+                // Print the extracted answers (just for demonstration purposes)
+                System.out.println("Extracted Answers:");
+                for (String answer : answers) {
+                    System.out.println(answer);
+                }
+
+                // Close the document
+                document.close();
+                EventBus.getDefault().unregister(startSolvingManualExamController);
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("ConductAnExam");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                // Implement your custom logic for handling the submitted answers here
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -194,6 +206,16 @@ public class StartSolvingManualExamBoundry {
 
     public void setFinished(String finished) {
         this.finished = finished;
+    }
+
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 }
 

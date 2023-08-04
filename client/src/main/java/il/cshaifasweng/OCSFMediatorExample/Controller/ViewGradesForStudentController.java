@@ -206,12 +206,14 @@ public class ViewGradesForStudentController
 
             Label studentName = new Label("Student name: " + student.getFirstName() + " " + student.getLastName()+ ".");
             Label studentId = new Label("Student ID: " + student.getId());
+            Label grade = new Label("Grade: "+readyExam.getGrade());
             studentName.setFont(font);
             studentId.setFont(font);
+            grade.setFont(font);
 
             studentName.setStyle("-fx-font-weight: bold;-fx-underline: true;");
             studentId.setStyle("-fx-font-weight: bold;-fx-underline: true;");
-            studentDetails.getChildren().addAll(studentName, studentId);
+            studentDetails.getChildren().addAll(studentName, studentId, grade);
 
             VBox questions = new VBox();
             int cnt = 1;

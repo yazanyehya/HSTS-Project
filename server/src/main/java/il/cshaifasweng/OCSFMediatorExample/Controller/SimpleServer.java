@@ -297,9 +297,9 @@ public class SimpleServer extends AbstractServer {
 	public List<ReadyExam> getExamsForStudent(Student student) {
 		try (Session session = getSessionFactory().openSession()) {
 			// Create a query to fetch the exams for the given teacher ID
-			String hql = "SELECT e FROM ReadyExam e JOIN e.listOfStudents s WHERE s.id = :studentId";
+			String hql = "SELECT e FROM ReadyExam e where e.studentId =:id and e.isClone = 'yes' and e.approved = 'yes'";
 			Query query = session.createQuery(hql, ReadyExam.class);
-			query.setParameter("studentId", student.getId());
+			query.setParameter("id", Integer.toString(student.getId()));
 
 			// Execute the query and retrieve the list of subjects
 			List<ReadyExam> exams = query.getResultList();
@@ -474,7 +474,7 @@ public class SimpleServer extends AbstractServer {
 		System.out.println(message.getTitle());
 		if ("Login".equals(message.getTitle()))
 		{
-			if (!session.getTransaction().isActive()) {
+			if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
 				session = getSessionFactory().openSession();
 				session.beginTransaction();
 			}
@@ -757,6 +757,8 @@ public class SimpleServer extends AbstractServer {
 				readyExam1.setExaminee(student.getUsername());
 				session.flush();
 				readyExam1.setReadyExamOriginalID(readyExam.getId());
+				readyExam1.setAddedTime(readyExam.getAddedTime());
+				readyExam1.setExtraTimeApproved(readyExam.getExtraTimeApproved());
 				session.save(readyExam1);
 				Message responseMessage = new Message(message.getTitle(), readyExam1);
 				client.sendToClient(responseMessage);
@@ -1689,6 +1691,7 @@ public class SimpleServer extends AbstractServer {
 				Message responseMessage = new Message("refreshTable",list);
 				System.out.println(responseMessage.getTitle());
 				sendToAllClients(responseMessage);
+				//client.sendToClient(responseMessage);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1732,6 +1735,7 @@ public class SimpleServer extends AbstractServer {
 					readyExam1.setOnGoing("no");
 					session.update(readyExam1);
 					session.flush();
+
 				}
 
 				hql = "SELECT re FROM ReadyExam re where re.username =: username AND re.OnGoing = 'yes' and re.isClone = 'no'";
@@ -1814,6 +1818,14 @@ public class SimpleServer extends AbstractServer {
 				Message responseMessage = new Message("AskPrincipleForExtraTime", message.getBody());
 				client.sendToClient(responseMessage);
 
+				hql = "SELECT et FROM ExtraTime et where et.extraTimeApproved = ''";
+				Query query2 = session.createQuery(hql, ExtraTime.class);
+				List<ExtraTime> list2 = (List<ExtraTime>) query2.getResultList();
+
+				Message responseMessage1 = new Message("refreshTablePrinciple",list2);
+				System.out.println(responseMessage.getTitle());
+				sendToAllClients(responseMessage1);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1824,8 +1836,127 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if("ExtraTimeRequest".equals(message.getTitle()))
+		else if("ExtraTimePrinciple".equals(message.getTitle()))
 		{
+
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				String hql = "SELECT et FROM ExtraTime et where et.extraTimeApproved = ''";
+				Query query1 = session.createQuery(hql, ExtraTime.class);
+				List<ExtraTime> list = (List<ExtraTime>) query1.getResultList();
+				Message responseMessage = new Message("ExtraTimePrinciple", list);
+				client.sendToClient(responseMessage);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
+		}
+		else if ("ApproveExtraTimeRequest".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				ExtraTime extraTime = (ExtraTime) message.getBody();
+				extraTime.setExtraTimeApproved("Approved");
+				session.update(extraTime);
+				session.flush();
+
+				extraTime.getReadyExam().setExtraTimeApproved("Approved");
+				session.update(extraTime.getReadyExam());
+				session.flush();
+
+				extraTime.getReadyExam().setAddedTime(extraTime.getReadyExam().getAddedTime() + Integer.parseInt(extraTime.getTimeAmount()));
+				session.update(extraTime.getReadyExam());
+				session.flush();
+
+				String hql = "SELECT re FROM ReadyExam re WHERE re.readyExamOriginalID =: id and re.isClone = 'yes'";
+				Query query = session.createQuery(hql, ReadyExam.class);
+				query.setParameter("id", extraTime.getReadyExam().getId());
+				List<ReadyExam> readyExamList = (List<ReadyExam>) query.getResultList();
+				for (ReadyExam readyExam : readyExamList)
+				{
+					readyExam.setAddedTime(extraTime.getReadyExam().getAddedTime());
+					session.update(readyExam);
+					session.flush();
+				}
+
+				hql = "SELECT re FROM ReadyExam re where re.username =: username AND re.OnGoing = 'yes' and re.isClone = 'no'";
+				Query query3 = session.createQuery(hql, ReadyExam.class);
+				query3.setParameter("username", extraTime.getReadyExam().getUsername());
+				List<ReadyExam> list = (List<ReadyExam>) query3.getResultList();
+				Message responseMessage = new Message("refreshTable",list);
+
+				hql = "SELECT et FROM ExtraTime et where et.extraTimeApproved = ''";
+				Query query1 = session.createQuery(hql, ExtraTime.class);
+				List<ExtraTime> list2 = (List<ExtraTime>) query1.getResultList();
+
+				Message responseMessage1 = new Message("refreshTablePrinciple",list2);
+				System.out.println(responseMessage.getTitle());
+				sendToAllClients(responseMessage1);
+				sendToAllClients(responseMessage);
+				sendToAllClients(message);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
+		}
+		else if("DenyExtraTimeRequest".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+			ExtraTime extraTime = (ExtraTime) message.getBody();
+			extraTime.setExtraTimeApproved("Denied");
+			session.update(extraTime);
+			session.flush();
+
+			extraTime.getReadyExam().setExtraTimeApproved("Denied");
+			session.update(extraTime.getReadyExam());
+			session.flush();
+
+			String hql = "SELECT re FROM ReadyExam re where re.username =: username AND re.OnGoing = 'yes' and re.isClone = 'no'";
+			Query query3 = session.createQuery(hql, ReadyExam.class);
+			query3.setParameter("username", extraTime.getReadyExam().getUsername());
+			List<ReadyExam> list = (List<ReadyExam>) query3.getResultList();
+			Message responseMessage = new Message("refreshTable",list);
+			System.out.println(responseMessage.getTitle());
+
+			hql = "SELECT et FROM ExtraTime et where et.extraTimeApproved = ''";
+			Query query1 = session.createQuery(hql, ExtraTime.class);
+			List<ExtraTime> list2 = (List<ExtraTime>) query1.getResultList();
+
+			Message responseMessage1 = new Message("refreshTablePrinciple",list2);
+			sendToAllClients(responseMessage1);
+			sendToAllClients(responseMessage);
+			sendToAllClients(message);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					session.getTransaction().commit();
+					session.close();
+				}
+			}
 		}
 //		if ("Get all Students".equals(message.getOperation())) {
 //			try {

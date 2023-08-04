@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ExtraTimePrincipleBoundry">
+   <children>
+      <TableView fx:id="table" layoutX="39.0" layoutY="63.0" prefHeight="200.0" prefWidth="476.0">
+        <columns>
+          <TableColumn fx:id="examIDCol" prefWidth="75.0" text="Exam ID" />
+            <TableColumn fx:id="courseCol" prefWidth="132.0" text="Course" />
+          <TableColumn fx:id="teacherCol" prefWidth="158.0" text="Teacher Name" />
+            <TableColumn fx:id="pressCol" prefWidth="111.0" text="Press To Preview" />
+        </columns>
+      </TableView>
+      <Button fx:id="backBtn" layoutX="78.0" layoutY="319.0" mnemonicParsing="false" onAction="#backAction" text="Back" />
+   </children>
+</AnchorPane>

@@ -47,7 +47,11 @@ public class ReadyExam implements Serializable
 
     private String OnGoing = "no";
 
+    private String extraTimeApproved;
+
     private String studentId;
+
+    private Integer addedTime = 0;
     @OneToOne
     @JoinColumn(name = "exam_id") // The foreign key column in the Ready_Exams table
     private Exam exam;
@@ -77,6 +81,7 @@ public class ReadyExam implements Serializable
         this.FullName = fullName;
         this.studentId = studentId;
         this.OnGoing = "no";
+        this.extraTimeApproved = "";
         this.setNumOfOnGoingExams(0);
     }
 
@@ -233,5 +238,21 @@ public class ReadyExam implements Serializable
 
     public Integer getNumOfOnGoingExams() {
         return numOfOnGoingExams;
+    }
+
+    public void setExtraTimeApproved(String extraTimeApproved) {
+        this.extraTimeApproved = extraTimeApproved;
+    }
+
+    public String getExtraTimeApproved() {
+        return extraTimeApproved;
+    }
+
+    public Integer getAddedTime() {
+        return addedTime;
+    }
+
+    public void setAddedTime(Integer addedTime) {
+        this.addedTime = addedTime;
     }
 }

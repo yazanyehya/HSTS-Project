@@ -5,8 +5,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeBoundry">
+<AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeTeacherBoundry">
    <children>
       <TableView fx:id="table" layoutX="124.0" layoutY="81.0" prefHeight="200.0" prefWidth="689.0">
         <columns>
@@ -14,6 +13,7 @@
             <TableColumn fx:id="courseCol" prefWidth="119.0" text="Course" />
             <TableColumn fx:id="numberOfExaminees" prefWidth="183.0" text="Number of Examinees" />
             <TableColumn fx:id="PressForExtraTimeCol" prefWidth="175.0" text="Press To" />
+            <TableColumn fx:id="statusCol" prefWidth="75.0" text="Status" />
         </columns>
       </TableView>
       <Button fx:id="backBtn" layoutX="95.0" layoutY="339.0" mnemonicParsing="false" onAction="#backAction" text="Back" />

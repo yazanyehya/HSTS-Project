@@ -8,6 +8,7 @@ import il.cshaifasweng.OCSFMediatorExample.Controller.CourseReportsController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.StudentReportsController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +19,8 @@ import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentReportsBoundry {
 
@@ -44,11 +47,9 @@ public class StudentReportsBoundry {
     private ListView<Student> studentsList;
 
     @FXML
-    private BarChart<?, ?> theChart;
-    @FXML
-    private CategoryAxis x;
-    @FXML
-    private NumberAxis y;
+    private BarChart<String, Integer> theChart;
+
+    private XYChart.Series<String,Integer> series1;
 
     @FXML // fx:id="examPeriod"
     private TextField examPeriod; // Value injected by FXMLLoader
@@ -116,32 +117,6 @@ public class StudentReportsBoundry {
         }
     }
 
-    @FXML
-    void showExamssAction(ActionEvent event) {
-
-        ObservableList<Student> selectedItems = studentsList.getSelectionModel().getSelectedItems();
-
-        for (Student item : selectedItems) {
-            // Perform actions based on the selected item(s)
-            try {
-                studentReportsController.getExams(item);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        // CALCULATE THE AVERAGE AND THE MEDIAN AND THE CHART: (DO ALL ON selectedItems List)
-        // retrieve grade by: Student ->  Exam -> Grade
-        // average = sumGrades / numOfGrades
-        // median = ??
-        // the chart = you can initialize 10 variables, for each Interval, by zero,
-        // and increase them every time we have a grade in that Interval
-    }
-
-    @FXML
-    void showStudentsAction(ActionEvent event) throws IOException {
-        studentReportsController.getStudents();
-    }
 
     @FXML
     void initialize() throws IOException {
@@ -149,13 +124,8 @@ public class StudentReportsBoundry {
         studentReportsController = new StudentReportsController(this);
         this.setStudentReportsController(studentReportsController);
 
-        System.out.println("before getting students");
-        listViewExams.setItems(null);
-        studentsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        populateCoursesList();
-
-        XYChart.Series series1 = new XYChart.Series();
-        series1.setName("Students Number");
+        series1 = new XYChart.Series<String,Integer>();
+        series1.setName("Number Of Exams");
         series1.getData().add(new XYChart.Data("0-10", 0));
         series1.getData().add(new XYChart.Data("11-20", 0));
         series1.getData().add(new XYChart.Data("21-30", 0));
@@ -168,8 +138,156 @@ public class StudentReportsBoundry {
         series1.getData().add(new XYChart.Data("91<", 0));
         theChart.getData().addAll(series1);
 
-    }
 
+        System.out.println("before getting students");
+        listViewExams.setItems(null);
+        studentsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        populateCoursesList();
+
+
+        studentsList.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) { // Check if it's a double-click
+                Student student = studentsList.getSelectionModel().getSelectedItem();
+                if (student != null)
+                {
+                    try {
+                        studentReportsController.getExams(student);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        listViewExams.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listViewExams.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends ReadyExam> change) -> {
+
+            ObservableList<? extends ReadyExam> selectedItems = change.getList();
+            double avg = calculateAverage( selectedItems);
+            averageTextField.setText(Double.toString(avg));
+            double median = calculateMedian(selectedItems);
+            medianTextField.setText(Double.toString(median));
+            fillChart(selectedItems);
+
+        });
+    }
+    double calculateAverage(ObservableList<? extends ReadyExam> selectedItems) {
+        double avg = 0;
+
+        for (ReadyExam readyExam : selectedItems) {
+            avg += readyExam.getGrade();
+        }
+
+        return avg / selectedItems.size();
+    }
+    double calculateMedian(ObservableList<? extends ReadyExam> selectedItems)
+    {
+        List<Double> list = new ArrayList<Double>();
+        for (ReadyExam readyExam : selectedItems)
+        {
+            double temp = readyExam.getGrade();
+            list.add(temp);
+        }
+        int size = selectedItems.size();
+        int middle = size / 2;
+        if (size % 2 == 0 ) {
+            // Step 3: If even number of elements, calculate the average of the two middle elements
+            if (size > 0)
+            {
+                double median1 = list.get(middle - 1);
+                double median2 = list.get(middle);
+                return (median1 + median2) / 2;
+            }
+            else {return 0;}
+        } else {
+            // Step 4: If odd number of elements, return the middle element
+            return list.get(middle);
+        }
+    }
+    private class GradeData {
+        private String gradeRange;
+        private int numExams;
+
+        public GradeData(String gradeRange, int numExams) {
+            this.gradeRange = gradeRange;
+            this.numExams = numExams;
+        }
+
+        public String getGradeRange() {
+            return gradeRange;
+        }
+
+        public int getNumExams() {
+            return numExams;
+        }
+    }
+    void fillChart(ObservableList<? extends ReadyExam> selectedItems)
+    {
+
+        List<GradeData> list = new ArrayList<>();
+        list.add(new GradeData("0-10",0));
+        list.add(new GradeData("11-20",0));
+        list.add(new GradeData("21-30",0));
+        list.add(new GradeData("31-40",0));
+        list.add(new GradeData("41-50",0));
+        list.add(new GradeData("51-60",0));
+        list.add(new GradeData("61-70",0));
+        list.add(new GradeData("71-80",0));
+        list.add(new GradeData("81-90",0));
+        list.add(new GradeData("91<",0));
+
+        for (ReadyExam readyExam : selectedItems)
+        {
+            int grade = readyExam.getGrade();
+            if (grade >= 0 && grade <= 10)
+            {
+                list.get(0).numExams++;
+            }
+            else if(grade >= 11 && grade <= 20)
+            {
+                list.get(1).numExams++;
+            }
+            else if(grade >= 21 && grade <= 30)
+            {
+                list.get(2).numExams++;
+            }
+            else if(grade >= 31 && grade <= 40)
+            {
+                list.get(3).numExams++;
+            }
+            else if(grade >= 41 && grade <= 50)
+            {
+                list.get(4).numExams++;
+            }
+            else if(grade >= 51 && grade <= 60)
+            {
+                list.get(5).numExams++;
+            }
+            else if(grade >= 61 && grade <= 70)
+            {
+                list.get(6).numExams++;
+            }
+            else if(grade >= 71 && grade <= 80)
+            {
+                list.get(7).numExams++;
+            }
+            else if(grade >= 81 && grade <= 90)
+            {
+                list.get(8).numExams++;
+            }
+            else if(grade >= 91 )
+            {
+                list.get(9).numExams++;
+            }
+        }
+        for (GradeData gradeData : list) {
+            XYChart.Data<String, Integer> data = new XYChart.Data<>(gradeData.getGradeRange(), gradeData.getNumExams());
+            series1.getData().add(data);
+
+            // Set the bar color for the data node
+            data.getNode().setStyle("-fx-bar-fill: #9400d3;");
+        }
+
+    }
     private void populateCoursesList() { // Set the cell factory to display the course name
         studentsList.setCellFactory(new Callback<ListView<Student>, ListCell<Student>>() {
             @Override

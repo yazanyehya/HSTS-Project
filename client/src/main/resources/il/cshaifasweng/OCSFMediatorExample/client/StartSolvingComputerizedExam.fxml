@@ -4,11 +4,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.StartSolvingComputerizedExamBoundry">
+<AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.StartSolvingComputerizedExamBoundry">
    <children>
-      <VBox fx:id="examContainer" layoutX="111.0" layoutY="84.0" prefHeight="628.0" prefWidth="578.0" />
-      <Button fx:id="finishExamBtn" layoutX="125.0" layoutY="712.0" mnemonicParsing="false" onAction="#finishExamAction" text="Finish Exam" />
-      <Label fx:id="timerLabel" layoutX="611.0" layoutY="44.0" prefHeight="26.0" prefWidth="152.0" />
+      <VBox fx:id="examContainer" layoutX="-1.0" prefHeight="705.0" prefWidth="994.0" style="-fx-border-color: #e9692c; -fx-border-width: 6px6px6px;" />
+      <Label fx:id="timerLabel" layoutX="581.0" layoutY="44.0" prefHeight="42.0" prefWidth="182.0" style="-fx-background-color: #ffa500; -fx-background-radius: 90; -fx-border-color: #000000; -fx-border-width: 2px2px2px; -fx-border-radius: 90;" stylesheets="@sButton.css" textFill="WHITE">
+         <font>
+            <Font size="30.0" />
+         </font></Label>
+      <Button fx:id="finishExamBtn" mnemonicParsing="false" onAction="#finishExamAction" prefHeight="42.0" prefWidth="141.0" stylesheets="@sButton.css" text="Finish Exam" />
    </children>
 </AnchorPane>

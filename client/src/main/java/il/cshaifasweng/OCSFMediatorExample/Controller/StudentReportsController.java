@@ -35,12 +35,6 @@ public class StudentReportsController {
         return studentReportsBoundry;
     }
 
-    public void getStudents() throws IOException
-    {
-        Principle principle = (Principle) SimpleClient.getClient().getUser();
-        Message message = new Message("getStudentsForPrinciple", principle);
-        SimpleClient.getClient().sendToServer(message);
-    }
     @Subscribe
     public void handleGetStudentForPrincipleEvent(GetStudentsForPrincipleEvent getStudentsForPrincipleEvent)
     {

@@ -13,3 +13,8 @@
 {
     -fx-background-color: #9ACD;
 }
+.radio-button .radio{
+    -fx-border-color: #0598ff;
+    -fx-border-radius: 90;
+    -fx-border-width: 1;
+}

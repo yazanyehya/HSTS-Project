@@ -328,17 +328,14 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new GetStudentsForPrincipleEvent((Message) msg));
 		}
-		else if(message.getTitle().equals("GetOnGoingExamsForExtraTime"))
+		else if(message.getTitle().equals("refreshTable") || message.getTitle().equals("ApproveExtraTimeRequest") || message.getTitle().equals("DenyExtraTimeRequest") || message.getTitle().equals("AskPrincipleForExtraTime") || message.getTitle().equals("GetOnGoingExamsForExtraTime") || message.getTitle().equals("refreshTablePrinciple"))
 		{
 			EventBus.getDefault().post(new ExtraTimeEvent((Message) msg));
 		}
-		else if(message.getTitle().equals("AskPrincipleForExtraTime"))
+		else if(message.getTitle().equals("ExtraTimePrinciple"))
 		{
-			EventBus.getDefault().post(new ExtraTimeEvent((Message) msg));
-		}
-		else if(message.getTitle().equals("refreshTable"))
-		{
-			EventBus.getDefault().post(new ExtraTimeEvent((Message) msg));
+			System.out.println("here is ExtraTimePrinciple");
+			EventBus.getDefault().post(new ExtraTimePrincipleEvent((Message) msg));
 		}
 
 	}

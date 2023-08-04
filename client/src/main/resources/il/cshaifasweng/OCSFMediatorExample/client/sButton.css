@@ -1,0 +1,18 @@
+.button{
+    -fx-background-color:  #ffa500;
+    -fx-background-radius: 30 30 30 30;
+    -fx-border-radius: 30 30 30 30;
+    -fx-border-color: #000000;
+    -fx-border-width: 2px 2px 2px 2px;
+}
+.button:hover{
+    -fx-background-color:  #e9692c;
+    -fx-background-radius: 30 30 30 30;
+    -fx-border-radius: 30 30 30 30;
+    -fx-border-color: #000000;
+    -fx-border-width: 2px 2px 2px 2px;
+}
+.button:pressed{
+    -fx-translate-x: 1px;
+    -fx-translate-y: 1px;
+}

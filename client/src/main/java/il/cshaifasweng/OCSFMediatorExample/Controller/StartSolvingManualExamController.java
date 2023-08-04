@@ -1,9 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
-import il.cshaifasweng.OCSFMediatorExample.client.SimpleChatClient;
-import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
-import il.cshaifasweng.OCSFMediatorExample.client.StartSolvingManualExamBoundry;
-import il.cshaifasweng.OCSFMediatorExample.client.StartSolvingManualExamEvent;
+import il.cshaifasweng.OCSFMediatorExample.client.*;
+import il.cshaifasweng.OCSFMediatorExample.entities.ExtraTime;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
@@ -49,7 +47,6 @@ public class StartSolvingManualExamController
 
     int hours;
 
-    int time;
 
     private Timeline timeline;
 
@@ -59,21 +56,46 @@ public class StartSolvingManualExamController
         EventBus.getDefault().register(this);
         this.startSolvingManualExamBoundry = startSolvingManualExamBoundry;
     }
-    public void update (int time)
-    {
-        this.timeline.stop();
-        this.time = this.time + time;
-        hours = this.time/ 60;
-        minutes = this.time % 60;
-        timeline.setCycleCount(Timeline.INDEFINITE);
+    public void update(int extraTimeInMinutes) {
+        // Convert extra time to seconds
+        int extraTimeInSeconds = extraTimeInMinutes * 60;
+
+        // Calculate the total time in seconds for the current countdown
+        int totalSecondsRemaining = (hours * 3600) + (minutes * 60) + seconds;
+
+        // Add the extra time in seconds
+        totalSecondsRemaining += extraTimeInSeconds;
+
+        // Update hours, minutes, and seconds accordingly
+        hours = totalSecondsRemaining / 3600;
+        totalSecondsRemaining %= 3600;
+        minutes = totalSecondsRemaining / 60;
+        seconds = totalSecondsRemaining % 60;
+
+        // Stop the timeline and update the timer label with the new value
+        timeline.stop();
+        startSolvingManualExamBoundry.getTimerLabel().setText(String.format("      %02d:%02d:%02d", hours, minutes, seconds));
 
         // Restart the timeline to continue the countdown with the new remaining time
+        timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-
-
     }
 
 
+    @Subscribe
+    public void handleExtraTime(ExtraTimeEvent extraTimeEvent)
+    {
+        if (extraTimeEvent.getMessage().getTitle().equals("ApproveExtraTimeRequest"))
+        {
+            ExtraTime extraTime = (ExtraTime) extraTimeEvent.getMessage().getBody();
+            int time = Integer.parseInt(extraTime.getTimeAmount());
+            update(time);
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.WARNING, "Notice", "There have been added " + time + " more minutes");
+
+            });
+        }
+    }
     @Subscribe
     public void handleEvents(StartSolvingManualExamEvent startSolvingManualExamEvent) throws IOException, InvalidFormatException {
         System.out.println("lollllllll");
@@ -82,17 +104,24 @@ public class StartSolvingManualExamController
             ReadyExam readyExam = (ReadyExam) startSolvingManualExamEvent.getMessage().getBody();
             Message message = new Message("SetOnGoingToTrue", readyExam);
             SimpleClient.getClient().sendToServer(message);
+
+            int extra = 0;
+            if (readyExam.getExtraTimeApproved().equals("Approved"))
+            {
+                extra = readyExam.getAddedTime();
+            }
+
+            startSolvingManualExamBoundry.setExamPeriod(Integer.parseInt(readyExam.getExam().getExamPeriod())+extra);
+
             Platform.runLater(() -> {
+                startSolvingManualExamBoundry.setExamID(Integer.toString(readyExam.getId()));
+                int time = startSolvingManualExamBoundry.getExamPeriod();
+                hours = time/ 60;
+                minutes = time % 60;
+                startSolvingManualExamBoundry.getTimerLabel().setText(String.format("      %02d:%02d:%02d", hours ,minutes, seconds));
 
-            startSolvingManualExamBoundry.setExamPeriod(Integer.parseInt(readyExam.getExam().getExamPeriod()));
-            startSolvingManualExamBoundry.setExamID(Integer.toString(readyExam.getId()));
-            time = Integer.parseInt(readyExam.getExam().getExamPeriod());
-            hours = time/ 60;
-            minutes = time % 60;
-            startSolvingManualExamBoundry.getTimerLabel().setText(String.format("%02d:%02d:%02d", hours ,minutes, seconds));
-
-            timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-                if (minutes == 0 && seconds == 0)
+                timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                if (minutes == 0 && seconds == 0 && hours == 0)
                 {
                     if (Objects.equals(startSolvingManualExamBoundry.getFinished(), "no"))
                     {
@@ -113,17 +142,23 @@ public class StartSolvingManualExamController
 
                 }
 
-                if (seconds == 0) {
-                    minutes--;
-                    seconds = 59;
+                else {
+                    // Update the timer
+                    if (seconds == 0) {
+                        if (minutes == 0) {
+                            hours--;
+                            minutes = 59;
+                            seconds = 59;
+                        } else {
+                            minutes--;
+                            seconds = 59;
+                        }
+                    } else {
+                        seconds--;
+                    }
                 }
-                else
-                {
-                    seconds--;
-                }
-
                 // Update the timer label with the new value
-                startSolvingManualExamBoundry.getTimerLabel().setText(String.format("%02d%02d:%02d", hours ,minutes, seconds));
+                startSolvingManualExamBoundry.getTimerLabel().setText(String.format("      %02d:%02d:%02d", hours ,minutes, seconds));
             }));
                 timeline.setCycleCount(Timeline.INDEFINITE); // This will make the timeline run indefinitely until stopped manually
                 timeline.play();
@@ -196,13 +231,6 @@ public class StartSolvingManualExamController
         });
     }
 
-    public void setTime(int time) {
-        this.time = time;
-    }
-
-    public int getTime() {
-        return time;
-    }
 
     public Timeline getTimeline() {
         return timeline;

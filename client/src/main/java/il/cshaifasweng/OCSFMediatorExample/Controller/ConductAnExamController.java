@@ -24,6 +24,11 @@ public class ConductAnExamController
     }
 
     @Subscribe
+    public void  handleExtraTimeRequest(ExtraTimeEvent extraTimeEvent)
+    {
+
+    }
+    @Subscribe
     public void handleShowExamFailed(StartExamFailedEvent startExamFailedEvent)
     {
         Platform.runLater(() -> {

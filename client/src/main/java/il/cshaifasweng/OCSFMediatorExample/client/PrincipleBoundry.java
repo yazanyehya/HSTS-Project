@@ -5,6 +5,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.PrincipleController;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Principle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -40,6 +41,9 @@ public class PrincipleBoundry {
     @FXML // fx:id="viewQuestionsBtn"
     private Button viewQuestionsBtn; // Value injected by FXMLLoader
 
+    @FXML
+    private Button extraTimeBtn;
+
     private PrincipleController principleController;
     @FXML
     void reportsAction(ActionEvent event) throws IOException {
@@ -56,6 +60,20 @@ public class PrincipleBoundry {
         principleController.logOut();
     }
 
+    @FXML
+    void extraTimeAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(principleController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimePrinciple");
+                Message message = new Message("ExtraTimePrinciple", null);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
     @FXML
     void viewExamsAction(ActionEvent event) throws IOException {
         Platform.runLater(() -> {
@@ -132,6 +150,9 @@ public class PrincipleBoundry {
             try {
                 EventBus.getDefault().unregister(principleController);
                 SimpleChatClient.switchScreen("studentReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getStudentsForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }

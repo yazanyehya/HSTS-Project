@@ -1,6 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.Controller.ExtraTimeController;
+import il.cshaifasweng.OCSFMediatorExample.Controller.ExtraTimeTeacherController;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,7 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
-public class ExtraTimeBoundry {
+public class ExtraTimeTeacherBoundry {
 
     @FXML
     private TableColumn<ReadyExam, Button> PressForExtraTimeCol;
@@ -29,12 +29,14 @@ public class ExtraTimeBoundry {
     @FXML
     private TableColumn<ReadyExam, Integer> numberOfExaminees;
 
+    @FXML
+    private TableColumn<ReadyExam, String> statusCol;
 
     @FXML
     private TableView<ReadyExam> table;
 
 
-    private ExtraTimeController extraTimeController;
+    private ExtraTimeTeacherController extraTimeController;
 
     @FXML
     void backAction(ActionEvent event)
@@ -51,7 +53,7 @@ public class ExtraTimeBoundry {
     @FXML
     public void initialize()
     {
-        extraTimeController = new ExtraTimeController(this);
+        extraTimeController = new ExtraTimeTeacherController(this);
         this.setExtraTimeController(extraTimeController);
     }
 
@@ -72,7 +74,7 @@ public class ExtraTimeBoundry {
     }
 
 
-    public void setExtraTimeController(ExtraTimeController extraTimeController) {
+    public void setExtraTimeController(ExtraTimeTeacherController extraTimeController) {
         this.extraTimeController = extraTimeController;
     }
 
@@ -96,7 +98,7 @@ public class ExtraTimeBoundry {
         return table;
     }
 
-    public ExtraTimeController getExtraTimeController() {
+    public ExtraTimeTeacherController getExtraTimeController() {
         return extraTimeController;
     }
 
@@ -110,5 +112,13 @@ public class ExtraTimeBoundry {
 
     public TableColumn<ReadyExam, Integer> getNumberOfExaminees() {
         return numberOfExaminees;
+    }
+
+    public TableColumn<ReadyExam, String> getStatusCol() {
+        return statusCol;
+    }
+
+    public void setStatusCol(TableColumn<ReadyExam, String> statusCol) {
+        this.statusCol = statusCol;
     }
 }

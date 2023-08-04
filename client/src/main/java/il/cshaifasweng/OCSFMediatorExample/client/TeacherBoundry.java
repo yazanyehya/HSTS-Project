@@ -47,6 +47,7 @@ public class TeacherBoundry {
     @FXML
     private Button seeResultsBtn;
 
+
     private TeacherController teacherController;
 
     @FXML
@@ -157,7 +158,7 @@ public class TeacherBoundry {
         EventBus.getDefault().unregister(teacherController);
         Platform.runLater(() -> {
             try {
-                SimpleChatClient.switchScreen("ExtraTime");
+                SimpleChatClient.switchScreen("ExtraTimeTeacher");
                 Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
                 SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
