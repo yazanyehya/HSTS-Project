@@ -9,6 +9,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.User;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -55,6 +56,7 @@ public class LoginController
                         showAlertDialog(AlertType.INFORMATION, "Login Successful", "Welcome, " + user.getFirstName() + " " + user.getLastName() + "!");
                         if (user.getWhoAreYou() == 0) {
                             try {
+//                                handleUserTypeSelection("Student");
                                 SimpleChatClient.switchScreen("studentBoundry");
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -62,6 +64,7 @@ public class LoginController
                         }
                         else if (user.getWhoAreYou() == 1) {
                             try {
+//                                handleUserTypeSelection("Teacher");
                                 SimpleChatClient.switchScreen("teacherBoundry");
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -69,6 +72,8 @@ public class LoginController
                         }
                         else if (user.getWhoAreYou() == 2) {
                             try {
+//                                handleUserTypeSelection("Principle");
+
                                 SimpleChatClient.switchScreen("PrincipleBoundry");
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -85,6 +90,12 @@ public class LoginController
                     });
                 }
 
+            }
+            else if(message.getTitle().equals("wrongType")){
+                Platform.runLater(() -> {
+                    // Login failure
+                    showAlertDialog(AlertType.ERROR, "Error", "Incorrect User Type");
+                });
             }
         }
     }
@@ -104,7 +115,19 @@ public class LoginController
     }
     public void login(String username, String password)
     {
-        Object[] obj = {username, password};
+        int s=0;
+        String type = loginBoundry.getUserType().getSelectionModel().getSelectedItem();
+        if(type == "Student"){
+            s=0;
+
+        }
+        else if(type == "Teacher"){
+            s=1;
+        }
+        else {
+            s=2;
+        }
+        Object[] obj = {username, password,s};
         Message msg = new Message("Login", obj);
         try {
             SimpleClient.getClient().sendToServer(msg);
@@ -121,4 +144,56 @@ public class LoginController
     public void setLoginBoundry(LoginBoundry loginBoundry) {
         this.loginBoundry = loginBoundry;
     }
+//    private void handleUserTypeSelection(String selectedUserType) {
+//
+//        // Set different colors for "Student" and "Teacher" options
+//        if (selectedUserType.equals("Student"))
+//        {
+//            loginBoundry.getLoginBtn().getStyleClass().add("login-button-student");
+//            loginBoundry.getUsernameTxt().getStyleClass().add("text-field-student");
+//            loginBoundry.getPasswordHidden().getStyleClass().add("password-field-custom-student");
+//            loginBoundry.getPasswordTxt().getStyleClass().add("text-field-student");
+//            loginBoundry.getAnchorPane().getStyleClass().add("anchor-pane-student");
+//            loginBoundry.getCheckbox().getStyleClass().add("check-box-student");
+//            loginBoundry.getTimeLabel().getStyleClass().add("label-student");
+//            loginBoundry.getUserLogin().getStyleClass().add("label-student");
+//            loginBoundry.getUserType().getStyleClass().add("combo-box-custom-student");
+//            Image image1 = new Image(getClass().getResourceAsStream("/images/usersOrange.png"));
+//            loginBoundry.getLogo().setImage(image1);
+//            Image image2 = new Image(getClass().getResourceAsStream("/images/userkeyOrange.png"));
+//            loginBoundry.getUserpassword().setImage(image2);
+//        }
+//        else if (selectedUserType.equals("Teacher"))
+//        {
+//            loginBoundry.getLoginBtn().getStyleClass().add("login-button-teacher");
+//            loginBoundry.getUsernameTxt().getStyleClass().add("text-field-teacher");
+//            loginBoundry.getPasswordHidden().getStyleClass().add("password-field-custom-teacher");
+//            loginBoundry.getPasswordTxt().getStyleClass().add("text-field-teacher");
+//            loginBoundry.getAnchorPane().getStyleClass().add("anchor-pane-teacher");
+//            loginBoundry.getCheckbox().getStyleClass().add("check-box-teacher");
+//            loginBoundry.getTimeLabel().getStyleClass().add("label-teacher");
+//            loginBoundry.getUserLogin().getStyleClass().add("label-teacher");
+//            loginBoundry.getUserType().getStyleClass().add("combo-box-custom-teacher");
+//            Image image1 = new Image(getClass().getResourceAsStream("/images/users.png"));
+//            loginBoundry.getLogo().setImage(image1);
+//            Image image2 = new Image(getClass().getResourceAsStream("/images/userpas.png"));
+//            loginBoundry.getUserpassword().setImage(image2);
+//        }
+//        else if (selectedUserType.equals("Principle"))
+//        {
+//            loginBoundry.getLoginBtn().getStyleClass().add("login-button-principle");
+//            loginBoundry.getUsernameTxt().getStyleClass().add("text-field-principle");
+//            loginBoundry.getPasswordHidden().getStyleClass().add("password-field-custom-principle");
+//            loginBoundry.getPasswordTxt().getStyleClass().add("text-field-principle");
+//            loginBoundry.getAnchorPane().getStyleClass().add("anchor-pane-principle");
+//            loginBoundry.getCheckbox().getStyleClass().add("check-box-principle");
+//            loginBoundry.getTimeLabel().getStyleClass().add("label-principle");
+//            loginBoundry.getUserLogin().getStyleClass().add("label-principle");
+//            loginBoundry.getUserType().getStyleClass().add("combo-box-custom-principle");
+//            Image image1 = new Image(getClass().getResourceAsStream("/images/usersPurple.png"));
+//            loginBoundry.getLogo().setImage(image1);
+//            Image image2 = new Image(getClass().getResourceAsStream("/images/userkeyPurple.png"));
+//            loginBoundry.getUserpassword().setImage(image2);
+//        }
+//    }
 }

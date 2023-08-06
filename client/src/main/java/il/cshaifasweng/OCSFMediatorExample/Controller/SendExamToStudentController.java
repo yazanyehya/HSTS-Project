@@ -20,13 +20,52 @@ import java.util.List;
 public class SendExamToStudentController
 {
     private SendExamToStudentBoundry sendExamToStudentBoundry;
+    private boolean isLogoutDialogShown = false;
 
     public SendExamToStudentController(SendExamToStudentBoundry sendExamToStudentBoundry)
     {
         EventBus.getDefault().register(this);
         this.sendExamToStudentBoundry = sendExamToStudentBoundry;
     }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutSE", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
 
+
+
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
+
+        if (logoutEvent.getMessage().getTitle().equals("LogoutSE")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public void getSubjects() throws IOException
     {
         Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
@@ -35,7 +74,8 @@ public class SendExamToStudentController
     }
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("getCoursesSE", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("getCoursesSE", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
@@ -104,11 +144,21 @@ public class SendExamToStudentController
     @Subscribe
     public void handleSendToStudent(SendToStudentEvent sendToStudentEvent)
     {
-        Platform.runLater(() -> {
-            // Login failure
-            showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam has been sent");
-            //EventBus.getDefault().unregister(this);
-        });
+        if(sendToStudentEvent.getMessage().getBody() != null)
+        {
+            Platform.runLater(()->
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam sent Successfully");
+            });
+        }
+        else
+        {
+            Platform.runLater(()->
+            {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Exam already sent to student");
+            });
+        }
+
     }
     private class ExamListCell extends ListCell<ReadyExam> {
         private boolean firstRow;
@@ -140,7 +190,7 @@ public class SendExamToStudentController
                     Label examTextLabel3 = new Label("Subject: " + exam.getExam().getSubject().getName());
                     Label examTextLabel4 = new Label("Exam Period: " + exam.getExam().getExamPeriod());
                     Label examTextLabel6 = new Label("Exam Type: " + exam.getExamType());
-                    Label examTextLabel5 = new Label("Exam ID: " + exam.getId());
+                    Label examTextLabel5 = new Label("Exam ID: " + exam.getIdd());
 
                     //Label examTextLabel3 = new Label(exam.getSubject().getName());
                     // Add additional labels or components for exam details if needed
@@ -205,3 +255,4 @@ public class SendExamToStudentController
         });
     }
 }
+

@@ -6,6 +6,7 @@ import il.cshaifasweng.OCSFMediatorExample.Controller.AquireExamController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.EditSelectedExamController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.QuestionController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -22,14 +25,21 @@ import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class AquireExamBoundry {
 
     @FXML
     private Button backBtn;
+
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
 
     @FXML
     private ListView<Exam> listViewE;
@@ -59,24 +69,102 @@ public class AquireExamBoundry {
 
     @FXML
     private TextField executionCodeTxt;
+    @FXML
+    private ImageView logo;
+
+
+    @FXML
+    private Button showCourseBtn;
+    @FXML
+    private Button createExamBtn;
+    @FXML
+    private Button createQuestionBtn;
+    @FXML
+    private Button editExamBtn;
+    @FXML
+    private Button editQuestionBtn;
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button approveExamBtn;
+    @FXML
+    private Button aquireExamBtn;
+    @FXML
+    private Button extraTimeBtn;
+    @FXML
+    private Button logoutBtn;
+    @FXML
+    private Button seeResultsBtn;
+    @FXML
+    private Button sendExamsToStudentsBtn;
+
 
     @FXML
     void aquireAction(ActionEvent event) throws IOException {
 
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(listViewE.getSelectionModel().getSelectedItem().getId());
-        if (examType.getSelectionModel().getSelectedItem() == "Manual")
+        if (selectSubject.getSelectionModel().isEmpty())
         {
-            list.add(-1);
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Select a Subject!");
+            });
+        }
+        else if(selectCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Select a Course!");
+            });
+        }
+
+        else if (listViewE.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Select An Exam!");
+            });
+        }
+        else if(examType.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Select the type of exam!");
+            });
+        }
+        else if(Objects.equals(executionCodeTxt.getText(), ""))
+        {
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please enter execution code!");
+            });
         }
         else
         {
-            list.add(-2);
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(listViewE.getSelectionModel().getSelectedItem().getId());
+            if (examType.getSelectionModel().getSelectedItem() == "Manual")
+            {
+                list.add(-1);
+            }
+            else
+            {
+                list.add(-2);
+            }
+            String regex = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{4}$";
+            if (!executionCodeTxt.getText().matches(regex))
+            {
+                Platform.runLater(()->{
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "Execution code must be composed only from letter and digits");
+                });
+            }
+            else
+            {
+                Teacher teacher = (Teacher)SimpleClient.getClient().getUser();
+                Object obj = new Object[]{list,executionCodeTxt.getText(), teacher};
+                Message message = new Message("aquireExam", obj);
+                SimpleClient.getClient().sendToServer(message);
+            }
         }
-        Teacher teacher = (Teacher)SimpleClient.getClient().getUser();
-        Object obj = new Object[]{list,executionCodeTxt.getText(), teacher};
-        Message message = new Message("aquireExam", obj);
-        SimpleClient.getClient().sendToServer(message);
 
     }
 
@@ -119,9 +207,121 @@ public class AquireExamBoundry {
         }
     }
     @FXML
-    void backAction(ActionEvent event)
-    {
+    void createAnExamAction(ActionEvent event) {
         EventBus.getDefault().unregister(aquireExamController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }  @FXML
+    void createAnQuestionAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("QuestionBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void EditExamsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void EditQuestionsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditQuestion");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void approveExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ApproveExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    @FXML
+    void aquireExamAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            // Show the dialog
+            aquireExamController.showAlertDialog(Alert.AlertType.ERROR, "Error", "You Are Already In Aquire Exam Page");
+
+        });
+    }
+
+    @FXML
+    void extraTimeAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimeTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+     aquireExamController.logOut();
+    }
+    @FXML
+    void seeResultsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ViewGradesForTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void sendExamsToStudentsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("SendExamToStudentBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        EventBus.getDefault().unregister(aquireExamController);
+
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
@@ -147,12 +347,27 @@ public class AquireExamBoundry {
     @FXML
     void showExamAction(ActionEvent event) throws IOException
     {
-        listViewE.setVisible(true);
-        Course course = getSelectCourse().getValue();
-        Message message = new Message("showExamsAE", course);
-        SimpleClient.getClient().sendToServer(message);
-    }
+        if (selectSubject.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
 
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Select a Subject!");
+            });
+        }
+        else if(selectCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Select a Course!");
+            });
+        }
+        else
+        {
+            Course course = getSelectCourse().getValue();
+            Message message = new Message("showExamsAE", course);
+            SimpleClient.getClient().sendToServer(message);
+        }
+    }
     public void setAquireExamController(AquireExamController aquireExamController) {
         this.aquireExamController = aquireExamController;
     }
@@ -162,13 +377,14 @@ public class AquireExamBoundry {
     {
         aquireExamController = new AquireExamController(this);
         this.setAquireExamController(aquireExamController);
-
-        selectCourse.setVisible(false);
-        showExamBtn.setVisible(false);
-        aquireBtn.setVisible(false);
-        executionCodeTxt.setVisible(false);
-        listViewE.setVisible(false);
-        selectedExam.setVisible(false);
+        Image logoImage = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
+        logo.setImage(logoImage);
+        selectCourse.setVisible(true);
+        showExamBtn.setVisible(true);
+        aquireBtn.setVisible(true);
+        executionCodeTxt.setVisible(true);
+        listViewE.setVisible(true);
+        selectedExam.setVisible(true);
         aquireExamController.getSubjects();
         examType.getItems().addAll("Manual", "Computerized");
         selectCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
@@ -233,6 +449,42 @@ public class AquireExamBoundry {
                 return null;
             }
         });
+
+
+
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+    }
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
     }
 
     public ComboBox<Subject> getSelectSubject() {

@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.Controller;
+ package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
@@ -48,7 +48,7 @@ public class ExamController111 implements Serializable
         //ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), SimpleClient.getClient().getUser().getFirstName() + " " + SimpleClient.getClient().getUser().getLastName(), getQuestionHashMap());
         //Message message = new Message("saveExam",examHelper);
         System.out.println("incline bench press11");
-       // SimpleClient.getClient().sendToServer(message);
+        // SimpleClient.getClient().sendToServer(message);
     }
     public ExamBoundry getExamBoundry() {
         return examBoundry;
@@ -115,7 +115,7 @@ public class ExamController111 implements Serializable
             }
         }
 
-        }
+    }
 
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
@@ -126,28 +126,28 @@ public class ExamController111 implements Serializable
             alert.showAndWait();
         });
     }
-     @Subscribe
-     public void handleSaveExamEvent(saveExamEvent saveExamEvent)
-     {
-         if (saveExamEvent.getMessage().getBody() != null)
-         {
-             if (saveExamEvent.getMessage().getTitle().equals("saveExam"))
-             {
-                 Platform.runLater(() -> {
-                     // Login success
-                     showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
-                 });
-             }
-         }
-         else {
-             Platform.runLater(() -> {
-                 // Login failure
-                 showAlertDialog(Alert.AlertType.ERROR, "Error", "One of the Field is not assigned");
-             });
-         }
-     }
-     @Subscribe
-     public void handleSelectedQuestionEvent(SelectQuestionEvent selectQuestionEvent) {
+    @Subscribe
+    public void handleSaveExamEvent(saveExamEvent saveExamEvent)
+    {
+        if (saveExamEvent.getMessage().getBody() != null)
+        {
+            if (saveExamEvent.getMessage().getTitle().equals("saveExam"))
+            {
+                Platform.runLater(() -> {
+                    // Login success
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
+                });
+            }
+        }
+        else {
+            Platform.runLater(() -> {
+                // Login failure
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "One of the Field is not assigned");
+            });
+        }
+    }
+    @Subscribe
+    public void handleSelectedQuestionEvent(SelectQuestionEvent selectQuestionEvent) {
         Object body = selectQuestionEvent.getMessage().getBody();
         if (body instanceof List) {
             List<?> list = (List<?>) body;
@@ -185,3 +185,4 @@ public class ExamController111 implements Serializable
     }
 
 }
+ 

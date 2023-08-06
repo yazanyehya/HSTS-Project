@@ -43,7 +43,7 @@ public class SimpleClient extends AbstractClient {
 	{
 		Message message = (Message) msg;
 
-		if(message.getTitle().equals("Login")){
+		if(message.getTitle().equals("Login")||message.getTitle().equals("wrongType")){
 			user = (User) ((Message) msg).getBody();
 			EventBus.getDefault().post(msg);
 		}
@@ -51,7 +51,7 @@ public class SimpleClient extends AbstractClient {
 			user = (User) ((Message) msg).getBody();
 			EventBus.getDefault().post(new AlreadyLoggedIn((Message)msg));
 		}
-		else if(message.getTitle().equals("createQuestion"))
+		else if(message.getTitle().equals("createQuestion")  ||message.getTitle().equals("LogoutQB"))
 		{
 			EventBus.getDefault().post(new QuestionEvent((Message) msg));
 		}
@@ -81,7 +81,7 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new GetCoursesForSubjectsExamEvent((Message) msg));
 		}
-		else if(message.getTitle().equals("getSubjectsForTeacherEQ"))
+		else if(message.getTitle().equals("getSubjectsForTeacherEQ") || message.getTitle().equals("getQuestionsForSubject") || message.getTitle().equals("getQuestionsForSubjectAndCourse"))
 		{
 			EventBus.getDefault().post(new GetSubjectsForTeacherEventEQ((Message) msg));
 		}
@@ -188,7 +188,7 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new ChangeToEditQuestionEvent((Message) msg));
 		}
-		else if(message.getTitle().equals("editSelectedQuestion"))
+		else if(message.getTitle().equals("editSelectedQuestion") || message.getTitle().equals("getQuestionsForSubjectSE"))
 		{
 			EventBus.getDefault().post(new EditSelectedQuestionEvent((Message) msg));
 		}
@@ -204,16 +204,18 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new PressBackEvent((Message) msg));
 		}
-		else if(message.getTitle().equals("Logout"))
+		else if(message.getTitle().equals("Logout")||message.getTitle().equals("LogoutEB")
+				||message.getTitle().equals("LogoutEEB")||message.getTitle().equals("LogoutEQB") ||message.getTitle().equals("LogoutAE")
+				||message.getTitle().equals("LogoutSE")||message.getTitle().equals("LogoutET")||message.getTitle().equals("LogoutAP")||message.getTitle().equals("LogoutVG"))
 		{
 			System.out.println("event bus logout");
 			EventBus.getDefault().post(new LogoutEvent((Message)msg));
 		}
-		else if(message.getTitle().equals("LogoutForStudent"))
+		else if(message.getTitle().equals("LogoutForStudent")|| message.getTitle().equals("LogoutCE")||message.getTitle().equals("LogoutVGS"))
 		{
 			EventBus.getDefault().post(new LogoutForStudentEvent((Message)msg));
 		}
-		else if(message.getTitle().equals("finishExam"))
+		else if(message.getTitle().equals("finishExam") || message.getTitle().equals("timeIsUp"))
 		{
 			EventBus.getDefault().post(new FinishExamEvent((Message)msg));
 		}
@@ -242,10 +244,9 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new ViewGradesForTeacherIIBoundryEvent((Message)msg));
 		}
-		else if(message.getTitle().equals("StartSolvingManualExam"))
+		else if(message.getTitle().equals("StartSolvingManualExam") || message.getTitle().equals("saveManualExam"))
 		{
 			EventBus.getDefault().post(new StartSolvingManualExamEvent((Message)msg));
-
 		}
 		else if(message.getTitle().equals("Logout principle"))
 		{
@@ -289,12 +290,12 @@ public class SimpleClient extends AbstractClient {
 			EventBus.getDefault().post(new GetCoursesForSubjectsPrincipleExamsEvent((Message) msg));
 		}
 
-		else if(message.getTitle().equals("getStudentsGradesForPrinciple"))
+		else if(message.getTitle().equals("getStudentsGradesForPrinciple") || message.getTitle().equals("getStudentsToViewGradePrinciple"))
 		{
 			EventBus.getDefault().post(new GetStudentsGradesForPrincipleEvent((Message) msg));
 		}
 
-		else if(message.getTitle().equals("getTeachersForPrinciple"))
+		else if(message.getTitle().equals("getTeachersForPrinciple") || message.getTitle().equals("getListGradeForTeacher") || message.getTitle().equals("getReadyExamsForTeacherReports"))
 		{
 			EventBus.getDefault().post(new GetTeachersForPrincipleEvent((Message) msg));
 		}
@@ -314,7 +315,7 @@ public class SimpleClient extends AbstractClient {
 			EventBus.getDefault().post(new GetCoursesForPrincipleEvent((Message) msg));
 		}
 
-		else if(message.getTitle().equals("getExamsForCoursePrinciple"))
+		else if(message.getTitle().equals("GetExamsForCoursePrinciple"))
 		{
 			EventBus.getDefault().post(new GetExamsForCoursePrincipleEvent((Message) msg));
 		}
@@ -330,12 +331,21 @@ public class SimpleClient extends AbstractClient {
 		}
 		else if(message.getTitle().equals("refreshTable") || message.getTitle().equals("ApproveExtraTimeRequest") || message.getTitle().equals("DenyExtraTimeRequest") || message.getTitle().equals("AskPrincipleForExtraTime") || message.getTitle().equals("GetOnGoingExamsForExtraTime") || message.getTitle().equals("refreshTablePrinciple"))
 		{
+			System.out.println("ahmaddd");
 			EventBus.getDefault().post(new ExtraTimeEvent((Message) msg));
 		}
 		else if(message.getTitle().equals("ExtraTimePrinciple"))
 		{
 			System.out.println("here is ExtraTimePrinciple");
 			EventBus.getDefault().post(new ExtraTimePrincipleEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getReadyExamsForCoursesReports")|| message.getTitle().equals("getListGradeForCourse"))
+		{
+			EventBus.getDefault().post(new GetCoursesForPrincipleEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getReadyExamsForStudentReports") || message.getTitle().equals("getListGradeForStudent"))
+		{
+			EventBus.getDefault().post(new GetStudentsForPrincipleEvent((Message) msg));
 		}
 
 	}
@@ -347,3 +357,4 @@ public class SimpleClient extends AbstractClient {
 	}
 
 }
+ 

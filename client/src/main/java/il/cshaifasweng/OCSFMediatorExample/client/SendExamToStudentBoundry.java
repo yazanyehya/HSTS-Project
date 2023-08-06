@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.Controller.AquireExamController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.SendExamToStudentController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,13 +22,16 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
-import javax.swing.text.Position;
-import java.awt.*;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SendExamToStudentBoundry {
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
 
     @FXML
     private ListView<ReadyExam> acquiredExams;
@@ -55,27 +59,78 @@ public class SendExamToStudentBoundry {
 
     @FXML
     private Button PerviewExamBtn;
+    @FXML
+    private ImageView logo;
+
+
+    @FXML
+    private Button showCourseBtn;
+    @FXML
+    private Button createExamBtn;
+    @FXML
+    private Button createQuestionBtn;
+    @FXML
+    private Button editExamBtn;
+    @FXML
+    private Button editQuestionBtn;
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button approveExamBtn;
+    @FXML
+    private Button aquireExamBtn;
+    @FXML
+    private Button extraTimeBtn;
+    @FXML
+    private Button logoutBtn;
+    @FXML
+    private Button seeResultsBtn;
+    @FXML
+    private Button sendExamsToStudentsBtn;
+
 
     private SendExamToStudentController sendExamToStudentController;
 
+
     @FXML
     void SendToStudentsAction(ActionEvent event) throws IOException {
-        List<Student> studentList = students.getSelectionModel().getSelectedItems();
-        List<String> list = new ArrayList<String>();
-        for (Student s : studentList)
+        if (acquiredExams.getSelectionModel().isEmpty())
         {
-            list.add(s.getUsername());
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select an exam");
+            });
         }
-        ReadyExam readyExam = acquiredExams.getSelectionModel().getSelectedItem();
-        Object object = new Object[]{list, readyExam};
-        //Object object = new Object[]{readyExam};
-        Message message = new Message("sendToStudent", object);
-        SimpleClient.getClient().sendToServer(message);
+        else
+        {
+            List<Student> studentList = students.getSelectionModel().getSelectedItems();
+            List<String> list = new ArrayList<String>();
+            for (Student s : studentList)
+            {
+                list.add(s.getUsername());
+            }
+            ReadyExam readyExam = acquiredExams.getSelectionModel().getSelectedItem();
+            Object object = new Object[]{list, readyExam};
+            //Object object = new Object[]{readyExam};
+            Message message = new Message("sendToStudent", object);
+            SimpleClient.getClient().sendToServer(message);
+        }
     }
 
     @FXML
     void PerviewExamAction(ActionEvent event) throws IOException {
-        if (acquiredExams.getSelectionModel().isEmpty())
+        if (selectSubject.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a subject");
+            });
+        }
+        else if(selectCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a course");
+            });
+        }
+        else if (acquiredExams.getSelectionModel().isEmpty())
         {
             Platform.runLater(() -> {
                 showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select an exam");
@@ -96,7 +151,7 @@ public class SendExamToStudentBoundry {
             AnchorPane anchorPane1 = new AnchorPane();
             AnchorPane anchorPane2 = new AnchorPane();
             BorderPane borderPane = new BorderPane();
-            Image logo = new Image(getClass().getResourceAsStream("/images/logo.jpg"));
+            Image logo = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
             ImageView imageViewLogo = new ImageView(logo);
             imageViewLogo.setFitWidth(150); // Set the width
             imageViewLogo.setFitHeight(150); // Set the height
@@ -105,12 +160,13 @@ public class SendExamToStudentBoundry {
 
             //Label HighSchoolNameLabel = new Label("High School Test System");
             Label courseLabel = new Label("Exam in "+ readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
+            Label teacherName = new Label(("Creator:" + readyExam.getExam().getTeacherFullName()));
             //HighSchoolNameLabel.setFont(font);
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
             courseLabel.setFont(font);
             courseLabel.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
-            examDetails.getChildren().addAll(imageViewLogo, courseLabel);
+            examDetails.getChildren().addAll(imageViewLogo, courseLabel, teacherName);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
 
@@ -156,6 +212,7 @@ public class SendExamToStudentBoundry {
             region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
             HBox hBox1 = new HBox(region3);
             vBox.getChildren().addAll(hBox,studentDetails,hBox1, questions);
+            vBox.setStyle("-fx-background-color: #ffffff");
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setContent(vBox);
             // Create a new stage and set the VBox as its root
@@ -170,9 +227,123 @@ public class SendExamToStudentBoundry {
         });
     }
     @FXML
-    void backAction(ActionEvent event)
-    {
+    void createAnExamAction(ActionEvent event) {
         EventBus.getDefault().unregister(sendExamToStudentController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }  @FXML
+    void createAnQuestionAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("QuestionBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void EditExamsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void EditQuestionsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditQuestion");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void approveExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ApproveExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    @FXML
+    void aquireExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("AquireExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void extraTimeAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimeTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+
+        sendExamToStudentController.logOut();
+    }
+    @FXML
+    void seeResultsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ViewGradesForTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void sendExamsToStudentsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            // Show the dialog
+            sendExamToStudentController.showAlertDialog(Alert.AlertType.ERROR, "Error", "You Are Already In Send To Student Page");
+
+        });
+    }
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
@@ -181,12 +352,18 @@ public class SendExamToStudentBoundry {
             }
         });
     }
+
     @FXML
     void selectCourseAction(ActionEvent event)
     {
-        showAcquiredExamsBtn.setVisible(true);
+        if (selectSubject.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a subject");
+            });
+        }
+        acquiredExams.getItems().clear();
     }
-
     @FXML
     void selectSubjectAction(ActionEvent event) throws IOException
     {
@@ -197,35 +374,54 @@ public class SendExamToStudentBoundry {
     @FXML
     void showAcquiredExamsAction(ActionEvent event) throws IOException
     {
-        acquiredExams.setVisible(true);
-        showStudentsBtn.setVisible(true);
-        Course course = getSelectCourse().getValue();
-        Teacher teacher = (Teacher)SimpleClient.getClient().getUser();
-        Object object = new Object[]{course, teacher};
-        Message message = new Message("showReadyExams", object);
-        SimpleClient.getClient().sendToServer(message);
+        if (selectCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a course");
+            });
+        }
+        else
+        {
+            acquiredExams.setVisible(true);
+            showStudentsBtn.setVisible(true);
+            Course course = getSelectCourse().getValue();
+            Teacher teacher = (Teacher)SimpleClient.getClient().getUser();
+            Object object = new Object[]{course, teacher};
+            Message message = new Message("showReadyExams", object);
+            SimpleClient.getClient().sendToServer(message);
+        }
     }
-
     @FXML
     void showStudentsAction(ActionEvent event) throws IOException {
-        students.setVisible(true);
-        sendToStudentsBtn.setVisible(true);
-        Message message = new Message("showStudents", selectCourse.getSelectionModel().getSelectedItem());
-        SimpleClient.getClient().sendToServer(message);
-    }
 
+        if (selectCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a course");
+            });
+        }
+        else
+        {
+            Message message = new Message("showStudents", selectCourse.getSelectionModel().getSelectedItem());
+            SimpleClient.getClient().sendToServer(message);
+        }
+
+    }
     @FXML
     public void initialize() throws IOException {
         sendExamToStudentController = new SendExamToStudentController(this);
         this.setSendExamToStudentController(sendExamToStudentController);
+        Image logoImage = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
+        logo.setImage(logoImage);
+
 
         students.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        selectCourse.setVisible(false);
-        showAcquiredExamsBtn.setVisible(false);
-        acquiredExams.setVisible(false);
-        showStudentsBtn.setVisible(false);
-        students.setVisible(false);
-        sendToStudentsBtn.setVisible(false);
+        selectCourse.setVisible(true);
+        showAcquiredExamsBtn.setVisible(true);
+        acquiredExams.setVisible(true);
+        showStudentsBtn.setVisible(true);
+        students.setVisible(true);
+        sendToStudentsBtn.setVisible(true);
 
         sendExamToStudentController.getSubjects();
 
@@ -294,6 +490,39 @@ public class SendExamToStudentBoundry {
             }
         });
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+    }
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
     }
     public void setSendExamToStudentController(SendExamToStudentController sendExamToStudentController) {
         this.sendExamToStudentController = sendExamToStudentController;

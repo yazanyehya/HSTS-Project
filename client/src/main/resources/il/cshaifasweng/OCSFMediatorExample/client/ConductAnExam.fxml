@@ -3,35 +3,108 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ConductAnExamBoundry">
-   <children>
-      <VBox layoutX="287.0" layoutY="112.0" prefHeight="325.0" prefWidth="165.0">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ConductAnExamBoundry">
+   <left>
+      <AnchorPane prefHeight="200.0" prefWidth="192.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="45.0" prefWidth="162.0">
+            <AnchorPane prefHeight="500.0" prefWidth="192.0" style="-fx-background-color: #ffc87c;">
                <children>
-                  <Label text="1.Enter exam execution code." />
-                  <Label prefHeight="17.0" prefWidth="94.0" text="2.Enter your Id." />
+                  <Button fx:id="homeBtn" layoutY="6.0" mnemonicParsing="false" onAction="#homeBtnAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Home" textFill="WHITE">
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect></Button>
+                  <Button fx:id="ConductAnExamBTN" layoutY="82.0" mnemonicParsing="false" onAction="#conductAnExamAction" prefWidth="209.0" style="-fx-background-color: #e9692c;" stylesheets="@Sbutton.css" text="Conduct an exam" textFill="WHITE">
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect></Button>
+                  <Button fx:id="viewGradesBTN" layoutY="158.0" mnemonicParsing="false" onAction="#viewGradesAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="ViewGrades" textFill="WHITE">
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect></Button>
+                  <Button fx:id="logoutBtn" layoutY="436.0" mnemonicParsing="false" onAction="#logoutAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Logout" textFill="WHITE">
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect></Button>
                </children>
-            </VBox>
-            <Region prefHeight="82.0" prefWidth="165.0" />
-            <TextField fx:id="executionCode" onAction="#executionCodeAction" prefHeight="18.0" prefWidth="155.0" promptText="Enter Execution Code" />
-            <Region prefHeight="80.0" prefWidth="155.0" />
-            <TextField fx:id="id" onAction="#idAction" promptText="Enter Your ID" />
-            <Region prefHeight="92.0" prefWidth="155.0" />
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Region prefHeight="100.0" prefWidth="67.0" />
-                  <Button fx:id="startExamBtn" mnemonicParsing="false" onAction="#startExamAction" prefHeight="26.0" prefWidth="128.0" text="Start Exam" />
-                  <Region prefHeight="100.0" prefWidth="62.0" />
-               </children>
-            </HBox>
+            </AnchorPane>
          </children>
-      </VBox>
-      <Button fx:id="backBtn" layoutX="330.0" layoutY="437.0" mnemonicParsing="false" onAction="#backAction" text="Back" />
-   </children>
-</AnchorPane>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="523.0" prefWidth="692.0" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane layoutY="2.0" prefHeight="514.0" prefWidth="691.0">
+               <children>
+                  <Button fx:id="startExamBtn1" layoutX="238.0" layoutY="300.0" mnemonicParsing="false" onAction="#startExamAction" prefHeight="28.0" prefWidth="157.0" stylesheets="@sbuttun1.css" text="Start Exam" />
+                  <TextField fx:id="executionCode" layoutX="238.0" layoutY="217.0" onAction="#executionCodeAction" prefHeight="28.0" prefWidth="157.0" promptText="Enter Execution Code" style="-fx-border-color: #ffa500; -fx-background-color: transparent; -fx-background-radius: 90; -fx-border-radius: 90; -fx-border-width: 2;" />
+                  <TextField fx:id="id" layoutX="238.0" layoutY="261.0" onAction="#idAction" prefHeight="28.0" prefWidth="157.0" promptText="Enter Your ID" style="-fx-border-color: #ffa500; -fx-background-color: transparent; -fx-background-radius: 90; -fx-border-radius: 90; -fx-border-width: 2;" />
+                  <Label layoutX="29.0" layoutY="128.0" prefHeight="35.0" prefWidth="178.0" style="-fx-border-color: #000000; -fx-background-color: #ffffff; -fx-background-radius: 90; -fx-border-radius: 90; -fx-border-width: 2;" text="  2. Enter your Id.">
+                     <font>
+                        <Font name="System Bold" size="11.0" />
+                     </font>
+                     <effect>
+                        <DropShadow>
+                           <color>
+                              <Color red="0.9137254953384399" green="0.4117647111415863" blue="0.1725490242242813" />
+                           </color>
+                        </DropShadow>
+                     </effect>
+                  </Label>
+                  <Label layoutX="29.0" layoutY="81.0" prefHeight="29.0" prefWidth="179.0" style="-fx-border-color: #000000; -fx-background-color: #ffffff; -fx-background-radius: 90; -fx-border-radius: 90; -fx-border-width: 2;" text="  1. Enter exam execution code.">
+                     <font>
+                        <Font name="System Bold" size="11.0" />
+                     </font>
+                     <effect>
+                        <DropShadow>
+                           <color>
+                              <Color red="0.9137254953384399" green="0.4117647111415863" blue="0.1725490242242813" />
+                           </color>
+                        </DropShadow>
+                     </effect>
+                  </Label>
+                  <ImageView fitHeight="165.0" fitWidth="195.0" layoutX="484.0" layoutY="102.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../images/orangeHSTS.png" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="445.0" layoutY="372.0" prefHeight="123.0" prefWidth="212.0" text="Good Luck !!" textFill="ORANGE">
+                     <font>
+                        <Font name="Algerian" size="31.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="timeLabel" layoutX="484.0" layoutY="28.0" prefHeight="67.0" prefWidth="173.0" textFill="ORANGE">
+                     <font>
+                        <Font name="Algerian" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

@@ -1,8 +1,12 @@
+
+
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.ExtraTimePrincipleController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ExtraTimeTeacherController;
 import il.cshaifasweng.OCSFMediatorExample.entities.ExtraTime;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.Principle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -36,12 +40,56 @@ public class ExtraTimePrincipleBoundry {
     private ExtraTimePrincipleController extraTimePrincipleController;
 
     @FXML
-    void backAction(ActionEvent event)
-    {
-        EventBus.getDefault().unregister(extraTimePrincipleController);
+    private Button courseReportsBtn;
+
+    @FXML
+    private Button extraTimeBtn;
+
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button logoutBtn;
+
+
+    @FXML
+    private Button studentReportsBtn;
+
+    @FXML
+    private Button teacherReportsBtn;
+
+    @FXML
+    private Button viewExamsBtn;
+
+    @FXML
+    private Button viewGradesBtn;
+
+    @FXML
+    private Button viewQuestionsBtn;
+
+
+    @FXML
+    void teacherReportsAction(ActionEvent event) {
         Platform.runLater(() -> {
             try {
-                SimpleChatClient.switchScreen("PrincipleBoundry");
+                EventBus.getDefault().unregister(extraTimePrincipleController);
+                SimpleChatClient.switchScreen("teacherReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getTeachersForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void courseReportsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(extraTimePrincipleController);
+                SimpleChatClient.switchScreen("courseReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getCoursesForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -49,9 +97,103 @@ public class ExtraTimePrincipleBoundry {
     }
 
     @FXML
+    void studentReportsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(extraTimePrincipleController);
+                SimpleChatClient.switchScreen("studentReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getStudentsForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void reportsAction(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(extraTimePrincipleController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("reportsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(extraTimePrincipleController);
+                SimpleChatClient.switchScreen("PrincipleBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+        extraTimePrincipleController.logOut();
+    }
+
+    @FXML
+    void extraTimeAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(extraTimePrincipleController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimePrinciple");
+                Message message = new Message("ExtraTimePrinciple", null);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void viewExamsAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(extraTimePrincipleController);
+                SimpleChatClient.switchScreen("viewExamsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void viewGradesAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(extraTimePrincipleController);
+                SimpleChatClient.switchScreen("viewGradesBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void viewQuestionsAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(extraTimePrincipleController);
+                SimpleChatClient.switchScreen("viewQuestionsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+    @FXML
     public void initialize()
     {
-         extraTimePrincipleController= new ExtraTimePrincipleController(this);
+        extraTimePrincipleController= new ExtraTimePrincipleController(this);
         this.setExtraTimePrincipleController(extraTimePrincipleController);
     }
     public TableColumn<ExtraTime, Button> getPressCol() {
@@ -99,3 +241,4 @@ public class ExtraTimePrincipleBoundry {
     }
 
 }
+ 

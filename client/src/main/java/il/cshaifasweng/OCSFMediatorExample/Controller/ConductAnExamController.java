@@ -16,6 +16,8 @@ public class ConductAnExamController
 {
 
     private ConductAnExamBoundry conductAnExamBoundry;
+    private boolean isLogoutDialogShown = false;
+
 
     public ConductAnExamController(ConductAnExamBoundry conductAnExamBoundry)
     {
@@ -35,7 +37,11 @@ public class ConductAnExamController
             // Login failure
             Object[] objects = (Object[]) startExamFailedEvent.getMessage().getBody();
             String info = (String) objects[0];
-            if (Objects.equals(info, "1"))
+            if (Objects.equals(info, "0"))
+            {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "You already did the exam");
+            }
+            else if (Objects.equals(info, "1"))
             {
                 showAlertDialog(Alert.AlertType.ERROR, "Error", "No available exam for this code");
             }
@@ -87,5 +93,36 @@ public class ConductAnExamController
             alert.setContentText(message);
             alert.showAndWait();
         });
+    }
+    @Subscribe
+    public void handleLogoutEvent(LogoutForStudentEvent logoutForStudentEvent) {
+        System.out.println("logout platform");
+
+        if (logoutForStudentEvent.getMessage().getTitle().equals("LogoutCE")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

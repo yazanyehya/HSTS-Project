@@ -1,19 +1,26 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.Controller.ViewGradesForTeacherController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ViewGradesForTeacherIIController;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ViewGradesForTeacherIIBoundry {
+
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
 
     @FXML
     private Button backBtn;
@@ -52,6 +59,39 @@ public class ViewGradesForTeacherIIBoundry {
     public void initialize() throws IOException {
         viewGradesForTeacherIIController = new ViewGradesForTeacherIIController(this);
         this.setViewGradesForTeacherIIController(viewGradesForTeacherIIController);
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+    }
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
     }
 
     public void setViewGradesForTeacherIIController(ViewGradesForTeacherIIController viewGradesForTeacherIIController) {

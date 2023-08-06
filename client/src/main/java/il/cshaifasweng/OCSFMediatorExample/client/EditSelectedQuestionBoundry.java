@@ -1,13 +1,12 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.Controller.EditSelectedQuestionController;
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.Subject;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
-import il.cshaifasweng.OCSFMediatorExample.Controller.EditSelectedQuestionController;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -16,11 +15,17 @@ import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class EditSelectedQuestionBoundry {
+
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
 
     @FXML
     private TextField answerA;
@@ -140,13 +145,32 @@ public class EditSelectedQuestionBoundry {
         }
         Subject selectedSubject = selectSubject.getValue();
         List<String> list = new ArrayList<>();
-        if (selectedRadioButton == null || selectedCourses == null || Objects.equals(getAnswerA().getText(), "") || Objects.equals(getAnswerB().getText(), "") || Objects.equals(getAnswerC().getText(), "") || Objects.equals(getAnswerD().getText(), "") || selectedSubject == null )
+        if (selectedRadioButton == null || courseList.getSelectionModel().isEmpty() || Objects.equals(getAnswerA().getText(), "") || Objects.equals(getAnswerB().getText(), "") || Objects.equals(getAnswerC().getText(), "") || Objects.equals(getAnswerD().getText(), "") || selectSubject.getSelectionModel().isEmpty() )
         {
             list = null;
         }
         else
         {
+            String answer = "";
             correctAnswer = selectedRadioButton.getText();
+
+            if(correctAnswer.equals("a."))
+            {
+                answer = answerA.getText();
+            }
+            else if (correctAnswer.equals("b."))
+            {
+                answer = answerB.getText();
+            }
+            else if (correctAnswer.equals("c."))
+            {
+                answer = answerC.getText();
+            }
+            else if (correctAnswer.equals("d."))
+            {
+                answer = answerD.getText();
+            }
+            correctAnswer = selectedRadioButton.getText() + " " + answer;
 //            question = new Question(questionTextTXT.getText(), answerA.getText(), answerB.getText()
 //                    , answerC.getText(), answerD.getText(), selectedSubject, (Teacher) SimpleClient.getClient().getUser(), correctAnswer);
             list.add(questionTextTXT.getText());
@@ -166,10 +190,20 @@ public class EditSelectedQuestionBoundry {
         editSelectedQuestionController.saveQuestion(list);
     }
 
+
     @FXML
     void selectCourseAction(ActionEvent event) throws IOException
     {
-        editSelectedQuestionController.getCourse(selectSubject.getSelectionModel().getSelectedItem());
+        if (selectSubject.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a Subject");
+            });
+        }
+        else
+        {
+            editSelectedQuestionController.getCourse(selectSubject.getSelectionModel().getSelectedItem());
+        }
     }
     @FXML
     void selectSubjectAction(ActionEvent event) {
@@ -349,7 +383,49 @@ public class EditSelectedQuestionBoundry {
         this.setEditSelectedQuestionController(editSelectedQuestionController);
         courseList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         //selectCourse.getSelectionModel().getSelectedItem()
-        editSelectedQuestionController.getSubjects();
+        //editSelectedQuestionController.getSubjects();
         populateCourseComboBox();
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+    }
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
+    }
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 }

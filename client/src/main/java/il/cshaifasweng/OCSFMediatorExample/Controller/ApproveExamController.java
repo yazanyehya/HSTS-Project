@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.Controller;
+ package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
@@ -20,6 +20,8 @@ import java.util.List;
 public class ApproveExamController
 {
     private ApproveExamBoundry approveExamBoundry;
+    private boolean isLogoutDialogShown = false;
+
 
     public ApproveExamController (ApproveExamBoundry approveExamBoundry)
     {
@@ -35,7 +37,8 @@ public class ApproveExamController
     }
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("getCoursesAPP", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("getCoursesAPP", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
@@ -88,7 +91,7 @@ public class ApproveExamController
                     Label examTextLabel4 = new Label("Exam Period: " + exam.getExam().getExamPeriod());
                     Label examTextLabel6 = new Label("Exam Type: " + exam.getExamType());
                     Label examTextLabel7 = new Label("Exam Grade: " + exam.getGrade());
-                    Label examTextLabel5 = new Label("Exam ID: " + exam.getId());
+                    Label examTextLabel5 = new Label("Exam ID: " + exam.getIdd());
 
                     //Label examTextLabel3 = new Label(exam.getSubject().getName());
                     // Add additional labels or components for exam details if needed
@@ -133,4 +136,45 @@ public class ApproveExamController
             alert.showAndWait();
         });
     }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutAP", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+
+
+
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
+
+        if (logoutEvent.getMessage().getTitle().equals("LogoutAP")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
+ 

@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.entities;
+ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,6 +23,8 @@ public class Teacher extends User implements Serializable
     @JoinColumn(name = "principle_id")
     private Principle principle;
 
+    @ManyToMany(mappedBy = "listOfTeachers", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Exam> listOfExams;
 
     public List<Course> getCourses() {
         return courses;
@@ -30,16 +32,19 @@ public class Teacher extends User implements Serializable
 
     public List<Subject> getSubjects(){return subjects;}
 
-    public Teacher(String firstName, String lastName, String username, String password, int whoAreYou)
+    public Teacher(String firstName, String lastName, String username, String password, int whoAreYou, String idd)
     {
-        super(firstName, lastName, username, password, whoAreYou, false);
+        super(firstName, lastName, username, password, whoAreYou, false,  idd);
         this.subjects = new ArrayList<Subject>();
         this.listOfQuestions = new ArrayList<Question>();
         this.courses = new ArrayList<Course>();
+        this.listOfExams = new ArrayList<Exam>();
     }
     public Teacher(){
         this.listOfQuestions = new ArrayList<Question>();
         this.courses = new ArrayList<Course>();
+        this.listOfExams = new ArrayList<Exam>();
+
     }
 
     public List<Question> getListOfQuestions() {
@@ -63,4 +68,10 @@ public class Teacher extends User implements Serializable
     public void setPrinciple(Principle principle) {
         this.principle = principle;
     }
+
+    public List<Exam> getListOfExams() {
+        return listOfExams;
+    }
+
 }
+ 

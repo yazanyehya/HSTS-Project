@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.Controller;
+ package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
@@ -102,22 +102,22 @@ public class PreviewToApproveController
 //
 //        }
 
-            if (!answer1RadioButton.getText().equals(question.getCorrectAnswer()) && answer1RadioButton.getText().equals(selectedAnswer))
-            {
-                answer1RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
-            }
-            else if (!answer2RadioButton.getText().equals(question.getCorrectAnswer()) && answer2RadioButton.getText().equals(selectedAnswer))
-            {
-                answer1RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
-            }
-            else if (!answer3RadioButton.getText().equals(question.getCorrectAnswer()) && answer3RadioButton.getText().equals(selectedAnswer))
-            {
-                answer1RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
-            }
-            else if (!answer4RadioButton.getText().equals(question.getCorrectAnswer()) && answer4RadioButton.getText().equals(selectedAnswer))
-            {
-                answer1RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
-            }
+        if (!answer1RadioButton.getText().equals(question.getCorrectAnswer()) && answer1RadioButton.getText().equals(selectedAnswer))
+        {
+            answer1RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
+        }
+        else if (!answer2RadioButton.getText().equals(question.getCorrectAnswer()) && answer2RadioButton.getText().equals(selectedAnswer))
+        {
+            answer2RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
+        }
+        else if (!answer3RadioButton.getText().equals(question.getCorrectAnswer()) && answer3RadioButton.getText().equals(selectedAnswer))
+        {
+            answer3RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
+        }
+        else if (!answer4RadioButton.getText().equals(question.getCorrectAnswer()) && answer4RadioButton.getText().equals(selectedAnswer))
+        {
+            answer4RadioButton.setStyle("-fx-text-fill: #FF6347 ;");
+        }
         if(answer1RadioButton.getText().equals(correctAnswer))
         {
             answer1RadioButton.setStyle("-fx-text-fill: #228B22;");
@@ -155,7 +155,7 @@ public class PreviewToApproveController
             AnchorPane anchorPane1 = new AnchorPane();
             AnchorPane anchorPane2 = new AnchorPane();
             BorderPane borderPane = new BorderPane();
-            Image logo = new Image(getClass().getResourceAsStream("/images/logo.jpg"));
+            Image logo = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
             ImageView imageViewLogo = new ImageView(logo);
             imageViewLogo.setFitWidth(150); // Set the width
             imageViewLogo.setFitHeight(150); // Set the height
@@ -163,12 +163,13 @@ public class PreviewToApproveController
             previewToApproveBoundry.getGrade().setText(Integer.toString(readyExam.getGrade()));
             //Label HighSchoolNameLabel = new Label("High School Test System");
             Label courseLabel = new Label("Exam in " + readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
+            Label teacherName = new Label((readyExam.getExam().getTeacherFullName()));
             //HighSchoolNameLabel.setFont(font);
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
             courseLabel.setFont(font);
             courseLabel.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
-            examDetails.getChildren().addAll(imageViewLogo, courseLabel);
+            examDetails.getChildren().addAll(imageViewLogo, courseLabel, teacherName);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
 
@@ -251,3 +252,4 @@ public class PreviewToApproveController
         });
     }
 }
+ 

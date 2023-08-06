@@ -1,3 +1,4 @@
+
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.StartSolvingManualExamController;
@@ -61,7 +62,7 @@ public class StartSolvingManualExamBoundry {
 
         try {
             // Save the Word document to a file
-            File file = new File("target/" + documentName);
+            File file = new File("word_Exams/" + documentName);
             FileOutputStream out = new FileOutputStream(file);
             document.write(out);
             out.close();
@@ -96,7 +97,7 @@ public class StartSolvingManualExamBoundry {
                 Object object = examID;
                 Message message2 = new Message("SetOnGoingToFalse", object);
                 SimpleClient.getClient().sendToServer(message2);
-                File file = new File("target/" + documentName);
+                File file = new File("word_Exams/" + documentName);
                 XWPFDocument document = new XWPFDocument(new FileInputStream(file));
 
                 // Extract the answers from the Word document
@@ -123,10 +124,12 @@ public class StartSolvingManualExamBoundry {
 
                 // Close the document
                 document.close();
-                EventBus.getDefault().unregister(startSolvingManualExamController);
                 Platform.runLater(() -> {
                     try {
                         SimpleChatClient.switchScreen("ConductAnExam");
+                        Object object1 = new Object[]{file, Integer.parseInt(examID), SimpleClient.getClient().getUser()};
+                        Message message = new Message("saveManualExam", object1);
+                        SimpleClient.getClient().sendToServer(message);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -219,3 +222,4 @@ public class StartSolvingManualExamBoundry {
     }
 }
 
+ 

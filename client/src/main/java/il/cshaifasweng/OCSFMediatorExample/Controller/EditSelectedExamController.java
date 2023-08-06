@@ -205,7 +205,8 @@ public class EditSelectedExamController
             }
             sum += q.getScore();
         }
-        if (s == "At least one Question has 0 score")
+        System.out.println("edit selected grade "+sum);
+        if (s.equals("At least one Question has 0 score"))
         {
             Platform.runLater(() -> {
                 // Login failure
@@ -214,7 +215,7 @@ public class EditSelectedExamController
             });
 
         }
-        else if (sum != 100 && s == "")
+        else if (sum != 100 && s.equals(""))
         {
             Platform.runLater(() -> {
                 // Login failure
@@ -224,10 +225,10 @@ public class EditSelectedExamController
         }
         else
         {
-                Platform.runLater(() -> {
-                    // Login success
-                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
-                });
+            Platform.runLater(() -> {
+                // Login success
+                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
+            });
         }
     }
     public void saveExam(List<Question> selectedQuestions) throws IOException {
@@ -248,9 +249,12 @@ public class EditSelectedExamController
             System.out.println(question.getQText() + "  score: " + question.getScore());
             questionHashMap1.put(question, question.getScore()); // Set a default score of 0 for each selected question
         }
-
-        ExamHelper examHelper = new ExamHelper(editSelectedExamBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), questionHashMap1, subject, course, editSelectedExamBoundry.getCommentTeacher().getText(), editSelectedExamBoundry.getCommentStudet().getText());
-        Message message = new Message("saveEditedExam", examHelper);
+        System.out.println(questionHashMap1.size());
+        String fullName = ((Teacher)SimpleClient.getClient().getUser()).getFirstName() + " " + ((Teacher)SimpleClient.getClient().getUser()).getLastName();
+        ExamHelper examHelper = new ExamHelper(editSelectedExamBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), fullName,questionHashMap1, subject, course, editSelectedExamBoundry.getCommentTeacher().getText(), editSelectedExamBoundry.getCommentStudet().getText());
+        Object object = new Object[]{SimpleClient.getClient().getUser(), examHelper};
+        Message message = new Message("saveEditedExam", object);
         SimpleClient.getClient().sendToServer(message);
     }
 }
+ 

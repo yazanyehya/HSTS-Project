@@ -6,9 +6,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,16 +24,43 @@ public class EditSelectedQuestionController
         this.editSelectedQuestionBoundry = editSelectedQuestionBoundry;
     }
     @Subscribe
-    public void handleSelectedQuestion(EditSelectedQuestionEvent editSelectedQuestionEvent)
-    {
-        Question question = (Question)editSelectedQuestionEvent.getMessage().getBody();
-        editSelectedQuestionBoundry.getQuestionTextTXT().setText(question.getQText());
-        editSelectedQuestionBoundry.getAnswerA().setText(question.getAnswer1());
-        editSelectedQuestionBoundry.getAnswerB().setText(question.getAnswer2());
-        editSelectedQuestionBoundry.getAnswerC().setText(question.getAnswer3());
-        editSelectedQuestionBoundry.getAnswerD().setText(question.getAnswer4());
+    public void handleSelectedQuestion(EditSelectedQuestionEvent editSelectedQuestionEvent) {
+        Platform.runLater(()->
+        {
+            Object[] objects = (Object[]) editSelectedQuestionEvent.getMessage().getBody();
+            Subject subject = (Subject) objects[0];
+            ObservableList<Subject> subjectObservableList= FXCollections.observableArrayList(subject);
+            editSelectedQuestionBoundry.getSelectSubject().setItems(subjectObservableList);
+            Question question = (Question) objects[1];
+            editSelectedQuestionBoundry.getQuestionTextTXT().setText(question.getQText());
+            editSelectedQuestionBoundry.getAnswerA().setText(question.getAnswer1());
+            editSelectedQuestionBoundry.getAnswerB().setText(question.getAnswer2());
+            editSelectedQuestionBoundry.getAnswerC().setText(question.getAnswer3());
+            editSelectedQuestionBoundry.getAnswerD().setText(question.getAnswer4());
 
+            // Get the correct answer from the Question object (e.g., "A", "B", "C", or "D")
+            String correctAnswer = question.getCorrectAnswer();
+
+            // Select the correct answer by setting the toggle for the corresponding radio button
+            if (correctAnswer.equalsIgnoreCase("a. "+ question.getAnswer1()))
+            {
+                editSelectedQuestionBoundry.getChooseAnswer().selectToggle(editSelectedQuestionBoundry.getOptionA());
+            }
+            else if (correctAnswer.equalsIgnoreCase("b. " + question.getAnswer2()) )
+            {
+                editSelectedQuestionBoundry.getChooseAnswer().selectToggle(editSelectedQuestionBoundry.getOptionB());
+            }
+            else if (correctAnswer.equalsIgnoreCase("c. " + question.getAnswer3()))
+            {
+                editSelectedQuestionBoundry.getChooseAnswer().selectToggle(editSelectedQuestionBoundry.getOptionC());
+            }
+            else if (correctAnswer.equalsIgnoreCase("d. " + question.getAnswer4()))
+            {
+                editSelectedQuestionBoundry.getChooseAnswer().selectToggle(editSelectedQuestionBoundry.getOptionD());
+            }
+        });
     }
+
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(alertType);
@@ -80,13 +105,14 @@ public class EditSelectedQuestionController
     @Subscribe
     public void handleGetSubjectForTeacher(GetSubjectsForTeacherEventEQ getSubjectsForTeacherEventEQ)
     {
-        List<Subject> subjects = (List<Subject>)getSubjectsForTeacherEventEQ.getMessage().getBody();
-        ObservableList<Subject> subjectObservableList= FXCollections.observableArrayList(subjects);
-        editSelectedQuestionBoundry.getSelectSubject().setItems(subjectObservableList);
+//        List<Subject> subjects = (List<Subject>)getSubjectsForTeacherEventEQ.getMessage().getBody();
+//        ObservableList<Subject> subjectObservableList= FXCollections.observableArrayList(subjects);
+//        editSelectedQuestionBoundry.getSelectSubject().setItems(subjectObservableList);
     }
 
     public void getCourse(Subject selectedItem) throws IOException {
-        Message message = new Message("getCoursesForSubjectsEQ", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("getCoursesForSubjectsEQ", object);
         SimpleClient.getClient().sendToServer(message);
     }
     private class CourseListCell extends ListCell<Course> {
@@ -119,11 +145,14 @@ public class EditSelectedQuestionController
     @Subscribe
     public void handleGetCoursesForSubject(GetCoursesForSubjectsEventEQ getCoursesForSubjectsEvent)
     {
-        List<Course> courses = (List<Course>)getCoursesForSubjectsEvent.getMessage().getBody();
-        ObservableList<Course> courseObservableList= FXCollections.observableArrayList(courses);
-        editSelectedQuestionBoundry.getCourseList().setItems(courseObservableList);
-        editSelectedQuestionBoundry.getCourseList().setCellFactory(param -> {
-            return new EditSelectedQuestionController.CourseListCell(false);
+        Platform.runLater(()->{
+            List<Course> courses = (List<Course>)getCoursesForSubjectsEvent.getMessage().getBody();
+            ObservableList<Course> courseObservableList= FXCollections.observableArrayList(courses);
+            editSelectedQuestionBoundry.getCourseList().setItems(courseObservableList);
+            editSelectedQuestionBoundry.getCourseList().setCellFactory(param -> {
+                return new EditSelectedQuestionController.CourseListCell(false);
+            });
         });
     }
 }
+ 

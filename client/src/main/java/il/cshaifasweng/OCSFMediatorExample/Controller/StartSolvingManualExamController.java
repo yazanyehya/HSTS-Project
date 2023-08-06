@@ -99,7 +99,14 @@ public class StartSolvingManualExamController
     @Subscribe
     public void handleEvents(StartSolvingManualExamEvent startSolvingManualExamEvent) throws IOException, InvalidFormatException {
         System.out.println("lollllllll");
-        if (startSolvingManualExamEvent.getMessage().getTitle().equals("StartSolvingManualExam"))
+        if ("saveManualExam".equals(startSolvingManualExamEvent.getMessage().getTitle()))
+        {
+            Platform.runLater(()->{
+                EventBus.getDefault().unregister(this);
+                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam saved Successfully");
+            });
+        }
+        else if (startSolvingManualExamEvent.getMessage().getTitle().equals("StartSolvingManualExam"))
         {
             ReadyExam readyExam = (ReadyExam) startSolvingManualExamEvent.getMessage().getBody();
             Message message = new Message("SetOnGoingToTrue", readyExam);
@@ -121,45 +128,45 @@ public class StartSolvingManualExamController
                 startSolvingManualExamBoundry.getTimerLabel().setText(String.format("      %02d:%02d:%02d", hours ,minutes, seconds));
 
                 timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-                if (minutes == 0 && seconds == 0 && hours == 0)
-                {
-                    if (Objects.equals(startSolvingManualExamBoundry.getFinished(), "no"))
+                    if (minutes == 0 && seconds == 0 && hours == 0)
                     {
-                        Platform.runLater(() -> {
+                        if (Objects.equals(startSolvingManualExamBoundry.getFinished(), "no"))
+                        {
+                            Platform.runLater(() -> {
 
-                            showAlertDialog(Alert.AlertType.ERROR, "Error", "There is no longer time left to solve the exam");
-                            try {
-                                EventBus.getDefault().unregister(this);
-                                SimpleChatClient.switchScreen("ConductAnExam");
-                                Message message2 = new Message("SetOnGoingToFalse", Integer.toString(readyExam.getId()));
-                                SimpleClient.getClient().sendToServer(message2);
+                                showAlertDialog(Alert.AlertType.ERROR, "Error", "There is no longer time left to solve the exam");
+                                try {
+                                    EventBus.getDefault().unregister(this);
+                                    SimpleChatClient.switchScreen("ConductAnExam");
+                                    Message message2 = new Message("SetOnGoingToFalse", Integer.toString(readyExam.getId()));
+                                    SimpleClient.getClient().sendToServer(message2);
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
-
-                }
-
-                else {
-                    // Update the timer
-                    if (seconds == 0) {
-                        if (minutes == 0) {
-                            hours--;
-                            minutes = 59;
-                            seconds = 59;
-                        } else {
-                            minutes--;
-                            seconds = 59;
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
                         }
-                    } else {
-                        seconds--;
+
                     }
-                }
-                // Update the timer label with the new value
-                startSolvingManualExamBoundry.getTimerLabel().setText(String.format("      %02d:%02d:%02d", hours ,minutes, seconds));
-            }));
+
+                    else {
+                        // Update the timer
+                        if (seconds == 0) {
+                            if (minutes == 0) {
+                                hours--;
+                                minutes = 59;
+                                seconds = 59;
+                            } else {
+                                minutes--;
+                                seconds = 59;
+                            }
+                        } else {
+                            seconds--;
+                        }
+                    }
+                    // Update the timer label with the new value
+                    startSolvingManualExamBoundry.getTimerLabel().setText(String.format("      %02d:%02d:%02d", hours ,minutes, seconds));
+                }));
                 timeline.setCycleCount(Timeline.INDEFINITE); // This will make the timeline run indefinitely until stopped manually
                 timeline.play();
             });
@@ -188,7 +195,7 @@ public class StartSolvingManualExamController
             run1.setColor("1B7245");
             run1.setText("Student Name: " + readyExam.getFullName());
             run1.addBreak();
-            run1.setText("Student ID: " + readyExam.getStudentId());
+            run1.setText("Student ID: " + SimpleClient.getClient().getUser().getIdd());
             run1.addBreak();
             run1.addBreak();
             run1.addBreak();
@@ -240,3 +247,4 @@ public class StartSolvingManualExamController
         this.timeline = timeline;
     }
 }
+ 

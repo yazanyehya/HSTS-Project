@@ -22,9 +22,9 @@ public class Principle extends User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "principle_id")
     private List<Subject> subjects;
-    public Principle(String firstName, String lastName, String username, String password, int whoAreYou)
+    public Principle(String firstName, String lastName, String username, String password, int whoAreYou, String idd)
     {
-        super(firstName, lastName, username, password, whoAreYou, false);
+        super(firstName, lastName, username, password, whoAreYou, false, idd);
         this.students = new ArrayList<Student>();
         this.teachers = new ArrayList<Teacher>();
         this.courses = new ArrayList<Course>();

@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.entities;
+ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -106,3 +106,4 @@ public class ExtraTime implements Serializable
         this.teacherId = teacherId;
     }
 }
+ 

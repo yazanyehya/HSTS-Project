@@ -21,11 +21,52 @@ public class AquireExamController
 {
 
     private AquireExamBoundry aquireExamBoundry;
+    private boolean isLogoutDialogShown = false;
+
     public AquireExamController(AquireExamBoundry aquireExamBoundry)
     {
         EventBus.getDefault().register(this);
         this.aquireExamBoundry = aquireExamBoundry;
 
+    }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutAE", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+
+
+
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
+
+        if (logoutEvent.getMessage().getTitle().equals("LogoutAE")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void getSubjects() throws IOException
@@ -36,7 +77,8 @@ public class AquireExamController
     }
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("getCoursesAE", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("getCoursesAE", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
@@ -139,15 +181,21 @@ public class AquireExamController
     @Subscribe
     public void handleAquireExam(AquireExamEvent aquireExamEvent)
     {
-        Platform.runLater(() -> {
-            // Login failure
-            showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Aquired successfully");
-            //EventBus.getDefault().unregister(this);
-            ReadyExam readyExam = (ReadyExam) aquireExamEvent.getMessage().getBody();
-            if (readyExam == null)
+        ReadyExam readyExam = (ReadyExam) aquireExamEvent.getMessage().getBody();
+        if (readyExam == null)
+        {
+            Platform.runLater(() ->
             {
-                System.out.println("is nulllllll");
-            }
-        });
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Execution Code is Already Used");
+            });
+        }
+        else
+        {
+            Platform.runLater(() ->
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Aquired Successfully");
+            });
+        }
+
     }
 }

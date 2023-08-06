@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.StartSolvingComputerizedExamBoundry">
    <children>
-      <VBox fx:id="examContainer" layoutX="-1.0" prefHeight="705.0" prefWidth="994.0" style="-fx-border-color: #e9692c; -fx-border-width: 6px6px6px;" />
+      <VBox fx:id="examContainer" layoutX="-1.0" prefHeight="500.0" prefWidth="900.0" style="-fx-border-color: #e9692c; -fx-border-width: 6px6px6px;" />
       <Label fx:id="timerLabel" layoutX="581.0" layoutY="44.0" prefHeight="42.0" prefWidth="182.0" style="-fx-background-color: #ffa500; -fx-background-radius: 90; -fx-border-color: #000000; -fx-border-width: 2px2px2px; -fx-border-radius: 90;" stylesheets="@sButton.css" textFill="WHITE">
          <font>
             <Font size="30.0" />

@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.Controller;
+  package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
@@ -36,7 +36,44 @@ public class ViewExamsController {
         Message message = new Message("getSubjectsForPrincipleExams", principle);
         SimpleClient.getClient().sendToServer(message);
     }
+    private boolean isLogoutDialogShown = false;
+    public void logOut() throws IOException {
+        Message msg = new Message("Logout principle", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+    @Subscribe
+    public void handleLogoutEvent(PrincipleLogoutEvent principleLogoutEvent) {
+        System.out.println("logout platform");
 
+        if (principleLogoutEvent.getMessage().getTitle().equals("Logout principle")) {
+            System.out.println("LOAI");
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @Subscribe
     public void handleGetSubjectsForPrincipleExams(GetSubjectsForPrincipleExamsEvent getSubjectsForPrincipleExamsEvent) {
         List<Subject> subjects = (List<Subject>)getSubjectsForPrincipleExamsEvent.getMessage().getBody();
@@ -51,7 +88,8 @@ public class ViewExamsController {
 
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("GetCoursesForSubjectsPrincipleExams", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("GetCoursesForSubjectsPrincipleExams", object);
         SimpleClient.getClient().sendToServer(message);
     }
 
@@ -144,84 +182,5 @@ public class ViewExamsController {
     }
 
 
-    @Subscribe
-    public void handleGetExamQuestions(GetExamQuestionsEvent getExamQuestions)
-    {
-        System.out.println("getExamQuestions");
-        Exam exam = (Exam)getExamQuestions.getMessage().getBody();
-        List<Question> list = exam.getListOfQuestions();
-
-        ObservableList<Question> questionList = FXCollections.observableArrayList(list);
-        Platform.runLater(() -> {
-            viewExamsBoundry.getListViewExamQuestions().setItems(questionList);
-            viewExamsBoundry.getListViewExamQuestions().setCellFactory(param -> {
-                return new ScoredQuestionListCell(false);
-            });
-        });
-        viewExamsBoundry.getExamPeriod().setText(exam.getExamPeriod());
-        viewExamsBoundry.getCommentStudet().setText(exam.getStudentComments());
-        viewExamsBoundry.getCommentTeacher().setText(exam.getTeacherComments());
-        String subject = exam.getSubject().getName();
-        String course = exam.getCourse().getName();
-        Platform.runLater(() -> {
-            // Set the items for the ComboBox
-            ObservableList<Course> courseObservableList = FXCollections.observableArrayList(exam.getCourse());
-            viewExamsBoundry.getSelectCourse().setItems(courseObservableList);
-        });
-    }
-
-    private class ScoredQuestionListCell extends ListCell<Question> {
-        private TextField scoreField;
-        private boolean firstRow;
-
-        ScoredQuestionListCell(boolean firstRow) {
-            this.firstRow = firstRow;
-        }
-
-        @Override
-        protected void updateItem(Question question, boolean empty) {
-            super.updateItem(question, empty);
-            if (empty || question == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                System.out.println(question.getQText() + "  " + question.getScore());
-                HBox container = new HBox();
-                container.setAlignment(Pos.CENTER_LEFT);
-                container.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: black;");
-
-                Label questionTextLabel = new Label("Question: " + question.getQText());
-                Label answer1 = new Label("a. " + question.getAnswer1());
-                Label answer2 = new Label("b. " + question.getAnswer2());
-                Label answer3 = new Label("c. " + question.getAnswer3());
-                Label answer4 = new Label("d. " + question.getAnswer4());
-                VBox questionVBox = new VBox(questionTextLabel, answer1, answer2, answer3, answer4);
-
-                TextField scoreField = new TextField();
-                scoreField.setPrefWidth(50);
-                scoreField.setText(Integer.toString(question.getScore()));
-                scoreField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    try {
-                        int score = Integer.parseInt(newValue);
-                        question.setScore(score);
-                        System.out.println(question.getQText() + "  " + question.getScore());
-                    } catch (NumberFormatException e) {
-                        // Handle invalid input
-                    }
-                });
-
-                Region region1 = new Region();
-                Region region2 = new Region();
-                Region region3 = new Region();
-                HBox.setHgrow(region1, Priority.ALWAYS);
-                HBox.setHgrow(region2, Priority.ALWAYS);
-                HBox.setHgrow(region3, Priority.ALWAYS);
-
-                container.getChildren().addAll(questionVBox, region3, scoreField);
-
-                setGraphic(container);
-            }
-        }
-    }
-
 }
+ 

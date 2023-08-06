@@ -21,11 +21,18 @@ public class EditExamController
 {
     EditExamBoundry editExamBoundry;
     static private boolean flag = false;
+    private boolean isLogoutDialogShown = false;
+
 
     public EditExamController(EditExamBoundry editExamBoundry)
     {
         EventBus.getDefault().register(this);
         this.editExamBoundry = editExamBoundry;
+    }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutEEB", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
     }
 
     public void getSubjects() throws IOException {
@@ -46,7 +53,8 @@ public class EditExamController
 
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("getCourses", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("getCourses", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
@@ -136,4 +144,36 @@ public class EditExamController
             });
         }
     }
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
+
+        if (logoutEvent.getMessage().getTitle().equals("LogoutEEB")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

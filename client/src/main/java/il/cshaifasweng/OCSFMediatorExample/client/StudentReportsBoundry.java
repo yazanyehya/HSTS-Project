@@ -1,10 +1,5 @@
-/**
- * Sample Skeleton for 'studentReportsBoundry.fxml' Controller Class
- */
+ package il.cshaifasweng.OCSFMediatorExample.client;
 
-package il.cshaifasweng.OCSFMediatorExample.client;
-
-import il.cshaifasweng.OCSFMediatorExample.Controller.CourseReportsController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.StudentReportsController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
@@ -12,18 +7,22 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.*;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StudentReportsBoundry {
-
 
     @FXML
     private TextField averageTextField;
@@ -38,34 +37,175 @@ public class StudentReportsBoundry {
     private TextField medianTextField;
 
     @FXML
-    private Button showExams;
-
-    @FXML
-    private Button showStudents;
-
-    @FXML
     private ListView<Student> studentsList;
 
+    public int flag = 0;
+
+    private StudentReportsController studentReportsController;
+
     @FXML
-    private BarChart<String, Integer> theChart;
+    private Button courseReportsBtn;
 
-    private XYChart.Series<String,Integer> series1;
+    @FXML
+    private Button extraTimeBtn;
 
-    @FXML // fx:id="examPeriod"
-    private TextField examPeriod; // Value injected by FXMLLoader
-    @FXML // fx:id="commentStudet"
-    private TextArea commentStudet; // Value injected by FXMLLoader
-    @FXML // fx:id="showQuestionsBtn"
-    private Button showQuestionsBtn; // Value injected by FXMLLoader
-    @FXML // fx:id="listViewExamQuestions"
-    private ListView<Question> listViewExamQuestions; // Value injected by FXMLLoader
-    @FXML // fx:id="commentTeacher"
-    private TextArea commentTeacher; // Value injected by FXMLLoader
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button logoutBtn;
+
+
+    @FXML
+    private Button studentReportsBtn;
+
+    @FXML
+    private Button teacherReportsBtn;
+
+    @FXML
+    private Button viewExamsBtn;
+
+    @FXML
+    private Button viewGradesBtn;
+
+    @FXML
+    private Button viewQuestionsBtn;
+
+    @FXML
+    private Button compare;
+    @FXML
+    void teacherReportsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(studentReportsController);
+                SimpleChatClient.switchScreen("teacherReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getTeachersForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void courseReportsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(studentReportsController);
+                SimpleChatClient.switchScreen("courseReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getCoursesForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void studentReportsAction(ActionEvent event) {
+//        Platform.runLater(() -> {
+//            try {
+//                EventBus.getDefault().unregister(studentReportsController);
+//                SimpleChatClient.switchScreen("studentReportsBoundry");
+//                Principle principle = (Principle) SimpleClient.getClient().getUser();
+//                Message message = new Message("getStudentsForPrinciple", principle);
+//                SimpleClient.getClient().sendToServer(message);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+        Platform.runLater(()->{
+            showAlertDialog(Alert.AlertType.ERROR, "Error", "You are already in Students Reports");
+        });
+    }
+    @FXML
+    void reportsAction(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(studentReportsController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("reportsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void compareAction(ActionEvent event) {
+
+    }
+
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(studentReportsController);
+                SimpleChatClient.switchScreen("PrincipleBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+        studentReportsController.logOut();
+    }
+
+    @FXML
+    void extraTimeAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(studentReportsController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimePrinciple");
+                Message message = new Message("ExtraTimePrinciple", null);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void viewExamsAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(studentReportsController);
+                SimpleChatClient.switchScreen("viewExamsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void viewGradesAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(studentReportsController);
+                SimpleChatClient.switchScreen("viewGradesBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void viewQuestionsAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(studentReportsController);
+                SimpleChatClient.switchScreen("viewQuestionsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     @FXML
     void averageTextFieldAction(ActionEvent event) {
 
     }
-    StudentReportsController studentReportsController;
     public void setStudentReportsController(StudentReportsController studentReportsController) {
         this.studentReportsController = studentReportsController;
     }
@@ -90,33 +230,6 @@ public class StudentReportsBoundry {
 
     }
 
-    @FXML
-    void examPeriodAction(ActionEvent event) {
-
-    }
-    @FXML
-    void showQuestionsAction(ActionEvent event) {
-        if (listViewExams.getSelectionModel().isEmpty())
-        {
-            Platform.runLater(() -> {
-                // Login failure
-                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Select An Exam!");
-            });
-        }
-        else
-        {
-            Platform.runLater(() -> {
-                try {
-                    ReadyExam exam = listViewExams.getSelectionModel().getSelectedItem();
-                    Message msg = new Message("getExamQuestions", exam);
-                    SimpleClient.getClient().sendToServer(msg);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-    }
-
 
     @FXML
     void initialize() throws IOException {
@@ -124,29 +237,21 @@ public class StudentReportsBoundry {
         studentReportsController = new StudentReportsController(this);
         this.setStudentReportsController(studentReportsController);
 
-        series1 = new XYChart.Series<String,Integer>();
-        series1.setName("Number Of Exams");
-        series1.getData().add(new XYChart.Data("0-10", 0));
-        series1.getData().add(new XYChart.Data("11-20", 0));
-        series1.getData().add(new XYChart.Data("21-30", 0));
-        series1.getData().add(new XYChart.Data("31-40", 0));
-        series1.getData().add(new XYChart.Data("41-50", 0));
-        series1.getData().add(new XYChart.Data("51-60", 0));
-        series1.getData().add(new XYChart.Data("61-70", 0));
-        series1.getData().add(new XYChart.Data("71-80", 0));
-        series1.getData().add(new XYChart.Data("81-90", 0));
-        series1.getData().add(new XYChart.Data("91<", 0));
-        theChart.getData().addAll(series1);
+
 
 
         System.out.println("before getting students");
         listViewExams.setItems(null);
-        studentsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        //studentsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         populateCoursesList();
 
 
         studentsList.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) { // Check if it's a double-click
+                if (listViewExams.getItems() != null)
+                {
+                    listViewExams.getItems().clear();
+                }
                 Student student = studentsList.getSelectionModel().getSelectedItem();
                 if (student != null)
                 {
@@ -159,49 +264,55 @@ public class StudentReportsBoundry {
             }
         });
         listViewExams.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        listViewExams.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends ReadyExam> change) -> {
+        Platform.runLater(()->{
+//        listViewExams.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends ReadyExam> change) -> {
+//            ObservableList<? extends ReadyExam> selectedItems = change.getList();
 
-            ObservableList<? extends ReadyExam> selectedItems = change.getList();
-            double avg = calculateAverage( selectedItems);
-            averageTextField.setText(Double.toString(avg));
-            double median = calculateMedian(selectedItems);
-            medianTextField.setText(Double.toString(median));
-            fillChart(selectedItems);
+            compare.setOnMouseClicked(event -> {
+                studentReportsController.getMedian_map().clear();
+                studentReportsController.getMap().clear();
+                ObservableList<ReadyExam> selectedExams = listViewExams.getSelectionModel().getSelectedItems();
+                flag = selectedExams.size();
+                double avg = 0;
+
+                List<Integer> list = new ArrayList<>(); // Changed from List<Integer> to List<Number>
+                CategoryAxis xAxis = new CategoryAxis();
+                NumberAxis yAxis = new NumberAxis();
+                BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+                barChart.setTitle("Selected Exams Grades");
+
+                for (ReadyExam readyExam : selectedExams) {
+                    list.add(readyExam.getGrade());
+                    avg += readyExam.getGrade();
+
+                    // Create a new series for the BarChart
+                    XYChart.Series<String, Number> series = new XYChart.Series<>();
+                    series.setName(" Exam ID = " + readyExam.getOri_idd());
+                    series.getData().add(new XYChart.Data<>("Grade", readyExam.getGrade()));
+
+                    // Add the series to the BarChart
+                    barChart.getData().add(series);
+                }
+
+                avg = avg / selectedExams.size();
+                getAverageTextField().setText(Double.toString(avg));
+                getMedianTextField().setText(Double.toString(list.get(list.size() / 2)));
+
+                // Create a new stage to show the BarChart
+                Stage stage = new Stage();
+                stage.setTitle("Exams Comparison");
+                stage.setScene(new Scene(new StackPane(barChart), 600, 400));
+                stage.show();
+            });
+
+
+
+//                for (ReadyExam exam : selectedExams)
+//                {
+//                    studentReportsController.getResults(exam);
+//                }
 
         });
-    }
-    double calculateAverage(ObservableList<? extends ReadyExam> selectedItems) {
-        double avg = 0;
-
-        for (ReadyExam readyExam : selectedItems) {
-            avg += readyExam.getGrade();
-        }
-
-        return avg / selectedItems.size();
-    }
-    double calculateMedian(ObservableList<? extends ReadyExam> selectedItems)
-    {
-        List<Double> list = new ArrayList<Double>();
-        for (ReadyExam readyExam : selectedItems)
-        {
-            double temp = readyExam.getGrade();
-            list.add(temp);
-        }
-        int size = selectedItems.size();
-        int middle = size / 2;
-        if (size % 2 == 0 ) {
-            // Step 3: If even number of elements, calculate the average of the two middle elements
-            if (size > 0)
-            {
-                double median1 = list.get(middle - 1);
-                double median2 = list.get(middle);
-                return (median1 + median2) / 2;
-            }
-            else {return 0;}
-        } else {
-            // Step 4: If odd number of elements, return the middle element
-            return list.get(middle);
-        }
     }
     private class GradeData {
         private String gradeRange;
@@ -220,74 +331,7 @@ public class StudentReportsBoundry {
             return numExams;
         }
     }
-    void fillChart(ObservableList<? extends ReadyExam> selectedItems)
-    {
 
-        List<GradeData> list = new ArrayList<>();
-        list.add(new GradeData("0-10",0));
-        list.add(new GradeData("11-20",0));
-        list.add(new GradeData("21-30",0));
-        list.add(new GradeData("31-40",0));
-        list.add(new GradeData("41-50",0));
-        list.add(new GradeData("51-60",0));
-        list.add(new GradeData("61-70",0));
-        list.add(new GradeData("71-80",0));
-        list.add(new GradeData("81-90",0));
-        list.add(new GradeData("91<",0));
-
-        for (ReadyExam readyExam : selectedItems)
-        {
-            int grade = readyExam.getGrade();
-            if (grade >= 0 && grade <= 10)
-            {
-                list.get(0).numExams++;
-            }
-            else if(grade >= 11 && grade <= 20)
-            {
-                list.get(1).numExams++;
-            }
-            else if(grade >= 21 && grade <= 30)
-            {
-                list.get(2).numExams++;
-            }
-            else if(grade >= 31 && grade <= 40)
-            {
-                list.get(3).numExams++;
-            }
-            else if(grade >= 41 && grade <= 50)
-            {
-                list.get(4).numExams++;
-            }
-            else if(grade >= 51 && grade <= 60)
-            {
-                list.get(5).numExams++;
-            }
-            else if(grade >= 61 && grade <= 70)
-            {
-                list.get(6).numExams++;
-            }
-            else if(grade >= 71 && grade <= 80)
-            {
-                list.get(7).numExams++;
-            }
-            else if(grade >= 81 && grade <= 90)
-            {
-                list.get(8).numExams++;
-            }
-            else if(grade >= 91 )
-            {
-                list.get(9).numExams++;
-            }
-        }
-        for (GradeData gradeData : list) {
-            XYChart.Data<String, Integer> data = new XYChart.Data<>(gradeData.getGradeRange(), gradeData.getNumExams());
-            series1.getData().add(data);
-
-            // Set the bar color for the data node
-            data.getNode().setStyle("-fx-bar-fill: #9400d3;");
-        }
-
-    }
     private void populateCoursesList() { // Set the cell factory to display the course name
         studentsList.setCellFactory(new Callback<ListView<Student>, ListCell<Student>>() {
             @Override
@@ -330,27 +374,13 @@ public class StudentReportsBoundry {
     public void setStudentsList(ListView<Student> studentsList) {
         this.studentsList = studentsList;
     }
-    public TextArea getCommentTeacher() {
-        return commentTeacher;
-    }
-    public void setCommentTeacher(TextArea commentTeacher) {
-        this.commentTeacher = commentTeacher;
+
+    public TextField getMedianTextField() {
+        return medianTextField;
     }
 
-    public void setCommentStudet(TextArea commentStudet) {
-        this.commentStudet = commentStudet;
-    }
-
-    public TextArea getCommentStudet() {
-        return commentStudet;
-    }
-    public TextField getExamPeriod() {
-        return examPeriod;
-    }
-    public void setExamPeriod(TextField examPeriod) {
-        this.examPeriod = examPeriod;
-    }
-    public ListView<Question> getListViewExamQuestions() {
-        return listViewExamQuestions;
+    public TextField getAverageTextField() {
+        return averageTextField;
     }
 }
+ 

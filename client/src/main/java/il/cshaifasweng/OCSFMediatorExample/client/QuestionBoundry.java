@@ -1,28 +1,32 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.Controller.QuestionController;
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.Subject;
 import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
-import il.cshaifasweng.OCSFMediatorExample.Controller.QuestionController;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
-import org.hibernate.Hibernate;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class QuestionBoundry {
-
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
     @FXML
     private TextField answerA;
 
@@ -35,8 +39,6 @@ public class QuestionBoundry {
     @FXML
     private TextField answerD;
 
-    @FXML
-    private Button backBtn;
 
     @FXML
     private ToggleGroup chooseAnswer;
@@ -61,9 +63,33 @@ public class QuestionBoundry {
 
     @FXML
     private ListView<Course> courseList;
+    @FXML
+    private ImageView logo;
 
     @FXML
     private Button showCourseBtn;
+    @FXML
+    private Button createExamBtn;
+    @FXML
+    private Button createQuestionBtn;
+    @FXML
+    private Button editExamBtn;
+    @FXML
+    private Button editQuestionBtn;
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button approveExamBtn;
+    @FXML
+    private Button aquireExamBtn;
+    @FXML
+    private Button extraTimeBtn;
+    @FXML
+    private Button logoutBtn;
+    @FXML
+    private Button seeResultsBtn;
+    @FXML
+    private Button sendExamsToStudentsBtn;
 
     @FXML
     private ComboBox<Subject> selectSubject;
@@ -86,6 +112,7 @@ public class QuestionBoundry {
         return answerA;
     }
 
+
     @FXML
     void answerAAction(ActionEvent event)
     {
@@ -106,10 +133,125 @@ public class QuestionBoundry {
     void answerDAction(ActionEvent event) {
 
     }
+    @FXML
+    void createAnExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }  @FXML
+    void createAnQuestionAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            // Show the dialog
+            questionController.showAlertDialog(Alert.AlertType.ERROR, "Error", "You Are Already In Create Question Page");
+
+        });
+    }
+    @FXML
+    void EditExamsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void EditQuestionsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditQuestion");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     @FXML
-    void backAction(ActionEvent event) throws IOException {
+    void approveExamAction(ActionEvent event) {
         EventBus.getDefault().unregister(questionController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ApproveExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    @FXML
+    void aquireExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("AquireExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void extraTimeAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimeTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+        //EventBus.getDefault().unregister(questionController);
+        questionController.logOut();
+
+
+    }
+    @FXML
+    void seeResultsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ViewGradesForTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void sendExamsToStudentsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("SendExamToStudentBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        EventBus.getDefault().unregister(questionController);
+
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
@@ -118,6 +260,7 @@ public class QuestionBoundry {
             }
         });
     }
+
 
     @FXML
     void optionAAction(ActionEvent event)
@@ -184,6 +327,7 @@ public class QuestionBoundry {
             }
         });
     }
+
     @FXML
     void saveAction(ActionEvent event)
     {
@@ -199,7 +343,7 @@ public class QuestionBoundry {
         }
         Subject selectedSubject = selectSubject.getValue();
         List<String> list = new ArrayList<>();
-        if (selectedRadioButton == null || selectedCourses == null || Objects.equals(getAnswerA().getText(), "") || Objects.equals(getAnswerB().getText(), "") || Objects.equals(getAnswerC().getText(), "") || Objects.equals(getAnswerD().getText(), "") || selectedSubject == null )
+        if (selectedRadioButton == null || courseList.getSelectionModel().isEmpty()  || Objects.equals(getAnswerA().getText(), "") || Objects.equals(getAnswerB().getText(), "") || Objects.equals(getAnswerC().getText(), "") || Objects.equals(getAnswerD().getText(), "") || selectedSubject == null )
         {
             list = null;
         }
@@ -261,6 +405,9 @@ public class QuestionBoundry {
     public void initialize() throws IOException {
         questionController = new QuestionController(this);
         this.setQuestionController(questionController);
+        Image logoImage = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
+        logo.setImage(logoImage);
+
 
         courseList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         questionController.getSubjects();
@@ -270,13 +417,55 @@ public class QuestionBoundry {
         answerB.setText("");
         answerC.setText("");
         answerD.setText("");
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
     }
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n" +
+                " HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
+    }
+
 
     @FXML
     void shoqCourseBtn(ActionEvent event) throws IOException {
-        questionController.getCourse(selectSubject.getSelectionModel().getSelectedItem());
+        if (selectSubject.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a Subject");
+            });
+        }
+        else
+        {
+            questionController.getCourse(selectSubject.getSelectionModel().getSelectedItem());
+        }
     }
-
     public ListView<Course> getCourseList() {
         return courseList;
     }
@@ -291,6 +480,15 @@ public class QuestionBoundry {
 
     public void setSelectSubject(ComboBox<Subject> selectSubject) {
         this.selectSubject = selectSubject;
+    }
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 
 }

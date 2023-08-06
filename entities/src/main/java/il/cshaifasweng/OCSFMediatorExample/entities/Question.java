@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.entities;
+ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -21,6 +21,7 @@ public class Question implements Serializable
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private String idd;
     @Column
     private String qText;
     @Column
@@ -269,4 +270,13 @@ public class Question implements Serializable
             c.getListOfQuestions().add(this);
         }
     }
+
+    public void setIdd(String idd) {
+        this.idd = idd;
+    }
+
+    public String getIdd() {
+        return idd;
+    }
 }
+ 

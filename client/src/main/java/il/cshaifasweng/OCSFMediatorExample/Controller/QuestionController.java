@@ -20,7 +20,7 @@ import java.util.List;
 public class QuestionController
 {
     private QuestionBoundry questionBoundry;
-
+    private boolean isLogoutDialogShown = false;
 
     public QuestionController(QuestionBoundry questionBoundry)
     {
@@ -49,6 +49,12 @@ public class QuestionController
             alert.showAndWait();
         });
     }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutQB", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+
 
     @Subscribe
     public void handleEvent(QuestionEvent event)
@@ -64,6 +70,33 @@ public class QuestionController
                 });
 
             }
+            else if (event.getMessage().getTitle().equals("LogoutQB")) {
+                System.out.println("gggggg");
+                if (!isLogoutDialogShown) {
+                    isLogoutDialogShown = true;
+
+                    Platform.runLater(() -> {
+                        // Show the dialog
+                        showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                        isLogoutDialogShown = false;
+                    });
+                }
+
+                // Unregister this class from the EventBus
+                EventBus.getDefault().unregister(this);
+
+                try {
+                    Platform.runLater(() -> {
+                        try {
+                            SimpleChatClient.switchScreen("LoginController");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         else {
             Platform.runLater(() -> {
@@ -72,6 +105,7 @@ public class QuestionController
                 //EventBus.getDefault().unregister(this);
             });
         }
+
     }
 
     public void getSubjects() throws IOException {
@@ -92,9 +126,11 @@ public class QuestionController
     }
 
     public void getCourse(Subject selectedItem) throws IOException {
-        Message message = new Message("getCoursesForSubjects", selectedItem);
+        Object object = new Object[]{selectedItem,SimpleClient.getClient().getUser()};
+        Message message = new Message("getCoursesForSubjects", object);
         SimpleClient.getClient().sendToServer(message);
     }
+
     private class CourseListCell extends ListCell<Course> {
         private boolean firstRow;
 
@@ -125,11 +161,12 @@ public class QuestionController
     @Subscribe
     public void handleGetCoursesForSubject(GetCoursesForSubjectsEvent getCoursesForSubjectsEvent)
     {
-        List<Course> courses = (List<Course>)getCoursesForSubjectsEvent.getMessage().getBody();
-        ObservableList<Course> courseObservableList= FXCollections.observableArrayList(courses);
-        questionBoundry.getCourseList().setItems(courseObservableList);
-        questionBoundry.getCourseList().setCellFactory(param -> {
-            return new QuestionController.CourseListCell(false);
+        Platform.runLater(()->{
+            List<Course> courses = (List<Course>)getCoursesForSubjectsEvent.getMessage().getBody();
+            ObservableList<Course> courseObservableList= FXCollections.observableArrayList(courses);
+            questionBoundry.getCourseList().setItems(courseObservableList);
+            questionBoundry.getCourseList().setCellFactory(param -> {
+                return new QuestionController.CourseListCell(false);
+            });
         });
-    }
-}
+    }}

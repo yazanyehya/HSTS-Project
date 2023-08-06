@@ -39,12 +39,15 @@ public class ViewGradesForTeacherIIController
         {
             List<ReadyExam> list = (List<ReadyExam>) viewGradesForTeacherIIBoundryEvent.getMessage().getBody();
 
-            viewGradesForTeacherIIBoundry.getStudentNameCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("FullName"));
-            viewGradesForTeacherIIBoundry.getStudentIDCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("studentId"));
-            viewGradesForTeacherIIBoundry.getGradeCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("Grade"));
-            viewGradesForTeacherIIBoundry.getPreviewCol().setCellFactory(column -> new ViewGradesForTeacherIIController.ButtonCell());
+            Platform.runLater(()->
+            {
+                viewGradesForTeacherIIBoundry.getStudentNameCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("FullName"));
+                viewGradesForTeacherIIBoundry.getStudentIDCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("studentId"));
+                viewGradesForTeacherIIBoundry.getGradeCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("Grade"));
+                viewGradesForTeacherIIBoundry.getPreviewCol().setCellFactory(column -> new ViewGradesForTeacherIIController.ButtonCell());
 
-            viewGradesForTeacherIIBoundry.getTable().getItems().addAll(list);
+                viewGradesForTeacherIIBoundry.getTable().getItems().addAll(list);
+            });
         }
     }
     private class ButtonCell extends TableCell<ReadyExam, Button> {
@@ -189,7 +192,7 @@ public class ViewGradesForTeacherIIController
             AnchorPane anchorPane1 = new AnchorPane();
             AnchorPane anchorPane2 = new AnchorPane();
             BorderPane borderPane = new BorderPane();
-            Image logo = new Image(getClass().getResourceAsStream("/images/logo.jpg"));
+            Image logo = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
             ImageView imageViewLogo = new ImageView(logo);
             imageViewLogo.setFitWidth(150); // Set the width
             imageViewLogo.setFitHeight(150); // Set the height
@@ -250,7 +253,9 @@ public class ViewGradesForTeacherIIController
             textFieldStudentComments.setDisable(true);
             vBox.getChildren().addAll(hBox,studentDetails,hBox1, questions, studentComments, textFieldStudentComments);
             ScrollPane scrollPane = new ScrollPane();
+            vBox.setStyle("-fx-background-color: #ffffff");
             scrollPane.setContent(vBox);
+            scrollPane.setStyle("-fx-background-color: #ffffff");
             // Create a new stage and set the VBox as its root
             Stage previewStage = new Stage();
             previewStage.setScene(new Scene(scrollPane));
@@ -263,3 +268,4 @@ public class ViewGradesForTeacherIIController
         });
     }
 }
+ 

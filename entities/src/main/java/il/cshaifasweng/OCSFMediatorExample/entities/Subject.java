@@ -12,6 +12,8 @@ public class Subject implements Serializable
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    private String idd;
     @Column
     private String name;
 
@@ -115,4 +117,17 @@ public class Subject implements Serializable
     public List<Student> getListOfStudents() {
         return listOfStudents;
     }
+
+    public List<Exam> getListOfExams() {
+        return listOfExams;
+    }
+
+    public void setIdd(String idd) {
+        this.idd = idd;
+    }
+
+    public String getIdd() {
+        return idd;
+    }
 }
+ 

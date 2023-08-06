@@ -2,26 +2,29 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.ViewGradesForTeacherController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ViewGradesForTeacherBoundry {
 
-    @FXML
-    private Button backBtn;
 
     @FXML
-    private ListView<Exam> examList;
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
+    @FXML
+    private ListView<ReadyExam> examList;
 
     @FXML
     private ComboBox<Course> selectCourse;
@@ -31,9 +34,150 @@ public class ViewGradesForTeacherBoundry {
 
     private ViewGradesForTeacherController viewGradesForTeacherController;
 
+
     @FXML
-    void backAction(ActionEvent event)
-    {
+    private ImageView logo;
+
+    @FXML
+    private Button showCourseBtn;
+    @FXML
+    private Button createExamBtn;
+    @FXML
+    private Button createQuestionBtn;
+    @FXML
+    private Button editExamBtn;
+    @FXML
+    private Button editQuestionBtn;
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button approveExamBtn;
+    @FXML
+    private Button aquireExamBtn;
+    @FXML
+    private Button extraTimeBtn;
+    @FXML
+    private Button logoutBtn;
+    @FXML
+    private Button seeResultsBtn;
+    @FXML
+    private Button sendExamsToStudentsBtn;
+
+
+    @FXML
+    void createAnExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }  @FXML
+    void createAnQuestionAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("QuestionBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void EditExamsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void EditQuestionsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditQuestion");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void approveExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ApproveExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    @FXML
+    void aquireExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("AquireExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void extraTimeAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimeTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+     viewGradesForTeacherController.logOut();
+    }
+    @FXML
+    void seeResultsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            // Show the dialog
+            viewGradesForTeacherController.showAlertDialog(Alert.AlertType.ERROR, "Error", "You Are Already In View Grades Page");
+
+        });
+
+    }
+    @FXML
+    void sendExamsToStudentsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(viewGradesForTeacherController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("SendExamToStudentBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void homeBtnAction(ActionEvent event) {
         EventBus.getDefault().unregister(viewGradesForTeacherController);
         Platform.runLater(() -> {
             try {
@@ -43,6 +187,7 @@ public class ViewGradesForTeacherBoundry {
             }
         });
     }
+
 
     @FXML
     void selectCourseAction(ActionEvent event) throws IOException {
@@ -68,7 +213,7 @@ public class ViewGradesForTeacherBoundry {
         viewGradesForTeacherController = new ViewGradesForTeacherController(this);
         this.setViewGradesForTeacherController(viewGradesForTeacherController);
 
-        selectCourse.setVisible(false);
+        selectCourse.setVisible(true);
 
 
         viewGradesForTeacherController.getSubjects();
@@ -138,7 +283,7 @@ public class ViewGradesForTeacherBoundry {
         });
         examList.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                Exam selectedExam = examList.getSelectionModel().getSelectedItem();
+                ReadyExam selectedExam = examList.getSelectionModel().getSelectedItem();
                 if (selectedExam != null) {
                     // Perform your double-click action here
                     try {
@@ -157,25 +302,52 @@ public class ViewGradesForTeacherBoundry {
                 }
             }
         });
+
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
     }
 
-    public Button getBackBtn() {
-        return backBtn;
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
     }
 
 
-    public ListView<Exam> getExamList() {
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
+    }
+
+
+
+
+    public ListView<ReadyExam> getExamList() {
         return examList;
     }
 
     public ViewGradesForTeacherController getViewGradesForTeacherController() {
         return viewGradesForTeacherController;
     }
-
-    public void setBackBtn(Button backBtn) {
-        this.backBtn = backBtn;
-    }
-
 
     public void setSelectCourse(ComboBox<Course> selectCourse) {
         this.selectCourse = selectCourse;
@@ -185,7 +357,7 @@ public class ViewGradesForTeacherBoundry {
         this.selectSubject = selectSubject;
     }
 
-    public void setExamList(ListView<Exam> examList) {
+    public void setExamList(ListView<ReadyExam> examList) {
         this.examList = examList;
     }
 

@@ -1,10 +1,10 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.EditSelectedExamController;
-import il.cshaifasweng.OCSFMediatorExample.Controller.LoginController;
 import il.cshaifasweng.OCSFMediatorExample.entities.Course;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
-import il.cshaifasweng.OCSFMediatorExample.entities.Teacher;
+
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -21,14 +23,22 @@ import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EditSelectedExamBoundry {
 
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
 
     @FXML
     private Button backBtn;
+
+    @FXML
+    private ImageView logo;
 
     @FXML
     private TextArea commentStudet;
@@ -67,7 +77,8 @@ public class EditSelectedExamBoundry {
     {
         editSelectedExamController = new EditSelectedExamController(this);
         this.setEditSelectedExamController(editSelectedExamController);
-
+        Image logoImage = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
+        logo.setImage(logoImage);
         questionListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listOfAllQuestions.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -103,6 +114,39 @@ public class EditSelectedExamBoundry {
             }
         });
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+    }
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
     }
     @FXML
     void backAction(ActionEvent event)
@@ -121,7 +165,16 @@ public class EditSelectedExamBoundry {
     @FXML
     void showAction(ActionEvent event) throws IOException
     {
-        editSelectedExamController.getAllQuestions();
+        if (chooseCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select the course");
+            });
+        }
+        else
+        {
+            editSelectedExamController.getAllQuestions();
+        }
     }
     @FXML
     void chooseCourseAction(ActionEvent event)
@@ -144,9 +197,39 @@ public class EditSelectedExamBoundry {
     @FXML
     void saveExam(ActionEvent event) throws IOException
     {
-        System.out.println("incline bench press");
-        editSelectedExamController.saveExam(selectedQuestions.getItems());
-        System.out.println("incline smith bench press");
+        if (chooseCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->
+            {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a course");
+            });
+        }
+        else if(selectedQuestions.getSelectionModel().isEmpty() && listOfAllQuestions.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->
+            {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "There are no selected questions ");
+            });
+        }
+        else if (examPeriod.getText().equals("") || !examPeriod.getText().matches("\\d+"))
+        {
+            Platform.runLater(() ->
+            {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please Enter a valid exam period");
+            });
+        }
+        else
+        {
+            System.out.println("incline bench press");
+            System.out.println(selectedQuestions.getItems().size());
+            for(Question q : selectedQuestions.getItems())
+            {
+                System.out.println(q.getScore());
+            }
+            editSelectedExamController.saveExam(selectedQuestions.getItems());
+
+            System.out.println("incline smith bench press");
+        }
     }
 
     public ListView<Question> getSelectedQuestions() {
@@ -273,20 +356,39 @@ public class EditSelectedExamBoundry {
         }
     }
     public void ConfirmSelect(ActionEvent actionEvent) throws IOException {
-        List<Question> selectedFromQuestionList = questionListView.getSelectionModel().getSelectedItems();
-        List<Question> selectedFromAllQuestionsList = listOfAllQuestions.getSelectionModel().getSelectedItems();
+        if (questionListView.getSelectionModel().isEmpty() && listOfAllQuestions.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->
+            {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select questions!");
+            });
+        }
+        else
+        {
+            List<Question> selectedFromQuestionList = questionListView.getSelectionModel().getSelectedItems();
+            List<Question> selectedFromAllQuestionsList = listOfAllQuestions.getSelectionModel().getSelectedItems();
 
-        List<Question> combinedList = new ArrayList<>();
-        combinedList.addAll(selectedFromQuestionList);
-        combinedList.addAll(selectedFromAllQuestionsList);
-
-        ObservableList<Question> observableCombinedList = FXCollections.observableArrayList(combinedList);
-        selectedQuestions.setItems(observableCombinedList);
-        selectedQuestions.setCellFactory(param -> new ScoredQuestionListCell(false));
+            List<Question> combinedList = new ArrayList<>();
+            combinedList.addAll(selectedFromQuestionList);
+            combinedList.addAll(selectedFromAllQuestionsList);
+            System.out.println(combinedList.size() + "sizeeeeeee");
+            ObservableList<Question> observableCombinedList = FXCollections.observableArrayList(combinedList);
+            selectedQuestions.setItems(observableCombinedList);
+            selectedQuestions.setCellFactory(param -> new ScoredQuestionListCell(false));
+        }
     }
 
 
     public ComboBox<Course> getChooseCourse() {
         return chooseCourse;
+    }
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 }

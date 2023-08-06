@@ -1,8 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
-import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
-import il.cshaifasweng.OCSFMediatorExample.client.ViewGradesForStudentBoundry;
-import il.cshaifasweng.OCSFMediatorExample.client.ViewGradesForStudentEvent;
+import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
 import il.cshaifasweng.OCSFMediatorExample.entities.Student;
@@ -19,10 +17,13 @@ import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ViewGradesForStudentController
 {
+    private boolean isLogoutDialogShown = false;
+
     private ViewGradesForStudentBoundry viewGradesForStudentBoundry;
     public ViewGradesForStudentController(ViewGradesForStudentBoundry viewGradesForStudentBoundry)
     {
@@ -34,12 +35,14 @@ public class ViewGradesForStudentController
     {
         List<ReadyExam> list = (List<ReadyExam>) viewGradesForStudentEvent.getMessage().getBody();
 
-        viewGradesForStudentBoundry.getCourse().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("Course"));
-        viewGradesForStudentBoundry.getExamID().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("id"));
-        viewGradesForStudentBoundry.getGrade().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("Grade"));
-        viewGradesForStudentBoundry.getPreviewOption().setCellFactory(column -> new ButtonCell());
+        Platform.runLater(()->{
+            viewGradesForStudentBoundry.getCourse().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("Course"));
+            viewGradesForStudentBoundry.getExamID().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("idd"));
+            viewGradesForStudentBoundry.getGrade().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("Grade"));
+            viewGradesForStudentBoundry.getPreviewOption().setCellFactory(column -> new ButtonCell());
 
-        viewGradesForStudentBoundry.getTable().getItems().addAll(list);
+            viewGradesForStudentBoundry.getTable().getItems().addAll(list);
+        });
     }
     private class ButtonCell extends TableCell<ReadyExam, Button> {
         private final Button button = new Button("Preview");
@@ -184,7 +187,7 @@ public class ViewGradesForStudentController
             AnchorPane anchorPane1 = new AnchorPane();
             AnchorPane anchorPane2 = new AnchorPane();
             BorderPane borderPane = new BorderPane();
-            Image logo = new Image(getClass().getResourceAsStream("/images/logo.jpg"));
+            Image logo = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
             ImageView imageViewLogo = new ImageView(logo);
             imageViewLogo.setFitWidth(150); // Set the width
             imageViewLogo.setFitHeight(150); // Set the height
@@ -193,12 +196,13 @@ public class ViewGradesForStudentController
 
             //Label HighSchoolNameLabel = new Label("High School Test System");
             Label courseLabel = new Label("Exam in "+ readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
+            Label teacherName = new Label((readyExam.getExam().getTeacherFullName()));
             //HighSchoolNameLabel.setFont(font);
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
             courseLabel.setFont(font);
             courseLabel.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
-            examDetails.getChildren().addAll(imageViewLogo, courseLabel);
+            examDetails.getChildren().addAll(imageViewLogo, courseLabel, teacherName);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
 
@@ -257,4 +261,50 @@ public class ViewGradesForStudentController
             previewStage.show();
         });
     }
+
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+    @Subscribe
+    public void handleLogoutEvent(LogoutForStudentEvent logoutForStudentEvent) {
+        System.out.println("logout platform");
+
+        if (logoutForStudentEvent.getMessage().getTitle().equals("LogoutVGS")) {
+            System.out.println("logout platform1");
+
+            if (!isLogoutDialogShown) {
+                System.out.println("logout platform2");
+
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
+

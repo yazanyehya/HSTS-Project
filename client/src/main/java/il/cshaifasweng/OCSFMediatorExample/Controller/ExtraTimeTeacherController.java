@@ -1,8 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
-import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeTeacherBoundry;
-import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeEvent;
-import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
 import javafx.application.Platform;
@@ -22,6 +20,7 @@ import java.util.List;
 public class ExtraTimeTeacherController
 {
     private ExtraTimeTeacherBoundry extraTimeBoundry;
+    private boolean isLogoutDialogShown = false;
 
     public ExtraTimeTeacherController(ExtraTimeTeacherBoundry extraTimeBoundry)
     {
@@ -35,14 +34,17 @@ public class ExtraTimeTeacherController
     {
         if (extraTimeEvent.getMessage().getTitle().equals("GetOnGoingExamsForExtraTime"))
         {
-            List<ReadyExam> list = (List<ReadyExam>) extraTimeEvent.getMessage().getBody();
+            System.out.println("ahmaddd33");
+            Platform.runLater(()->{
+                List<ReadyExam> list = (List<ReadyExam>) extraTimeEvent.getMessage().getBody();
 
-            extraTimeBoundry.getExamIdCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("readyExamOriginalID"));
-            extraTimeBoundry.getNumberOfExaminees().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("numOfOnGoingExams"));
-            extraTimeBoundry.getCourseCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("course"));
-            extraTimeBoundry.getPressForExtraTimeCol().setCellFactory(column -> new ExtraTimeTeacherController.ButtonCell());
-            extraTimeBoundry.getStatusCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("extraTimeApproved"));
-            extraTimeBoundry.getTable().getItems().addAll(list);
+                extraTimeBoundry.getExamIdCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("readyExamOriginalID"));
+                extraTimeBoundry.getNumberOfExaminees().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("numOfOnGoingExams"));
+                extraTimeBoundry.getCourseCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("course"));
+                extraTimeBoundry.getPressForExtraTimeCol().setCellFactory(column -> new ExtraTimeTeacherController.ButtonCell());
+                extraTimeBoundry.getStatusCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("extraTimeApproved"));
+                extraTimeBoundry.getTable().getItems().addAll(list);
+            });
         }
         else if("AskPrincipleForExtraTime".equals(extraTimeEvent.getMessage().getTitle()))
         {
@@ -159,4 +161,46 @@ public class ExtraTimeTeacherController
             alert.showAndWait();
         });
     }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutET", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+
+
+
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
+
+        if (logoutEvent.getMessage().getTitle().equals("LogoutET")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }
+

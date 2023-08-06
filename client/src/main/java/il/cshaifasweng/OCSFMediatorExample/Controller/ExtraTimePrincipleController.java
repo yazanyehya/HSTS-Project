@@ -1,9 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
-import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimeEvent;
-import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimePrincipleBoundry;
-import il.cshaifasweng.OCSFMediatorExample.client.ExtraTimePrincipleEvent;
-import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.ExtraTime;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
@@ -29,20 +26,60 @@ public class ExtraTimePrincipleController
         EventBus.getDefault().register(this);
         this.extraTimePrincipleBoundry = extraTimePrincipleBoundry;
     }
+    private boolean isLogoutDialogShown = false;
+    public void logOut() throws IOException {
+        Message msg = new Message("Logout principle", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+    @Subscribe
+    public void handleLogoutEvent(PrincipleLogoutEvent principleLogoutEvent) {
+        System.out.println("logout platform");
 
+        if (principleLogoutEvent.getMessage().getTitle().equals("Logout principle")) {
+            System.out.println("LOAI");
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @Subscribe
     public void handleEvents(ExtraTimePrincipleEvent extraTimePrincipleEvent)
     {
-        if (extraTimePrincipleEvent.getMessage().getTitle().equals("ExtraTimePrinciple"))
+        Platform.runLater(()->
         {
-            List<ExtraTime> list = (List<ExtraTime>)extraTimePrincipleEvent.getMessage().getBody();
-            extraTimePrincipleBoundry.getExamIDCol().setCellValueFactory(new PropertyValueFactory<ExtraTime, Integer>("exam_id"));
-            extraTimePrincipleBoundry.getTeacherCol().setCellValueFactory(new PropertyValueFactory<ExtraTime, String>("teacherId"));
-            extraTimePrincipleBoundry.getCourseCol().setCellValueFactory(new PropertyValueFactory<ExtraTime, String>("course"));
-            extraTimePrincipleBoundry.getPressCol().setCellFactory(column -> new ExtraTimePrincipleController.ButtonCell());
+            if (extraTimePrincipleEvent.getMessage().getTitle().equals("ExtraTimePrinciple"))
+            {
+                List<ExtraTime> list = (List<ExtraTime>)extraTimePrincipleEvent.getMessage().getBody();
+                extraTimePrincipleBoundry.getExamIDCol().setCellValueFactory(new PropertyValueFactory<ExtraTime, Integer>("exam_id"));
+                extraTimePrincipleBoundry.getTeacherCol().setCellValueFactory(new PropertyValueFactory<ExtraTime, String>("teacherId"));
+                extraTimePrincipleBoundry.getCourseCol().setCellValueFactory(new PropertyValueFactory<ExtraTime, String>("course"));
+                extraTimePrincipleBoundry.getPressCol().setCellFactory(column -> new ExtraTimePrincipleController.ButtonCell());
 
-            extraTimePrincipleBoundry.getTable().getItems().addAll(list);
-        }
+                extraTimePrincipleBoundry.getTable().getItems().addAll(list);
+            }
+        });
     }
     @Subscribe
     public void handleExtraTime(ExtraTimeEvent extraTimeEvent)
@@ -146,3 +183,4 @@ public class ExtraTimePrincipleController
         });
     }
 }
+ 

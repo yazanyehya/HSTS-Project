@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.Controller;
+ package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.ExtraTime;
@@ -91,7 +91,7 @@ public class StartSolvingComputerizedExamController
             }
         }
 
-        Object object = new Object[]{map, startSolvingExamBoundry.getExamID()};
+        Object object = new Object[]{map, startSolvingExamBoundry.getExamID(), SimpleClient.getClient().getUser()};
         Message message = new Message("finishExam", object);
         SimpleClient.getClient().sendToServer(message);
 
@@ -144,7 +144,8 @@ public class StartSolvingComputerizedExamController
 
         System.out.println("here");
         ReadyExam readyExam = (ReadyExam) startExamEvent.getMessage().getBody();
-        Message message = new Message("SetOnGoingToTrue", readyExam);
+        Object object = new Object[]{readyExam, SimpleClient.getClient().getUser()};
+        Message message = new Message("SetOnGoingToTrue", object);
         SimpleClient.getClient().sendToServer(message);
 
         examID = Integer.toString(readyExam.getId());
@@ -181,7 +182,7 @@ public class StartSolvingComputerizedExamController
             minutes = time % 60;
             startSolvingExamBoundry.getTimerLabel().setText(String.format("      %02d:%02d:%02d", hours ,minutes, seconds));
 
-             timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
                 if (minutes == 0 && seconds == 0 && hours == 0)
                 {
                     if (Objects.equals(startSolvingExamBoundry.getFinished(), "no"))
@@ -191,9 +192,10 @@ public class StartSolvingComputerizedExamController
                             showAlertDialog(Alert.AlertType.ERROR, "Error", "There is no longer time left to solve the exam");
                             try {
                                 startSolvingExamBoundry.getExamContainer().getChildren().clear();
-                                EventBus.getDefault().unregister(this);
                                 SimpleChatClient.switchScreen("ConductAnExam");
                                 Message message2 = new Message("SetOnGoingToFalse", Integer.toString(readyExam.getId()));
+                                Message message1 = new Message("timeIsUp", null);
+                                SimpleClient.getClient().sendToServer(message1);
                                 SimpleClient.getClient().sendToServer(message2);
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -228,12 +230,13 @@ public class StartSolvingComputerizedExamController
             }));
             //Label HighSchoolNameLabel = new Label("High School Test System");
             Label courseLabel = new Label("Exam in "+ readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
+            Label teacherName = new Label((readyExam.getExam().getTeacherFullName()));
             //HighSchoolNameLabel.setFont(font);
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
             courseLabel.setFont(font);
             courseLabel.setStyle("-fx-text-fill: #ffa500;-fx-underline: true;");
-            examDetails.getChildren().addAll(imageViewLogo, courseLabel);
+            examDetails.getChildren().addAll(imageViewLogo, courseLabel,teacherName);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
             borderPane.setTop(startSolvingExamBoundry.getTimerLabel());
@@ -241,7 +244,7 @@ public class StartSolvingComputerizedExamController
             VBox studentDetails = new VBox();
 
             Label studentName = new Label("Student name: " + SimpleClient.getClient().getUser().getFirstName() + " "+ SimpleClient.getClient().getUser().getLastName() + ".");
-            Label studentId = new Label("Student ID: " + SimpleClient.getClient().getUser().getId());
+            Label studentId = new Label("Student ID: " + SimpleClient.getClient().getUser().getIdd());
             studentName.setFont(font);
             studentId.setFont(font);
 
@@ -309,16 +312,31 @@ public class StartSolvingComputerizedExamController
     @Subscribe
     public void handleFinishExamEvent(FinishExamEvent finishExamEvent)
     {
-        Platform.runLater(() -> {
+        if (finishExamEvent.getMessage().getTitle().equals("timeIsUp"))
+        {
+            Platform.runLater(() -> {
 
-            showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam has been submitted");
-            try {
-                EventBus.getDefault().unregister(this);
-                SimpleChatClient.switchScreen("ConductAnExam");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam has been submitted");
+                try {
+                    EventBus.getDefault().unregister(this);
+                    SimpleChatClient.switchScreen("ConductAnExam");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        else {
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam has been submitted");
+                try {
+                    EventBus.getDefault().unregister(this);
+                    SimpleChatClient.switchScreen("ConductAnExam");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
@@ -330,3 +348,4 @@ public class StartSolvingComputerizedExamController
         });
     }
 }
+ 

@@ -1,20 +1,34 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.ViewGradesForStudentController;
-import il.cshaifasweng.OCSFMediatorExample.entities.Course;
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.event.ActionEvent;
-import javafx.scene.control.cell.PropertyValueFactory;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ViewGradesForStudentBoundry {
+
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
+
+    @FXML
+    private Button ConductAnExamBTN;
+
+    @FXML
+    private Button homeBtn;
+
+    @FXML
+    private Button logoutBtn;
+
 
     @FXML
     private TableColumn<ReadyExam, String> course;
@@ -41,8 +55,20 @@ public class ViewGradesForStudentBoundry {
     private ViewGradesForStudentController viewGradesForStudentController;
 
     @FXML
-    void backAction(ActionEvent event)
+    void conductAnExamAction(ActionEvent event)
     {
+        EventBus.getDefault().unregister(viewGradesForStudentController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ConductAnExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void homeBtnAction(ActionEvent event) {
         EventBus.getDefault().unregister(viewGradesForStudentController);
         Platform.runLater(() -> {
             try {
@@ -51,8 +77,27 @@ public class ViewGradesForStudentBoundry {
                 e.printStackTrace();
             }
         });
+
     }
 
+
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+        Message msg = new Message("LogoutVGS", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+    @FXML
+    void viewGradesAction(ActionEvent event) throws IOException {
+
+        Platform.runLater(() -> {
+            // Show the dialog
+            viewGradesForStudentController.showAlertDialog(Alert.AlertType.ERROR, "Error", "You Are Already In View Grades Page");
+
+        });
+
+
+    }
 
     @FXML
     public void initialize()
@@ -60,8 +105,39 @@ public class ViewGradesForStudentBoundry {
         viewGradesForStudentController = new ViewGradesForStudentController(this);
         this.setViewGradesForStudentController(viewGradesForStudentController);
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+    }
 
 
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
     }
 
     public void setViewGradesForStudentController(ViewGradesForStudentController viewGradesForStudentController) {

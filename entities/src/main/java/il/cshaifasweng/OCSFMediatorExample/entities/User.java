@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.entities;
+ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,7 +11,7 @@ public class User implements Serializable
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    private String idd;
     @Column(name = "firstname")
     private String firstName;
     @Column(name = "lastname")
@@ -25,7 +25,7 @@ public class User implements Serializable
     @Column
     private int whoAreYou; // 0 for student, 1 for teacher, 2 for principle
 
-   public User(String firstName, String lastName, String username, String password, int whoAreYou, Boolean isLoggedIn)
+    public User(String firstName, String lastName, String username, String password, int whoAreYou, Boolean isLoggedIn, String idd)
     {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -33,6 +33,7 @@ public class User implements Serializable
         this.password = password;
         this.whoAreYou = whoAreYou;
         this.isLoggedIn = isLoggedIn;
+        this.idd = idd;
     }
 
     public User() {
@@ -94,4 +95,13 @@ public class User implements Serializable
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
+    public String getIdd() {
+        return idd;
+    }
+
+    public void setIdd(String idd) {
+        this.idd = idd;
+    }
 }
+ 

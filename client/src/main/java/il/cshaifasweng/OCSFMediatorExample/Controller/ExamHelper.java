@@ -11,16 +11,18 @@ public class ExamHelper implements Serializable
 {
     String examPeriod;
     String username;
+    String teacherFullName;
     HashMap<Question, Integer> questionHashMap;
     String subject;
     String course;
     String teacherComments;
     String allComments;
 
-    public ExamHelper(String examPeriod, String username, HashMap<Question, Integer> questionHashMap, String subject, String course, String teacherComments, String allComments)
+    public ExamHelper(String examPeriod, String username,String teacherFullName, HashMap<Question, Integer> questionHashMap, String subject, String course, String teacherComments, String allComments)
     {
         this.examPeriod = examPeriod;
         this.username = username;
+        this.teacherFullName=teacherFullName;
         this.questionHashMap = questionHashMap;
         this.subject = subject;
         this.course =course;
@@ -62,6 +64,14 @@ public class ExamHelper implements Serializable
 
     public void setQuestionHashMap(HashMap<Question, Integer> questionHashMap) {
         this.questionHashMap = questionHashMap;
+    }
+
+    public String getTeacherFullName() {
+        return teacherFullName;
+    }
+
+    public void setTeacherFullName(String teacherFullName) {
+        this.teacherFullName = teacherFullName;
     }
 
     public HashMap<Question, Integer> getQuestionHashMap() {

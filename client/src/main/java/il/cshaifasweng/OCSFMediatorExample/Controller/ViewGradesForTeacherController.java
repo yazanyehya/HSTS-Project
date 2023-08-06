@@ -19,6 +19,8 @@ import java.util.List;
 
 public class ViewGradesForTeacherController
 {
+    private boolean isLogoutDialogShown = false;
+
     private ViewGradesForTeacherBoundry viewGradesForTeacherBoundry;
 
     public ViewGradesForTeacherController(ViewGradesForTeacherBoundry viewGradesForTeacherBoundry)
@@ -34,7 +36,8 @@ public class ViewGradesForTeacherController
     }
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("viewGradesForTeacherCourses", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("viewGradesForTeacherCourses", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
@@ -62,7 +65,7 @@ public class ViewGradesForTeacherController
         }
         else if("showExamsForTeacherCourses".equals(viewGradesForTeacherEvent.getMessage().getTitle()))
         {
-            List<Exam> list = (List<Exam>) viewGradesForTeacherEvent.getMessage().getBody();
+            List<ReadyExam> list = (List<ReadyExam>) viewGradesForTeacherEvent.getMessage().getBody();
             if (list.isEmpty())
             {
                 Platform.runLater(() -> {
@@ -72,7 +75,7 @@ public class ViewGradesForTeacherController
                 });
             }
             else {
-                ObservableList<Exam> exams = FXCollections.observableArrayList(list);
+                ObservableList<ReadyExam> exams = FXCollections.observableArrayList(list);
                 viewGradesForTeacherBoundry.getExamList().setItems(exams);
                 viewGradesForTeacherBoundry.getExamList().setCellFactory(param -> {
                     return new ViewGradesForTeacherController.ExamListCell(false);
@@ -81,7 +84,7 @@ public class ViewGradesForTeacherController
         }
         else if("ShowExamsForTeacherSubjects".equals(viewGradesForTeacherEvent.getMessage().getTitle()))
         {
-            List<Exam> list = (List<Exam>) viewGradesForTeacherEvent.getMessage().getBody();
+            List<ReadyExam> list = (List<ReadyExam>) viewGradesForTeacherEvent.getMessage().getBody();
             if (list.isEmpty())
             {
                 Platform.runLater(() -> {
@@ -91,7 +94,7 @@ public class ViewGradesForTeacherController
                 });
             }
             else {
-                ObservableList<Exam> exams = FXCollections.observableArrayList(list);
+                ObservableList<ReadyExam> exams = FXCollections.observableArrayList(list);
                 viewGradesForTeacherBoundry.getExamList().setItems(exams);
                 viewGradesForTeacherBoundry.getExamList().setCellFactory(param -> {
                     return new ViewGradesForTeacherController.ExamListCell(false);
@@ -100,7 +103,7 @@ public class ViewGradesForTeacherController
         }
 
     }
-    private class ExamListCell extends ListCell<Exam> {
+    private class ExamListCell extends ListCell<ReadyExam> {
         private boolean firstRow;
 
         ExamListCell(boolean firstRow) {
@@ -108,7 +111,7 @@ public class ViewGradesForTeacherController
         }
 
         @Override
-        protected void updateItem(Exam exam, boolean empty) {
+        protected void updateItem(ReadyExam exam, boolean empty) {
             super.updateItem(exam, empty);
             if (empty || exam == null) {
                 setText(null);
@@ -123,10 +126,10 @@ public class ViewGradesForTeacherController
 
                     // Second column: Exam
                     Label examTextLabel1 = new Label("Creator username: " + exam.getUsername());
-                    Label examTextLabel2 = new Label("Course: " + exam.getCourse().getName());
-                    Label examTextLabel3 = new Label("Subject: " + exam.getSubject().getName());
-                    Label examTextLabel4 = new Label("Exam Period: " + exam.getExamPeriod());
-                    Label examTextLabel5 = new Label("Exam ID: " + exam.getId());
+                    Label examTextLabel2 = new Label("Course: " + exam.getCourse());
+                    Label examTextLabel3 = new Label("Subject: " + exam.getSubject());
+                    Label examTextLabel4 = new Label("Exam Period: " + exam.getExam().getExamPeriod());
+                    Label examTextLabel5 = new Label("Exam ID: " + exam.getIdd());
 
                     //Label examTextLabel3 = new Label(exam.getSubject().getName());
                     // Add additional labels or components for exam details if needed
@@ -151,4 +154,44 @@ public class ViewGradesForTeacherController
             alert.showAndWait();
         });
     }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutVG", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+
+
+
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
+
+        if (logoutEvent.getMessage().getTitle().equals("LogoutVG")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
+

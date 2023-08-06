@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
@@ -20,13 +21,59 @@ import java.util.List;
 
 public class EditQuestionController {
     EditQuestionBoundry editQuestionBoundry;
+    private boolean isLogoutDialogShown = false;
 
     public EditQuestionController(EditQuestionBoundry editQuestionBoundry) {
         EventBus.getDefault().register(this);
         this.editQuestionBoundry = editQuestionBoundry;
 
     }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutEQB", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
 
+        if (logoutEvent.getMessage().getTitle().equals("LogoutEQB")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
     public void setEditQuestionBoundry(EditQuestionBoundry editQuestionBoundry) {
         this.editQuestionBoundry = editQuestionBoundry;
     }
@@ -44,17 +91,43 @@ public class EditQuestionController {
     @Subscribe
     public void handleGetSubjectsForTeacherEQ(GetSubjectsForTeacherEventEQ getSubjectsForTeacherEvent)
     {
-        List<Subject> subjects = (List<Subject>)getSubjectsForTeacherEvent.getMessage().getBody();
+        if("getQuestionsForSubject".equals(getSubjectsForTeacherEvent.getMessage().getTitle()))
+        {
+            List<Question> list = (List<Question>) getSubjectsForTeacherEvent.getMessage().getBody();
+            ObservableList<Question> questionList = FXCollections.observableArrayList(list);
+            Platform.runLater(() -> {
+                editQuestionBoundry.getListViewQ().setItems(questionList);
+                editQuestionBoundry.getListViewQ().setCellFactory(param -> {
+                    return new EditQuestionController.QuestionListCell(false);
+                });
+            });
+        }
+        else if("getQuestionsForSubjectAndCourse".equals(getSubjectsForTeacherEvent.getMessage().getTitle()))
+        {
+            List<Question> list = (List<Question>) getSubjectsForTeacherEvent.getMessage().getBody();
+            ObservableList<Question> questionList = FXCollections.observableArrayList(list);
+            Platform.runLater(() -> {
+                editQuestionBoundry.getListViewQ().setItems(questionList);
+                editQuestionBoundry.getListViewQ().setCellFactory(param -> {
+                    return new EditQuestionController.QuestionListCell(false);
+                });
+            });
+        }
+        else
+        {
+            List<Subject> subjects = (List<Subject>)getSubjectsForTeacherEvent.getMessage().getBody();
 
-        Platform.runLater(() -> {
-            // Set the items for the ComboBox
-            ObservableList<Subject> subjectObservableList = FXCollections.observableArrayList(subjects);
-            editQuestionBoundry.getSelectSubject().setItems(subjectObservableList);
-        });
+            Platform.runLater(() -> {
+                // Set the items for the ComboBox
+                ObservableList<Subject> subjectObservableList = FXCollections.observableArrayList(subjects);
+                editQuestionBoundry.getSelectSubject().setItems(subjectObservableList);
+            });
+        }
     }
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("getCoursesForSubjectsEQ", selectedItem);
+        Object object = new Object[]{selectedItem, SimpleClient.getClient().getUser()};
+        Message message = new Message("getCoursesForSubjectsEQ", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe

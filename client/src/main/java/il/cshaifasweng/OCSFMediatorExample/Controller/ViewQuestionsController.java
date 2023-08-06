@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ViewQuestionsController {
     private ViewQuestionsBoundry viewQuestionsBoundry;
-    
+
     public ViewQuestionsController(ViewQuestionsBoundry viewQuestionsBoundry)
     {
         EventBus.getDefault().register(this);
@@ -39,6 +39,44 @@ public class ViewQuestionsController {
         Message message = new Message("getSubjectsForPrinciple", principle);
         SimpleClient.getClient().sendToServer(message);
     }
+    private boolean isLogoutDialogShown = false;
+    public void logOut() throws IOException {
+        Message msg = new Message("Logout principle", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
+    }
+    @Subscribe
+    public void handleLogoutEvent(PrincipleLogoutEvent principleLogoutEvent) {
+        System.out.println("logout platform");
+
+        if (principleLogoutEvent.getMessage().getTitle().equals("Logout principle")) {
+            System.out.println("LOAI");
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @Subscribe
     public void handleGetSubjectsForPrinciple(GetSubjectsForPrincipleEvent getSubjectsForPrincipleEvent)
     {
@@ -52,7 +90,8 @@ public class ViewQuestionsController {
     }
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("getCoursesForSubjectsPrinciple", selectedItem);
+        Object object = new Object[]{selectedItem};
+        Message message = new Message("getCoursesForSubjectsPrinciple", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
@@ -136,3 +175,4 @@ public class ViewQuestionsController {
     }
 
 }
+ 

@@ -2,20 +2,27 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.Controller.EditExamController;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class EditExamBoundry {
-
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
     @FXML
     private Button backBtn;
 
@@ -35,20 +42,164 @@ public class EditExamBoundry {
     private ListView<Exam> listViewE;
 
     private EditExamController editExamController;
+    @FXML
+    private Button showQBtn;
+    @FXML
+    private ImageView logo;
 
     @FXML
-    void backAction(ActionEvent event)
-    {
+    private Button showCourseBtn;
+    @FXML
+    private Button createExamBtn;
+    @FXML
+    private Button createQuestionBtn;
+    @FXML
+    private Button editExamBtn;
+    @FXML
+    private Button editQuestionBtn;
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button approveExamBtn;
+    @FXML
+    private Button aquireExamBtn;
+    @FXML
+    private Button extraTimeBtn;
+    @FXML
+    private Button logoutBtn;
+    @FXML
+    private Button seeResultsBtn;
+    @FXML
+    private Button sendExamsToStudentsBtn;
+
+    @FXML
+    void createAnExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
         Platform.runLater(() -> {
             try {
-                System.out.println("back edit exam");
-                SimpleChatClient.switchScreen("teacherBoundry");
-                EventBus.getDefault().unregister(editExamController);
+                SimpleChatClient.switchScreen("ExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }  @FXML
+    void createAnQuestionAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("QuestionBoundry");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
     }
+    @FXML
+    void EditExamsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            // Show the dialog
+            editExamController.showAlertDialog(Alert.AlertType.ERROR, "Error", "You Are Already In Edit Exam Page");
+
+        });
+    }
+    @FXML
+    void EditQuestionsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("EditQuestion");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void approveExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ApproveExam");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    @FXML
+    void aquireExamAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("AquireExamBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void extraTimeAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimeTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException {
+        editExamController.logOut();
+
+    }
+    @FXML
+    void seeResultsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ViewGradesForTeacher");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+    @FXML
+    void sendExamsToStudentsAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("SendExamToStudentBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        EventBus.getDefault().unregister(editExamController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("teacherBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
 
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
@@ -103,18 +254,36 @@ public class EditExamBoundry {
     }
 
     @FXML
-    void showExamAction(ActionEvent event) throws IOException {
-        Course course = getSelectCourse().getValue();
-        Message message = new Message("showExams", course);
-        SimpleClient.getClient().sendToServer(message);
+    void showExamAction(ActionEvent event) throws IOException
+    {
+        if (selectSubject.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a subject");
+            });
+        }
+        else if (selectCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a course");
+            });
+        }
+        else
+        {
+            Course course = getSelectCourse().getValue();
+            Message message = new Message("showExams", course);
+            SimpleClient.getClient().sendToServer(message);
+        }
     }
     @FXML
     public void initialize() throws IOException {
         editExamController = new EditExamController(this);
         this.setEditExamController(editExamController);
+        Image logoImage = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
+        logo.setImage(logoImage);
 
-        selectCourse.setVisible(false);
-        showExamBtn.setVisible(false);
+        selectCourse.setVisible(true);
+        showExamBtn.setVisible(true);
         editExamController.getSubjects();
         selectCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
             @Override
@@ -178,6 +347,39 @@ public class EditExamBoundry {
                 return null;
             }
         });
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+    }
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n" +
+                " HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
     }
 
     public EditExamController getEditExamController() {

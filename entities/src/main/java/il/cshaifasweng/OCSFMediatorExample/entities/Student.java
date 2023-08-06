@@ -1,4 +1,4 @@
-package il.cshaifasweng.OCSFMediatorExample.entities;;
+ package il.cshaifasweng.OCSFMediatorExample.entities;;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +11,10 @@ public class Student  extends User implements Serializable
 {
 
     @ManyToMany(mappedBy = "listOfStudents", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ReadyExam> exams;
+    private List<ReadyExam> readyExams;
+
+    @ManyToMany(mappedBy = "listOfStudents", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Exam> exams;
 
     @ManyToMany(mappedBy = "listOfStudents", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Subject> subjects;
@@ -23,16 +26,16 @@ public class Student  extends User implements Serializable
     @JoinColumn(name = "principle_id")
     private Principle principle;
 
-    public Student(String firstName, String lastName, String username, String password, int whoAreYou)
+    public Student(String firstName, String lastName, String username, String password, int whoAreYou, String idd)
     {
-        super(firstName, lastName, username, password, whoAreYou, false);
+        super(firstName, lastName, username, password, whoAreYou, false, idd);
         this.subjects = new ArrayList<Subject>();
-        this.exams = new ArrayList<ReadyExam>();
+        this.exams = new ArrayList<Exam>();
         this.courses = new ArrayList<Course>();
     }
     public Student(){
         this.subjects = new ArrayList<Subject>();
-        this.exams = new ArrayList<ReadyExam>();
+        this.exams = new ArrayList<Exam>();
         this.courses = new ArrayList<Course>();
     }
 
@@ -40,11 +43,17 @@ public class Student  extends User implements Serializable
         return courses;
     }
 
-    public List<ReadyExam> getExams() {
+    public List<Exam> getExams() {
         return exams;
     }
 
     public List<Subject> getSubjects() {
         return subjects;
     }
+
+    public List<ReadyExam> getReadyExams() {
+        return readyExams;
+    }
+
 }
+ 

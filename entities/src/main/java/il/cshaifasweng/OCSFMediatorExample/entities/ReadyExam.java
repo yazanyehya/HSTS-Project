@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +52,25 @@ public class ReadyExam implements Serializable
 
     private String studentId;
 
+    private String creatorFullName;
+
     private Integer addedTime = 0;
-    @OneToOne
+
+    private double avg = 0;
+
+    private double median = 0;
+
+    private String subject;
+
+    private String idd;
+    private String ori_idd;
+    private Integer size = 0;
+
+    @ManyToOne
     @JoinColumn(name = "exam_id") // The foreign key column in the Ready_Exams table
     private Exam exam;
+
+
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
@@ -64,10 +80,16 @@ public class ReadyExam implements Serializable
     )
     private List<Student> listOfStudents;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "Exam_Grades", joinColumns = @JoinColumn(name = "ready_exam_id"))
+    @Column(name = "grade")
+    private List<Integer> listOfGrades;
 
+    private File file;
 
-    public ReadyExam(String examType, String course, String executionCode,Exam exam, String isClone, String username, Integer originalId, String fullName, String studentId)
+    public ReadyExam(String examType, String course, String subject,String executionCode,Exam exam, String isClone, String username, String creatorFullName, Integer originalId, String fullName, String studentId, File file)
     {
+        this.creatorFullName = creatorFullName;
         this.examType = examType;
         this.exam = exam;
         this.course = course;
@@ -83,23 +105,30 @@ public class ReadyExam implements Serializable
         this.OnGoing = "no";
         this.extraTimeApproved = "";
         this.setNumOfOnGoingExams(0);
+        this.file = file;
+        this.subject = subject;
+        this.listOfGrades = new ArrayList<Integer>();
     }
 
     public ReadyExam clone()
     {
         ReadyExam readyExam = new ReadyExam();
         readyExam.setExam(exam);
+        readyExam.creatorFullName = creatorFullName;
         readyExam.setExamType(examType);
         readyExam.setCourse(course);
         readyExam.setUsername(username);
         readyExam.setId(0);
         readyExam.isClone = "yes";
         readyExam.grade = 0;
+        readyExam.subject = subject;
         readyExam.approved = "no";
         readyExam.examinee = examinee;
         readyExam.FullName = FullName;
         readyExam.studentId = studentId;
+        readyExam.listOfGrades = new ArrayList<>();
         readyExam.OnGoing = "no";
+        readyExam.file = file;
         return readyExam;
     }
     public String getUsername() {
@@ -255,4 +284,69 @@ public class ReadyExam implements Serializable
     public void setAddedTime(Integer addedTime) {
         this.addedTime = addedTime;
     }
+
+    public String getCreatorFullName() {
+        return creatorFullName;
+    }
+
+    public double getAvg() {
+        return avg;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setAvg(double avg) {
+        this.avg = avg;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public void setMedian(double median) {
+        this.median = median;
+    }
+
+    public double getMedian() {
+        return median;
+    }
+
+    public List<Integer> getListOfGrades() {
+        return listOfGrades;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getIdd() {
+        return idd;
+    }
+
+    public void setIdd(String idd) {
+        this.idd = idd;
+    }
+
+    public void setOri_idd(String ori_idd) {
+        this.ori_idd = ori_idd;
+    }
+
+    public String getOri_idd() {
+        return ori_idd;
+    }
 }
+ 

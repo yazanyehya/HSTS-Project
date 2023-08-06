@@ -3,50 +3,68 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.Controller.TeacherController;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.User;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TeacherBoundry {
+    @FXML
+    private ImageView approve;
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
+    @FXML
+    private Button approveExamBtn;
 
     @FXML
-    private Button createAnExamBtn;
+    private Button aquireExamBtn;
 
     @FXML
-    private Button createAnQuestionBtn;
+    private Button createExamBtn;
 
     @FXML
-    private Button EditExamsBtn;
+    private Button createQuestionBtn;
 
     @FXML
-    private Button EditQuestionsBtn;
+    private Button editExamBtn;
 
     @FXML
-    private Button logoutBtn;
+    private Button editQuestionBtn;
 
     @FXML
     private Button extraTimeBtn;
 
     @FXML
-    private Button aquireExamBtn;
+    private Button homeBtn;
+
+    @FXML
+    private ImageView logo;
+
+
+    @FXML
+    private Button logoutBtn;
+
+
+    @FXML
+    private Button seeResultsBtn;
 
     @FXML
     private Button sendExamsToStudentsBtn;
 
     @FXML
     private Text teacherName;
-
-    @FXML
-    private Button approveExamBtn;
-
-    @FXML
-    private Button seeResultsBtn;
-
 
     private TeacherController teacherController;
 
@@ -138,6 +156,14 @@ public class TeacherBoundry {
     {
         this.teacherController = teacherController;
     }
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            // Show the dialog
+            teacherController.showAlertDialog(Alert.AlertType.ERROR, "Error", "You Are Already In Home Page");
+
+        });
+    }
 
     @FXML
     void aquireExamAction(ActionEvent event)
@@ -153,18 +179,19 @@ public class TeacherBoundry {
     }
 
     @FXML
-    void extraTimeAction(ActionEvent event)
-    {
+    void extraTimeAction(ActionEvent event) {
         EventBus.getDefault().unregister(teacherController);
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("ExtraTimeTeacher");
+                System.out.println("ahmadddggg");
                 Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
                 SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+
     }
 
     @FXML
@@ -189,5 +216,45 @@ public class TeacherBoundry {
 
         User user = SimpleClient.getClient().getUser();
         teacherName.setText("Welcome " + user.getFirstName() + " " + user.getLastName());
+        Image logoImage = new  Image(getClass().getResourceAsStream("/images/finallogo.png"));
+        logo.setImage(logoImage);
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
     }
-}
+
+
+
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n" +
+                " HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
+
+
+    // Override the stop method to stop the AnimationTimer when the application exits
+    public void stop() {
+        animationTimer.stop();
+    }
+
+
+
+
+    }
+

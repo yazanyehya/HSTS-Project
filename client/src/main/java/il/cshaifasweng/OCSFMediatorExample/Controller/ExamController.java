@@ -26,6 +26,8 @@ public class ExamController
 {
     ExamBoundry examBoundry;
     private HashMap<Question, Integer> questionHashMap;
+    private boolean isLogoutDialogShown = false;
+
 
     public ExamController(ExamBoundry examBoundry)
     {
@@ -52,9 +54,12 @@ public class ExamController
             questionHashMap.put(question, question.getScore()); // Set a default score of 0 for each selected question
         }
 
-        ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(), questionHashMap, examBoundry.getSelectSubject().getValue().getName(), examBoundry.getChooseCourse().getValue().getName(), examBoundry.getCommentTeacher().getText(), examBoundry.getCommentStudet().getText());
-        Message message = new Message("saveExam", examHelper);
+        String fullName = ((Teacher)SimpleClient.getClient().getUser()).getFirstName() + " " + ((Teacher)SimpleClient.getClient().getUser()).getLastName();
+        ExamHelper examHelper = new ExamHelper(examBoundry.getExamPeriod().getText(), ((Teacher)SimpleClient.getClient().getUser()).getUsername(),fullName ,questionHashMap, examBoundry.getSelectSubject().getValue().getName(), examBoundry.getChooseCourse().getValue().getName(), examBoundry.getCommentTeacher().getText(), examBoundry.getCommentStudet().getText());
+        Object object = new Object[]{SimpleClient.getClient().getUser(), examHelper};
+        Message message = new Message("saveExam", object);
         SimpleClient.getClient().sendToServer(message);
+
     }
 
     public void selectAction(Course course) throws IOException
@@ -67,6 +72,11 @@ public class ExamController
         Teacher teacher = (Teacher) SimpleClient.getClient().getUser();
         Message message = new Message("getSubjectsForTeacherExam", teacher);
         SimpleClient.getClient().sendToServer(message);
+    }
+    public void logOut() throws IOException {
+        Message msg = new Message("LogoutEB", SimpleClient.getClient().getUser());
+        System.out.println(SimpleClient.getClient().getUser().getUsername());
+        SimpleClient.getClient().sendToServer(msg);
     }
     @Subscribe
     public void handleGetSubjectsForTeacherEQ(GetSubjectsForTeacherExamEvent getSubjectsForTeacherExamEvent)
@@ -81,7 +91,8 @@ public class ExamController
     }
     public void getCourses(Subject selectedItem) throws IOException
     {
-        Message message = new Message("getCoursesForSubjectsExam", selectedItem);
+        Object object = new Object[]{selectedItem,SimpleClient.getClient().getUser()};
+        Message message = new Message("getCoursesForSubjectsExam", object);
         SimpleClient.getClient().sendToServer(message);
     }
     @Subscribe
@@ -102,6 +113,7 @@ public class ExamController
         ScoredQuestionListCell(boolean firstRow) {
             this.firstRow = firstRow;
         }
+
 
         @Override
         protected void updateItem(Question question, boolean empty) {
@@ -246,5 +258,39 @@ public class ExamController
             return new SimpleBooleanProperty(false); // Default value
         }
     }
+
+
+    @Subscribe
+    public void handleLogoutEvent(LogoutEvent logoutEvent) {
+        System.out.println("logout platform");
+
+        if (logoutEvent.getMessage().getTitle().equals("LogoutEB")) {
+            if (!isLogoutDialogShown) {
+                isLogoutDialogShown = true;
+
+                Platform.runLater(() -> {
+                    // Show the dialog
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Success", "You Logged out");
+                    isLogoutDialogShown = false;
+                });
+            }
+
+            // Unregister this class from the EventBus
+            EventBus.getDefault().unregister(this);
+
+            try {
+                Platform.runLater(() -> {
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
 

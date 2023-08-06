@@ -1,3 +1,4 @@
+
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ public class Course implements Serializable
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private String idd;
     @Column
     private String name;
 
@@ -131,4 +133,13 @@ public class Course implements Serializable
     public void setPrinciple(Principle principle) {
         this.principle = principle;
     }
+
+    public String getIdd() {
+        return idd;
+    }
+
+    public void setIdd(String idd) {
+        this.idd = idd;
+    }
 }
+ 

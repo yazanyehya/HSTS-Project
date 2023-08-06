@@ -1,25 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.TeacherBoundry">
-   <children>
-      <Text fx:id="teacherName" layoutX="132.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0">
-         <font>
-            <Font name="American Typewriter" size="32.0" />
-         </font></Text>
-      <Button fx:id="createAnQuestionBtn" layoutX="40.0" layoutY="96.0" mnemonicParsing="false" onAction="#createAnQuestionAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Create a Question" AnchorPane.topAnchor="96.0" />
-      <Button fx:id="createAnExamBtn" layoutX="320.0" layoutY="96.0" mnemonicParsing="false" onAction="#createAnExamAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Create an Exam" />
-      <Button fx:id="EditExamsBtn" layoutX="320.0" layoutY="241.0" mnemonicParsing="false" onAction="#EditExamsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Edit Exams" />
-      <Button fx:id="EditQuestionsBtn" layoutX="40.0" layoutY="241.0" mnemonicParsing="false" onAction="#EditQuestionsAction" prefHeight="76.0" prefWidth="179.0" stylesheets="@designs.css" text="Edit Questions" />
-      <Button fx:id="logoutBtn" layoutX="232.0" layoutY="630.0" mnemonicParsing="false" onAction="#logoutAction" stylesheets="@designs.css" text="logout" />
-      <Button fx:id="aquireExamBtn" layoutX="43.0" layoutY="358.0" mnemonicParsing="false" onAction="#aquireExamAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Aquire Exam From Repository" />
-      <Button fx:id="extraTimeBtn" layoutX="329.0" layoutY="366.0" mnemonicParsing="false" onAction="#extraTimeAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Request Extra Time" />
-      <Button fx:id="sendExamsToStudentsBtn" layoutX="43.0" layoutY="467.0" mnemonicParsing="false" onAction="#sendExamsToStudentsAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Send Exams To Students" />
-      <Button fx:id="approveExamBtn" layoutX="329.0" layoutY="467.0" mnemonicParsing="false" onAction="#approveExamAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="Approve Exams" />
-      <Button fx:id="seeResultsBtn" layoutX="43.0" layoutY="561.0" mnemonicParsing="false" onAction="#seeResultsAction" prefHeight="69.0" prefWidth="179.0" stylesheets="@designs.css" text="View Grades" />
-   </children>
-</AnchorPane>
+<BorderPane maxHeight="500.0" maxWidth="750.0" minHeight="500.0" minWidth="750.0" prefHeight="500.0" prefWidth="750.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.TeacherBoundry">
+   <left>
+      <AnchorPane prefHeight="500.0" prefWidth="209.0" style="-fx-background-color: #0598ff; -fx-border-width: 0px 0px 2px 0px;" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="editExamBtn" layoutY="159.0" mnemonicParsing="false" onAction="#EditExamsAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Edit Exam" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="createExamBtn" layoutY="81.0" mnemonicParsing="false" onAction="#createAnExamAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Creat Exam" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="editQuestionBtn" layoutY="120.0" mnemonicParsing="false" onAction="#EditQuestionsAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Edit Question" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="createQuestionBtn" layoutY="42.0" mnemonicParsing="false" onAction="#createAnQuestionAction" prefHeight="30.0" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Create Question" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="logoutBtn" layoutY="439.0" mnemonicParsing="false" onAction="#logoutAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Logout" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="aquireExamBtn" layoutY="198.0" mnemonicParsing="false" onAction="#aquireExamAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="     Aquire Exam From Repository" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="sendExamsToStudentsBtn" layoutY="237.0" mnemonicParsing="false" onAction="#sendExamsToStudentsAction" prefHeight="30.0" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Send Exams To Students" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="approveExamBtn" layoutY="315.0" mnemonicParsing="false" onAction="#approveExamAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Approve Exams" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="extraTimeBtn" layoutY="276.0" mnemonicParsing="false" onAction="#extraTimeAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Request Extra Time" textFill="#fbfbfb">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="seeResultsBtn" layoutY="354.0" mnemonicParsing="false" onAction="#seeResultsAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="View Grades" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect></Button>
+            <Button fx:id="homeBtn" layoutY="3.0" mnemonicParsing="false" onAction="#homeBtnAction" prefWidth="209.0" style="-fx-background-color: #273be2;" stylesheets="@ButtonCss.css" text="Home" textFill="WHITE">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </InnerShadow>
+               </effect>
+            </Button>
+         </children>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="400.0" prefWidth="262.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text fx:id="teacherName" fill="#0598ff" layoutX="70.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="278.64966011047363">
+               <font>
+                  <Font name="Algerian" size="24.0" />
+               </font>
+            </Text>
+            <ImageView fx:id="logo" fitHeight="347.0" fitWidth="370.0" layoutX="14.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/finallogo.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="timeLabel" layoutX="361.0" layoutY="14.0" prefHeight="67.0" prefWidth="173.0" textFill="#0598ff">
+               <font>
+                  <Font name="Algerian" size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

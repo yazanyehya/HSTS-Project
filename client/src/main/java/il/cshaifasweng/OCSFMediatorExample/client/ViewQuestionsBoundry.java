@@ -1,15 +1,14 @@
+
+
 /**
  * Sample Skeleton for 'viewQuestionsBoundry.fxml' Controller Class
  */
 
-package il.cshaifasweng.OCSFMediatorExample.client;
+ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.EditQuestionController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ViewQuestionsController;
-import il.cshaifasweng.OCSFMediatorExample.entities.Course;
-import il.cshaifasweng.OCSFMediatorExample.entities.Message;
-import il.cshaifasweng.OCSFMediatorExample.entities.Question;
-import il.cshaifasweng.OCSFMediatorExample.entities.Subject;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +20,33 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 
 public class ViewQuestionsBoundry {
+    @FXML
+    private Button courseReportsBtn;
+
+    @FXML
+    private Button extraTimeBtn;
+
+    @FXML
+    private Button homeBtn;
+    @FXML
+    private Button logoutBtn;
+
+
+    @FXML
+    private Button studentReportsBtn;
+
+    @FXML
+    private Button teacherReportsBtn;
+
+    @FXML
+    private Button viewExamsBtn;
+
+    @FXML
+    private Button viewGradesBtn;
+
+    @FXML
+    private Button viewQuestionsBtn;
+
 
     @FXML // fx:id="backBtn"
     private Button backBtn; // Value injected by FXMLLoader
@@ -40,14 +66,128 @@ public class ViewQuestionsBoundry {
     private Button showQuestionsBtn; // Value injected by FXMLLoader
 
     @FXML
-    void backAction(ActionEvent event) {
+    void teacherReportsAction(ActionEvent event) {
         Platform.runLater(() -> {
             try {
-                SimpleChatClient.switchScreen("principleBoundry");
                 EventBus.getDefault().unregister(viewQuestionsController);
+                SimpleChatClient.switchScreen("teacherReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getTeachersForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        });
+    }
+    @FXML
+    void courseReportsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(viewQuestionsController);
+                SimpleChatClient.switchScreen("courseReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getCoursesForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void studentReportsAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(viewQuestionsController);
+                SimpleChatClient.switchScreen("studentReportsBoundry");
+                Principle principle = (Principle) SimpleClient.getClient().getUser();
+                Message message = new Message("getStudentsForPrinciple", principle);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void reportsAction(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(viewQuestionsController);
+
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("reportsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void homeBtnAction(ActionEvent event) {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(viewQuestionsController);
+                SimpleChatClient.switchScreen("PrincipleBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void logoutAction(ActionEvent event) throws IOException
+    {
+        viewQuestionsController.logOut();
+    }
+
+    @FXML
+    void extraTimeAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(viewQuestionsController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("ExtraTimePrinciple");
+                Message message = new Message("ExtraTimePrinciple", null);
+                SimpleClient.getClient().sendToServer(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
+    void viewExamsAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(viewQuestionsController);
+                SimpleChatClient.switchScreen("viewExamsBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void viewGradesAction(ActionEvent event) throws IOException {
+        Platform.runLater(() -> {
+            try {
+                EventBus.getDefault().unregister(viewQuestionsController);
+                SimpleChatClient.switchScreen("viewGradesBoundry");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    void viewQuestionsAction(ActionEvent event) throws IOException {
+//        Platform.runLater(() -> {
+//            try {
+//                EventBus.getDefault().unregister(viewQuestionsController);
+//                SimpleChatClient.switchScreen("viewQuestionsBoundry");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+        Platform.runLater(()->{
+            showAlertDialog(Alert.AlertType.ERROR, "Error", "You are already in View Questions page");
         });
     }
 
@@ -64,9 +204,24 @@ public class ViewQuestionsBoundry {
 
     @FXML
     void showQuestionsAction(ActionEvent event) throws IOException {
-        Course course = getSelectCourse().getValue();
-        Message message = new Message("showQuestionsForPrinciple", course);
-        SimpleClient.getClient().sendToServer(message);
+        if (selectSubject.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a subject");
+            });
+        }
+        else if(selectCourse.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(()->{
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a course");
+            });
+        }
+        else
+        {
+            Course course = getSelectCourse().getValue();
+            Message message = new Message("showQuestionsForPrinciple", course);
+            SimpleClient.getClient().sendToServer(message);
+        }
     }
 
     ViewQuestionsController viewQuestionsController;
