@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.StartSolvingComputerizedExamController;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,10 +37,14 @@ public class StartSolvingComputerizedExamBoundry
     private Label timerLabel;
 
     private int examPeriod;
+
+    @FXML
+    private Label timeLabel;
+    private AnimationTimer animationTimer;
     @FXML
     void finishExamAction(ActionEvent event) throws IOException {
         finished = "yes";
-        startSolvingExamController.finish();
+        startSolvingExamController.finish("InTime");
     }
 
     public Map<Question, RadioButton> getSelectedAnswersMap()
@@ -98,7 +105,15 @@ public class StartSolvingComputerizedExamBoundry
         startSolvingExamController = new StartSolvingComputerizedExamController(this);
         this.setStartSolvingExamController(startSolvingExamController);
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
     }
+
 
     public Button getFinishExamBtn() {
         return finishExamBtn;
@@ -107,5 +122,22 @@ public class StartSolvingComputerizedExamBoundry
     public void setFinishExamBtn(Button finishExamBtn) {
         this.finishExamBtn = finishExamBtn;
     }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd \n" +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
+
 }
  

@@ -294,7 +294,7 @@ public class SimpleServer extends AbstractServer {
 
 			Course course = (Course) objects[0];
 			Teacher teacher = (Teacher) objects[1];
-			String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam WHERE re.exam.course.name = :course AND re.isClone = 'yes' AND re.approved = 'no' AND re.username = : username";
+			String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam WHERE re.exam.course.name = :course AND re.isClone = 'yes' AND re.approved = 'no' AND re.username = : username and re.examType = 'Computerized'";
 			Query query = session.createQuery(hql, ReadyExam.class);
 			query.setParameter("course", course.getName());
 			query.setParameter("username",teacher.getUsername());
@@ -688,6 +688,7 @@ public class SimpleServer extends AbstractServer {
 				Query query = session.createQuery(hql, ReadyExam.class);
 				query.setParameter("id", readyExam.getId());
 				ReadyExam re = (ReadyExam) query.getSingleResult();
+				List<String> studentlistt = new ArrayList<String>();
 				for (String str : students)
 				{
 					hql = "SELECT s FROM Student s WHERE s.username = :username";
@@ -704,15 +705,21 @@ public class SimpleServer extends AbstractServer {
 						re.getListOfStudents().add(student);
 						session.update(re);
 						session.flush();
-						Message responseMessage = new Message("sendToStudent", re);
-						client.sendToClient(responseMessage);
+
 					}
 					else
 					{
-						Message responseMessage = new Message("sendToStudent", null);
-						client.sendToClient(responseMessage);
+						studentlistt.add(student.getFirstName() + " " + student.getLastName());
+
 					}
 				}
+				if (studentlistt.size() == students.size())
+				{
+					re = null;
+				}
+				Object object = new Object[]{re, studentlistt};
+				Message responseMessage = new Message("sendToStudent", object);
+				client.sendToClient(responseMessage);
 				//session.save(readyExam1);
 			} catch (HibernateException e)
 			{
@@ -1367,7 +1374,7 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if(message.getTitle().equals("finishExam"))
+		else if(message.getTitle().equals("InTime") || message.getTitle().equals("NotInTime"))
 		{
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive())
@@ -1531,7 +1538,7 @@ public class SimpleServer extends AbstractServer {
 				session.update(readyExam1);
 				session.flush();
 
-				hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam where re.readyExamOriginalID = :id and re.approved = 'yes' and re.isClone = 'yes'";
+				hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam where re.readyExamOriginalID = :id and re.approved = 'yes' and re.isClone = 'yes' AND re.examType = 'Computerized'";
 				Query query6 = session.createQuery(hql, ReadyExam.class);
 				query6.setParameter("id", readyExam1.getId());
 				List<ReadyExam> readyExamList = (List<ReadyExam>) query6.getResultList();
@@ -1706,7 +1713,7 @@ public class SimpleServer extends AbstractServer {
 					session = getSessionFactory().openSession();
 					session.beginTransaction();
 				}
-				Exam exam = (Exam)message.getBody();
+				ReadyExam exam = (ReadyExam) message.getBody();
 				int id = exam.getId();
 				String hql = "SELECT re FROM ReadyExam re where re.originalId =: id and re.approved = 'yes' and re.isClone = 'yes'";
 				Query query1 = session.createQuery(hql, ReadyExam.class);

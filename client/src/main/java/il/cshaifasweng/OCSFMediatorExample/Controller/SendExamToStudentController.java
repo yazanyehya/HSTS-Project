@@ -144,7 +144,11 @@ public class SendExamToStudentController
     @Subscribe
     public void handleSendToStudent(SendToStudentEvent sendToStudentEvent)
     {
-        if(sendToStudentEvent.getMessage().getBody() != null)
+        Object[] objects = (Object[])sendToStudentEvent.getMessage().getBody();
+        ReadyExam readyExam = (ReadyExam) objects[0];
+        List<String> list = (List<String>)objects[1];
+
+        if(list.isEmpty())
         {
             Platform.runLater(()->
             {
@@ -153,9 +157,41 @@ public class SendExamToStudentController
         }
         else
         {
+
             Platform.runLater(()->
             {
-                showAlertDialog(Alert.AlertType.ERROR, "Error", "Exam already sent to student");
+                String s = "";
+                for (String name : list)
+                {
+                    s += name + ", \n";
+                }
+                if (readyExam != null)
+
+                {
+                    String t = "";
+                    if (list.size() == 1)
+                    {
+                        t = "this student";
+                    }
+                    else
+                    {
+                        t = "those students";
+                    }
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "Exam has been sent, but not for:\n " + s + "" + "it has been already sent "+ t);
+                }
+                else
+                {
+                    String t = "";
+                    if (list.size() == 1)
+                    {
+                            t = "this student";
+                    }
+                    else
+                    {
+                         t = "those students";
+                    }
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "Exam already has been sent to "  + t);
+                }
             });
         }
 

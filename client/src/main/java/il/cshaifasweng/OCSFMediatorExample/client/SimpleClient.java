@@ -215,7 +215,11 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new LogoutForStudentEvent((Message)msg));
 		}
-		else if(message.getTitle().equals("finishExam") || message.getTitle().equals("timeIsUp"))
+		else if(message.getTitle().equals("NotInTime"))
+		{
+			EventBus.getDefault().post(new TimeIsUpEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("InTime") || message.getTitle().equals("saveManualExam"))
 		{
 			EventBus.getDefault().post(new FinishExamEvent((Message)msg));
 		}
@@ -244,7 +248,7 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new ViewGradesForTeacherIIBoundryEvent((Message)msg));
 		}
-		else if(message.getTitle().equals("StartSolvingManualExam") || message.getTitle().equals("saveManualExam"))
+		else if(message.getTitle().equals("StartSolvingManualExam"))
 		{
 			EventBus.getDefault().post(new StartSolvingManualExamEvent((Message)msg));
 		}

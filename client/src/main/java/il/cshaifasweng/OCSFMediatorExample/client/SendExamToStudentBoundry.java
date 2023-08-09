@@ -100,6 +100,12 @@ public class SendExamToStudentBoundry {
                 showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select an exam");
             });
         }
+        else if(students.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select at least one student");
+            });
+        }
         else
         {
             List<Student> studentList = students.getSelectionModel().getSelectedItems();
@@ -308,6 +314,9 @@ public class SendExamToStudentBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("ExtraTimeTeacher");
+                System.out.println("ahmadddggg");
+                Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }

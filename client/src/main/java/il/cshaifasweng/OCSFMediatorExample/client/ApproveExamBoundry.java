@@ -164,10 +164,12 @@ public class ApproveExamBoundry {
 
     @FXML
     void extraTimeAction(ActionEvent event) {
-        EventBus.getDefault().unregister(approveExamController);
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("ExtraTimeTeacher");
+                System.out.println("ahmadddggg");
+                Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }

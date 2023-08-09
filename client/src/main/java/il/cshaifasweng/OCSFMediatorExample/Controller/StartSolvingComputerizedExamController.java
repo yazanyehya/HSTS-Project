@@ -70,7 +70,7 @@ public class StartSolvingComputerizedExamController
         return vBox;
     }
 
-    public void finish() throws IOException {
+    public void finish(String s) throws IOException {
         Map<Question, String> map = new HashMap<>();
         for (Map.Entry<Question, RadioButton> entry : startSolvingExamBoundry.getSelectedAnswersMap().entrySet()) {
             Question question = entry.getKey();
@@ -91,12 +91,16 @@ public class StartSolvingComputerizedExamController
             }
         }
 
+        timeline.stop();
         Object object = new Object[]{map, startSolvingExamBoundry.getExamID(), SimpleClient.getClient().getUser()};
-        Message message = new Message("finishExam", object);
+        Message message = new Message(s, object);
         SimpleClient.getClient().sendToServer(message);
 
         Message message2 = new Message("SetOnGoingToFalse", examID);
         SimpleClient.getClient().sendToServer(message2);
+        //EventBus.getDefault().unregister(this);
+
+        System.out.println("herelol");
     }
 
     public void update(int extraTimeInMinutes) {
@@ -126,17 +130,19 @@ public class StartSolvingComputerizedExamController
 
 
     @Subscribe
-    public void handleExtraTime(ExtraTimeEvent extraTimeEvent)
-    {
-        if (extraTimeEvent.getMessage().getTitle().equals("ApproveExtraTimeRequest"))
-        {
+    public void handleExtraTime(ExtraTimeEvent extraTimeEvent) {
+        if (extraTimeEvent.getMessage().getTitle().equals("ApproveExtraTimeRequest")) {
             ExtraTime extraTime = (ExtraTime) extraTimeEvent.getMessage().getBody();
             int time = Integer.parseInt(extraTime.getTimeAmount());
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 update(time);
                 showAlertDialog(Alert.AlertType.WARNING, "Notice", "There have been added " + time + " more minutes");
 
             });
+        }
+        else
+        {
+            EventBus.getDefault().unregister(this);
         }
     }
     @Subscribe
@@ -188,26 +194,20 @@ public class StartSolvingComputerizedExamController
                     if (Objects.equals(startSolvingExamBoundry.getFinished(), "no"))
                     {
                         Platform.runLater(() -> {
-
-                            showAlertDialog(Alert.AlertType.ERROR, "Error", "There is no longer time left to solve the exam");
-                            try {
-                                startSolvingExamBoundry.getExamContainer().getChildren().clear();
-                                SimpleChatClient.switchScreen("ConductAnExam");
-                                Message message2 = new Message("SetOnGoingToFalse", Integer.toString(readyExam.getId()));
-                                Message message1 = new Message("timeIsUp", null);
-                                SimpleClient.getClient().sendToServer(message1);
-                                SimpleClient.getClient().sendToServer(message2);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            startSolvingExamBoundry.getExamContainer().getChildren().clear();
+                                //SimpleChatClient.switchScreen("ConductAnExam");
+                                //Message message2 = new Message("SetOnGoingToFalse", Integer.toString(readyExam.getId()));
+                                //Message message1 = new Message("timeIsUp", null);
+                                //SimpleClient.getClient().sendToServer(message2);
+                                //SimpleClient.getClient().sendToServer(message1);
                         });
                         try {
-                            finish();
+                            SimpleChatClient.switchScreen("ConductAnExam");
+                            finish("NotInTime");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-
                 }
 
                 else {
@@ -309,35 +309,7 @@ public class StartSolvingComputerizedExamController
             timeline.play();
         });
     }
-    @Subscribe
-    public void handleFinishExamEvent(FinishExamEvent finishExamEvent)
-    {
-        if (finishExamEvent.getMessage().getTitle().equals("timeIsUp"))
-        {
-            Platform.runLater(() -> {
 
-                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam has been submitted");
-                try {
-                    EventBus.getDefault().unregister(this);
-                    SimpleChatClient.switchScreen("ConductAnExam");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        else {
-            Platform.runLater(() -> {
-
-                showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam has been submitted");
-                try {
-                    EventBus.getDefault().unregister(this);
-                    SimpleChatClient.switchScreen("ConductAnExam");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-    }
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(alertType);

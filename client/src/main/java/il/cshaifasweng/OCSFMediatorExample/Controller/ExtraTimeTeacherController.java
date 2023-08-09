@@ -32,11 +32,13 @@ public class ExtraTimeTeacherController
     @Subscribe
     public void handleExtraTimeEvent(ExtraTimeEvent extraTimeEvent)
     {
+
         if (extraTimeEvent.getMessage().getTitle().equals("GetOnGoingExamsForExtraTime"))
         {
+            List<ReadyExam> list = (List<ReadyExam>) extraTimeEvent.getMessage().getBody();
             System.out.println("ahmaddd33");
             Platform.runLater(()->{
-                List<ReadyExam> list = (List<ReadyExam>) extraTimeEvent.getMessage().getBody();
+
 
                 extraTimeBoundry.getExamIdCol().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("readyExamOriginalID"));
                 extraTimeBoundry.getNumberOfExaminees().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("numOfOnGoingExams"));
