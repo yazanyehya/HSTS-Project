@@ -49,7 +49,8 @@ public class StudentBoundry {
     private Button logoutBtn;
 
     @FXML
-    private Text studentName;
+    private Label studentName;
+
 
     @FXML
     private Text belIcon;
@@ -62,7 +63,7 @@ public class StudentBoundry {
 
     private StudentController studentController;
 
-    private  Label notificationCountLabel;
+    private  Label notificationCountLabel = new Label("0");
     @FXML
     private ImageView bellArrow;
 
@@ -119,9 +120,17 @@ public class StudentBoundry {
     }
 
     @FXML
-    void notificationAction(ActionEvent event)
-    {
-
+    void notificationAction(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(studentController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("StudentNotifications");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        Message message = new Message("getNotificationForStudent", SimpleClient.getClient().getUser());
+        SimpleClient.getClient().sendToServer(message);
     }
 
     @FXML
@@ -149,7 +158,7 @@ public class StudentBoundry {
         ImageView bellIconImageView = new ImageView(bellIconImage);
         bellIconImageView.setFitWidth(20); // Adjust the size as needed
         bellIconImageView.setFitHeight(20);
-        notificationCountLabel = new Label("1"); // You can update this label text based on the actual count
+        //notificationCountLabel = new Label("1"); // You can update this label text based on the actual count
         notificationList.setVisible(false);
         bellArrow.setImage(new Image(getClass().getResourceAsStream("/images/arrow.png")));
         bellArrow.setVisible(false);
@@ -158,22 +167,23 @@ public class StudentBoundry {
 
         bellBtn.setGraphic(buttonLayout);
 
-//        notificationList.setCellFactory(listView -> new NotificationCell());
-//        Notification notification = new Notification("New Grade Has been published", LocalDateTime.now(), false);
-//        ObservableList<Notification> notifications = FXCollections.observableArrayList(notification);
-//// Populate the notifications list from your data source
-//        notificationList.setItems(notifications);
+        notificationList.setCellFactory(listView -> new NotificationCell());
 
         Button markAsReadButton = new Button("Mark as Read");
-        markAsReadButton.setOnAction(e -> markSelectedNotificationAsRead(notificationList.getSelectionModel().getSelectedItem()));
+        markAsReadButton.setOnAction(e -> {
+            try {
+                markSelectedNotificationAsRead(notificationList.getSelectionModel().getSelectedItem());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
 
-        VBox layout = new VBox(notificationList, markAsReadButton);
-
+        //layout.getChildren().addAll();
 
         Image logoImage2= new  Image(getClass().getResourceAsStream("/images/orangeHSTS.png"));
         logostd.setImage(logoImage2);
         User user = SimpleClient.getClient().getUser();
-        //studentName.setText("Welcome " + user.getFirstName() + " " + user.getLastName());
+        studentName.setText("Welcome " + user.getFirstName() + " " + user.getLastName());
         animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -193,26 +203,41 @@ public class StudentBoundry {
                 setGraphic(null);
             } else {
                 HBox cellLayout = new HBox();
+                //cellLayout.setStyle("-fx-background-radius: 40; -fx-border-color:  #000000; -fx-border-radius: 40; -fx-border-width: 3; -fx-background-color:  #ffa500;");
                 Button markAsReadButton = new Button("Mark as Read");
-                markAsReadButton.setOnAction(e -> markNotificationAsRead(item));
+                markAsReadButton.setStyle("    -fx-background-color:  #e9692c;\n" +
+                        "    -fx-background-radius: 30 30 30 30;\n" +
+                        "    -fx-border-radius: 30 30 30 30;\n" +
+                        "    -fx-border-color: #000000;\n" +
+                        "    -fx-border-width: 2px 2px 2px 2px;\n" +
+                        "    -fx-effect: dropshadow(gaussian, #e9692c, 6, 0.5, 0, 0);");
+                markAsReadButton.setOnAction(e -> {
+                    try {
+                        markNotificationAsRead(item);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                });
 
                 // Display the notification message
                 setText(item.getMessage());
+                setStyle("-fx-background-color: transparent;");
 
                 // Add the "Mark as Read" button to the cell layout
-                cellLayout.getChildren().addAll(new Button("Mark as Read"), markAsReadButton);
+                cellLayout.getChildren().addAll(markAsReadButton);
                 setGraphic(cellLayout);
             }
         }
 
-        private void markNotificationAsRead(Notification notification) {
+        private void markNotificationAsRead(Notification notification) throws IOException {
             notification.setRead(true);
             updateItem(notification, false);
+            markSelectedNotificationAsRead(notification);
             // Update the database or perform any necessary action
         }
     }
     @FXML
-    private void markSelectedNotificationAsRead(Notification selectedNotification) {
+    private void markSelectedNotificationAsRead(Notification selectedNotification) throws IOException {
         if (selectedNotification != null) {
             // Perform the logic to mark the selected notification as read
             selectedNotification.setRead(true);
@@ -222,7 +247,10 @@ public class StudentBoundry {
 
             // Update the display or perform any necessary actions
             // For example, you could refresh the notification list
-            notificationList.refresh();
+            Object object = new Object[]{SimpleClient.getClient().getUser(), selectedNotification};
+            Message message = new Message("setToRead", object);
+            SimpleClient.getClient().sendToServer(message);
+
         }
     }
     private void updateDateTime() {
@@ -253,4 +281,15 @@ public class StudentBoundry {
         this.studentController = studentController;
     }
 
+    public ListView<Notification> getNotificationList() {
+        return notificationList;
+    }
+
+    public Label getNotificationCountLabel() {
+        return notificationCountLabel;
+    }
+
+    public void setNotificationCountLabel(Label notificationCountLabel) {
+        this.notificationCountLabel = notificationCountLabel;
+    }
 }

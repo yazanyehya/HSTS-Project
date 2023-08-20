@@ -95,6 +95,11 @@ public class ConductAnExamController
         });
     }
     @Subscribe
+    public void handleStudentEvents(StudentEvent studentEvent)
+    {
+        showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");
+    }
+    @Subscribe
     public void handleLogoutEvent(LogoutForStudentEvent logoutForStudentEvent) {
         System.out.println("logout platform");
 

@@ -98,7 +98,8 @@ public class StartSolvingComputerizedExamController
 
         Message message2 = new Message("SetOnGoingToFalse", examID);
         SimpleClient.getClient().sendToServer(message2);
-        //EventBus.getDefault().unregister(this);
+        SimpleChatClient.switchScreen("ConductAnExam");
+        EventBus.getDefault().unregister(this);
 
         System.out.println("herelol");
     }
@@ -140,10 +141,10 @@ public class StartSolvingComputerizedExamController
 
             });
         }
-        else
-        {
-            EventBus.getDefault().unregister(this);
-        }
+//        else
+//        {
+//            EventBus.getDefault().unregister(this);
+//        }
     }
     @Subscribe
     public void handleStartExam(StartExamEvent startExamEvent) throws IOException {

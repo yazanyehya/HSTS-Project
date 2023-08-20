@@ -62,6 +62,18 @@
                      <font>
                         <Font name="American Typewriter" size="19.0" />
                      </font></Button>
+                  <Button fx:id="notificationBtn" layoutY="235.0" mnemonicParsing="false" onAction="#notificationAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Notifications" textFill="WHITE">
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect>
+                     <font>
+                        <Font name="American Typewriter" size="16.0" />
+                     </font>
+                  </Button>
                </children>
             </AnchorPane>
          </children>

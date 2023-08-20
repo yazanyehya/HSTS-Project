@@ -164,6 +164,8 @@ public class PreviewToApproveController
             //Label HighSchoolNameLabel = new Label("High School Test System");
             Label courseLabel = new Label("Exam in " + readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
             Label teacherName = new Label((readyExam.getExam().getTeacherFullName()));
+            teacherName.setFont(font);
+            teacherName.setStyle("-fx-font-weight: bold;-fx-underline: true; -fx-text-fill: #1E90FF;");
             //HighSchoolNameLabel.setFont(font);
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
@@ -175,13 +177,14 @@ public class PreviewToApproveController
 
             VBox studentDetails = new VBox();
 
+            previewToApproveBoundry.setStudentID(student.getId());
             Label studentName = new Label("Student name: " + student.getFirstName() + " " + student.getLastName());
             Label studentId = new Label("Student ID: " + student.getId());
             studentName.setFont(font);
             studentId.setFont(font);
 
-            studentName.setStyle("-fx-font-weight: bold;-fx-underline: true;");
-            studentId.setStyle("-fx-font-weight: bold;-fx-underline: true;");
+            studentName.setStyle("-fx-font-weight: bold;-fx-underline: true; -fx-text-fill: #1E90FF;");
+            studentId.setStyle("-fx-font-weight: bold;-fx-underline: true; -fx-text-fill: #1E90FF;");
             studentDetails.getChildren().addAll(studentName, studentId);
 
             VBox questions = new VBox();
@@ -197,8 +200,14 @@ public class PreviewToApproveController
 
                 // Add the question label and RadioButtons VBox to the main VBox
                 vBox1.getChildren().add(0, Qtext); // Add the question label as the first child
-                vBox1.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
-                questions.getChildren().addAll(vBox1);
+                Region region9 = new Region();
+                region9.setMinHeight(10); // Example: Set a minimum height
+                region9.setPrefHeight(20); // Example: Set a preferred height
+                region9.setMaxHeight(25);
+
+                VBox.setVgrow(region9, Priority.ALWAYS);
+                vBox1.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #1f75fe;");
+                questions.getChildren().addAll(vBox1,region9);
 
             }
             Label gradeLabel = new Label("Grade: ");
@@ -211,18 +220,49 @@ public class PreviewToApproveController
             Region region1 = new Region();
             Region region2 = new Region();
             Region region3 = new Region();
+            Region region4 = new Region();
+            Region region5 = new Region();
+            Region region6 = new Region();
+            Region region7 = new Region();
             HBox.setHgrow(region1, Priority.ALWAYS);
             HBox.setHgrow(region2, Priority.ALWAYS);
-            HBox.setHgrow(region3, Priority.ALWAYS);
+
+            region3.setMinHeight(10); // Example: Set a minimum height
+            region3.setPrefHeight(40); // Example: Set a preferred height
+            region3.setMaxHeight(40); // Example: Set a maximum height
+
+            region4.setMinHeight(10); // Example: Set a minimum height
+            region4.setPrefHeight(40); // Example: Set a preferred height
+            region4.setMaxHeight(40); // Example: Set a maximum height
+
+            region5.setMinHeight(10); // Example: Set a minimum height
+            region5.setPrefHeight(40); // Example: Set a preferred height
+            region5.setMaxHeight(40); // Example: Set a maximum height
+
+            region6.setMinHeight(10); // Example: Set a minimum height
+            region6.setPrefHeight(40); // Example: Set a preferred height
+            region6.setMaxHeight(40); // Example: Set a maximum height
+
+            region7.setMinHeight(10); // Example: Set a minimum height
+            region7.setPrefHeight(40); // Example: Set a preferred height
+            region7.setMaxHeight(40); // Example: Set a maximum height
+
+            VBox.setVgrow(region3, Priority.ALWAYS);
+            VBox.setVgrow(region4, Priority.ALWAYS);
+            VBox.setVgrow(region5, Priority.ALWAYS);
+            VBox.setVgrow(region6, Priority.ALWAYS);
+            VBox.setVgrow(region7, Priority.ALWAYS);
             hBox.getChildren().addAll(region1, borderPane, region2);
-            region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
-            HBox hBox1 = new HBox(region3);
+
             previewToApproveBoundry.getStudentComments().setText(readyExam.getExam().getStudentComments());
             previewToApproveBoundry.getTeacherComments().setText(readyExam.getExam().getTeacherComments());
-            vBox.getChildren().addAll(hBox, studentDetails, hBox1, questions,previewToApproveBoundry.getTeacherContainer(), previewToApproveBoundry.getStudentContainer(), previewToApproveBoundry.getApproveBtn(), previewToApproveBoundry.getBackBtn());
+            vBox.getChildren().addAll(hBox, studentDetails, region3, questions, region4,previewToApproveBoundry.getTeacherContainer(), region6,previewToApproveBoundry.getStudentContainer(),region5, previewToApproveBoundry.getApproveBtn(), region7,previewToApproveBoundry.getBackBtn());
 //            AnchorPane pane = new AnchorPane();
 //            pane.setStyle("-fx-border-color: #FFFFFF; -fx-border-width: 1px 1px 1px 1px");
 //            vBox.setStyle("-fx-background-color: #FFFFFF");
+            vBox.setStyle("-fx-background-color: #ffffff");
+            vBox.setPrefHeight(500);
+            vBox.setPrefWidth(900);
             previewToApproveBoundry.getScrollPane().setContent(vBox);
             //previewToApproveBoundry.getBorder().setCenter(vBox);
             //pane.getChildren().add(previewToApproveBoundry.getBorder());

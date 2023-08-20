@@ -131,6 +131,7 @@ public class EditSelectedExamController
             // Set the items for the ComboBox
             ObservableList<Course> courseObservableList = FXCollections.observableArrayList(exam.getCourse());
             editSelectedExamBoundry.getChooseCourse().setItems(courseObservableList);
+            editSelectedExamBoundry.getChooseCourse().setValue(exam.getCourse());
         });
     }
     private boolean checkQuestion(Question q1)
@@ -227,7 +228,14 @@ public class EditSelectedExamController
         {
             Platform.runLater(() -> {
                 // Login success
+                EventBus.getDefault().unregister(this);
                 showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
+                try {
+                    SimpleChatClient.switchScreen("EditExam");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             });
         }
     }

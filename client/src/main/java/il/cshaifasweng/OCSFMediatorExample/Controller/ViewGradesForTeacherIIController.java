@@ -194,8 +194,8 @@ public class ViewGradesForTeacherIIController
             BorderPane borderPane = new BorderPane();
             Image logo = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
             ImageView imageViewLogo = new ImageView(logo);
-            imageViewLogo.setFitWidth(150); // Set the width
-            imageViewLogo.setFitHeight(150); // Set the height
+            imageViewLogo.setFitWidth(250); // Set the width
+            imageViewLogo.setFitHeight(250); // Set the height
             Font font = new Font("American Typewriter", 24);
 
 
@@ -203,10 +203,13 @@ public class ViewGradesForTeacherIIController
             Label courseLabel = new Label("Exam in "+ readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
             //HighSchoolNameLabel.setFont(font);
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
-
+            Label teacher = new Label("Creator: "+readyExam.getCreatorFullName());
+            teacher.setFont(font);
             courseLabel.setFont(font);
             courseLabel.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
-            examDetails.getChildren().addAll(imageViewLogo, courseLabel);
+            teacher.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
+
+            examDetails.getChildren().addAll(imageViewLogo, courseLabel, teacher);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
 
@@ -219,8 +222,10 @@ public class ViewGradesForTeacherIIController
             studentId.setFont(font);
             grade.setFont(font);
 
-            studentName.setStyle("-fx-font-weight: bold;-fx-underline: true;");
-            studentId.setStyle("-fx-font-weight: bold;-fx-underline: true;");
+            studentName.setStyle("-fx-font-weight: bold;-fx-underline: true;-fx-text-fill: #1E90FF;");
+            studentId.setStyle("-fx-font-weight: bold;-fx-underline: true;-fx-text-fill: #1E90FF;");
+            grade.setStyle("-fx-font-weight: bold;-fx-underline: true;-fx-text-fill: #1E90FF;");
+
             studentDetails.getChildren().addAll(studentName, studentId,grade);
 
             VBox questions = new VBox();
@@ -242,25 +247,44 @@ public class ViewGradesForTeacherIIController
             Region region1 = new Region();
             Region region2 = new Region();
             Region region3 = new Region();
+            Region region4 = new Region();
+            Region region5 = new Region();
             HBox.setHgrow(region1, Priority.ALWAYS);
             HBox.setHgrow(region2, Priority.ALWAYS);
-            HBox.setHgrow(region3, Priority.ALWAYS);
+            region3.setMinHeight(10); // Example: Set a minimum height
+            region3.setPrefHeight(40); // Example: Set a preferred height
+            region3.setMaxHeight(40); // Example: Set a maximum height
+
+            region4.setMinHeight(10); // Example: Set a minimum height
+            region4.setPrefHeight(40); // Example: Set a preferred height
+            region4.setMaxHeight(40); // Example: Set a maximum height
+
+            region5.setMinHeight(10); // Example: Set a minimum height
+            region5.setPrefHeight(40); // Example: Set a preferred height
+            region5.setMaxHeight(40); // Example: Set a maximum height
+            VBox.setVgrow(region3, Priority.ALWAYS);
+            VBox.setVgrow(region4, Priority.ALWAYS);
+            VBox.setVgrow(region5, Priority.ALWAYS);
+
             hBox.getChildren().addAll(region1, borderPane, region2);
             region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
-            HBox hBox1 = new HBox(region3);
             Label studentComments = new Label("Comments for Student");
             TextField textFieldStudentComments = new TextField(readyExam.getExam().getStudentComments());
             textFieldStudentComments.setDisable(true);
-            vBox.getChildren().addAll(hBox,studentDetails,hBox1, questions, studentComments, textFieldStudentComments);
+            vBox.getChildren().addAll(hBox,studentDetails,region3, questions,region4, studentComments, region5 ,textFieldStudentComments);
             ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setPrefWidth(900);
+            scrollPane.setPrefHeight(500);
             vBox.setStyle("-fx-background-color: #ffffff");
+            vBox.setPrefWidth(900);
+            vBox.setPrefHeight(500);
             scrollPane.setContent(vBox);
             scrollPane.setStyle("-fx-background-color: #ffffff");
             // Create a new stage and set the VBox as its root
             Stage previewStage = new Stage();
             previewStage.setScene(new Scene(scrollPane));
-            previewStage.setHeight(800);
-            previewStage.setWidth(800);
+            previewStage.setHeight(500);
+            previewStage.setWidth(900);
 
 
             // Show the stage

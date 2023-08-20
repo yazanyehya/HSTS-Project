@@ -328,6 +328,8 @@ public class AquireExamBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
+                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }

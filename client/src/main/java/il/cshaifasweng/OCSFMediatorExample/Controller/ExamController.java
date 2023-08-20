@@ -205,6 +205,12 @@ public class ExamController
             Platform.runLater(() -> {
                 // Login success
                 showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Saved Successfully");
+                EventBus.getDefault().unregister(this);
+                try {
+                    SimpleChatClient.switchScreen("teacherBoundry");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         }
     }

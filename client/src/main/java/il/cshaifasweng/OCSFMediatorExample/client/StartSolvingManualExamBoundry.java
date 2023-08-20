@@ -293,6 +293,8 @@ public class StartSolvingManualExamBoundry {
                         Object object1 = new Object[]{selectedFile, Integer.parseInt(examID), SimpleClient.getClient().getUser()};
                         Message message = new Message("saveManualExam", object1);
                         SimpleClient.getClient().sendToServer(message);
+                        Message message2 = new Message("SetOnGoingToFalse", examID);
+                        SimpleClient.getClient().sendToServer(message2);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

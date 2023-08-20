@@ -2,8 +2,10 @@
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
+ @Entity
 @Table(name = "Users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements Serializable
@@ -25,6 +27,10 @@ public class User implements Serializable
     @Column
     private int whoAreYou; // 0 for student, 1 for teacher, 2 for principle
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_id")
+    private List<Notification> notificationList;
+
     public User(String firstName, String lastName, String username, String password, int whoAreYou, Boolean isLoggedIn, String idd)
     {
         this.firstName = firstName;
@@ -34,10 +40,11 @@ public class User implements Serializable
         this.whoAreYou = whoAreYou;
         this.isLoggedIn = isLoggedIn;
         this.idd = idd;
+        this.notificationList =  new ArrayList<Notification>();
     }
 
     public User() {
-
+        this.notificationList =  new ArrayList<Notification>();
     }
 
     public Boolean isLoggedIn() {
@@ -102,6 +109,10 @@ public class User implements Serializable
 
     public void setIdd(String idd) {
         this.idd = idd;
+    }
+
+    public List<Notification> getNotificationList() {
+        return notificationList;
     }
 }
  

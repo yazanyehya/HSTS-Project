@@ -195,6 +195,8 @@ public class EditExamBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
+                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -226,6 +228,7 @@ public class EditExamBoundry {
         {
             Platform.runLater(() -> {
                 try {
+                    EventBus.getDefault().unregister(editExamController);
                     SimpleChatClient.switchScreen("EditSelectedExam");
                     System.out.println("exam 1");
                     Exam exam = getListViewE().getSelectionModel().getSelectedItem();

@@ -115,7 +115,7 @@ public class SendExamToStudentBoundry {
                 list.add(s.getUsername());
             }
             ReadyExam readyExam = acquiredExams.getSelectionModel().getSelectedItem();
-            Object object = new Object[]{list, readyExam};
+            Object object = new Object[]{list, readyExam, SimpleClient.getClient().getUser()};
             //Object object = new Object[]{readyExam};
             Message message = new Message("sendToStudent", object);
             SimpleClient.getClient().sendToServer(message);
@@ -356,6 +356,8 @@ public class SendExamToStudentBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
+                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }

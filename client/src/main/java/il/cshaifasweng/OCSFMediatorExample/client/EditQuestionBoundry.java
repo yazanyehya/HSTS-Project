@@ -205,6 +205,8 @@ public class EditQuestionBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("TeacherBoundry");
+                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -349,6 +351,7 @@ public class EditQuestionBoundry {
         {
             Platform.runLater(() -> {
                 try {
+                    EventBus.getDefault().unregister(editQuestionController);
                     SimpleChatClient.switchScreen("EditSelectedQuestion");
                     Object object = new Object[]{selectSubject.getSelectionModel().getSelectedItem(), getListViewQ().getSelectionModel().getSelectedItem()};
                     Message message = new Message("editSelectedQuestion",object);
