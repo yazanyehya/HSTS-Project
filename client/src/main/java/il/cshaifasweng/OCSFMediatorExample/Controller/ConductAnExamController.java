@@ -95,6 +95,11 @@ public class ConductAnExamController
         });
     }
     @Subscribe
+    public void handleStudentEvents(StudentEvent studentEvent)
+    {
+        showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");
+    }
+    @Subscribe
     public void handleLogoutEvent(LogoutForStudentEvent logoutForStudentEvent) {
         System.out.println("logout platform");
 
@@ -123,6 +128,27 @@ public class ConductAnExamController
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    @Subscribe
+    public void handleFinishExamEvent(FinishExamEvent finishExamEvent)
+    {
+
+        System.out.println("here");
+        Platform.runLater(() -> {
+
+            showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam has been submitted");
+        });
+    }
+    @Subscribe
+    public void handleTimeIsUp(TimeIsUpEvent timeIsUpEvent)
+    {
+        if (timeIsUpEvent.getMessage().getTitle().equals("NotInTime"))
+        {
+            Platform.runLater(() -> {
+
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "There is no longer time left to solve the exam");
+            });
         }
     }
 }

@@ -100,6 +100,12 @@ public class SendExamToStudentBoundry {
                 showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select an exam");
             });
         }
+        else if(students.getSelectionModel().isEmpty())
+        {
+            Platform.runLater(() -> {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select at least one student");
+            });
+        }
         else
         {
             List<Student> studentList = students.getSelectionModel().getSelectedItems();
@@ -109,7 +115,7 @@ public class SendExamToStudentBoundry {
                 list.add(s.getUsername());
             }
             ReadyExam readyExam = acquiredExams.getSelectionModel().getSelectedItem();
-            Object object = new Object[]{list, readyExam};
+            Object object = new Object[]{list, readyExam, SimpleClient.getClient().getUser()};
             //Object object = new Object[]{readyExam};
             Message message = new Message("sendToStudent", object);
             SimpleClient.getClient().sendToServer(message);
@@ -308,6 +314,9 @@ public class SendExamToStudentBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("ExtraTimeTeacher");
+                System.out.println("ahmadddggg");
+                Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -347,6 +356,8 @@ public class SendExamToStudentBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
+                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }

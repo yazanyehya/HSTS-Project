@@ -31,6 +31,11 @@ public class ViewGradesForStudentController
         this.viewGradesForStudentBoundry = viewGradesForStudentBoundry;
     }
     @Subscribe
+    public void handleStudentEvents(StudentEvent studentEvent)
+    {
+        showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");
+    }
+    @Subscribe
     public void handleViewGradesForStudent(ViewGradesForStudentEvent viewGradesForStudentEvent)
     {
         List<ReadyExam> list = (List<ReadyExam>) viewGradesForStudentEvent.getMessage().getBody();
@@ -39,8 +44,8 @@ public class ViewGradesForStudentController
             viewGradesForStudentBoundry.getCourse().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("Course"));
             viewGradesForStudentBoundry.getExamID().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("idd"));
             viewGradesForStudentBoundry.getGrade().setCellValueFactory(new PropertyValueFactory<ReadyExam, Integer>("Grade"));
+            viewGradesForStudentBoundry.getSubject().setCellValueFactory(new PropertyValueFactory<ReadyExam, String>("subject"));
             viewGradesForStudentBoundry.getPreviewOption().setCellFactory(column -> new ButtonCell());
-
             viewGradesForStudentBoundry.getTable().getItems().addAll(list);
         });
     }
@@ -187,7 +192,7 @@ public class ViewGradesForStudentController
             AnchorPane anchorPane1 = new AnchorPane();
             AnchorPane anchorPane2 = new AnchorPane();
             BorderPane borderPane = new BorderPane();
-            Image logo = new Image(getClass().getResourceAsStream("/images/finallogo.png"));
+            Image logo = new Image(getClass().getResourceAsStream("/images/student_logo.png"));
             ImageView imageViewLogo = new ImageView(logo);
             imageViewLogo.setFitWidth(150); // Set the width
             imageViewLogo.setFitHeight(150); // Set the height
@@ -197,11 +202,13 @@ public class ViewGradesForStudentController
             //Label HighSchoolNameLabel = new Label("High School Test System");
             Label courseLabel = new Label("Exam in "+ readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
             Label teacherName = new Label((readyExam.getExam().getTeacherFullName()));
+            teacherName.setFont(font);
             //HighSchoolNameLabel.setFont(font);
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
             courseLabel.setFont(font);
-            courseLabel.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
+            courseLabel.setStyle("-fx-text-fill: #ffa500;-fx-underline: true;");
+            teacherName.setStyle("-fx-text-fill: #ffa500;-fx-underline: true;");
             examDetails.getChildren().addAll(imageViewLogo, courseLabel, teacherName);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
@@ -215,8 +222,8 @@ public class ViewGradesForStudentController
             studentId.setFont(font);
             grade.setFont(font);
 
-            studentName.setStyle("-fx-font-weight: bold;-fx-underline: true;");
-            studentId.setStyle("-fx-font-weight: bold;-fx-underline: true;");
+            studentName.setStyle("-fx-font-weight: bold;-fx-underline: true; -fx-text-fill: #ffa500;");
+            studentId.setStyle("-fx-font-weight: bold;-fx-underline: true; -fx-text-fill: #ffa500;");
             studentDetails.getChildren().addAll(studentName, studentId, grade);
 
             VBox questions = new VBox();
@@ -232,29 +239,44 @@ public class ViewGradesForStudentController
 
                 // Add the question label and RadioButtons VBox to the main VBox
                 vBox1.getChildren().add(0, Qtext); // Add the question label as the first child
-                vBox1.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
+                vBox1.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #e9692c;");
                 questions.getChildren().addAll(vBox1);
             }
             Region region1 = new Region();
             Region region2 = new Region();
             Region region3 = new Region();
+            Region region4 = new Region();
+            Region region5 = new Region();
             HBox.setHgrow(region1, Priority.ALWAYS);
             HBox.setHgrow(region2, Priority.ALWAYS);
-            HBox.setHgrow(region3, Priority.ALWAYS);
+            region3.setMinHeight(10); // Example: Set a minimum height
+            region3.setPrefHeight(40); // Example: Set a preferred height
+            region3.setMaxHeight(40); // Example: Set a maximum height
+
+            region4.setMinHeight(10); // Example: Set a minimum height
+            region4.setPrefHeight(40); // Example: Set a preferred height
+            region4.setMaxHeight(40); // Example: Set a maximum height
+
+            region5.setMinHeight(10); // Example: Set a minimum height
+            region5.setPrefHeight(40); // Example: Set a preferred height
+            region5.setMaxHeight(40); // Example: Set a maximum height
+            VBox.setVgrow(region3, Priority.ALWAYS);
+            VBox.setVgrow(region4, Priority.ALWAYS);
+            VBox.setVgrow(region5, Priority.ALWAYS);
             hBox.getChildren().addAll(region1, borderPane, region2);
-            region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
+            //region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
             HBox hBox1 = new HBox(region3);
             Label studentComments = new Label("Comments for Student");
             TextField textFieldStudentComments = new TextField(readyExam.getExam().getStudentComments());
             textFieldStudentComments.setDisable(true);
-            vBox.getChildren().addAll(hBox,studentDetails,hBox1, questions, studentComments, textFieldStudentComments);
+            vBox.getChildren().addAll(hBox,region3,studentDetails,region4, questions, region5,studentComments, textFieldStudentComments);
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setContent(vBox);
             // Create a new stage and set the VBox as its root
             Stage previewStage = new Stage();
             previewStage.setScene(new Scene(scrollPane));
-            previewStage.setHeight(800);
-            previewStage.setWidth(800);
+            previewStage.setHeight(500);
+            previewStage.setWidth(900);
 
 
             // Show the stage

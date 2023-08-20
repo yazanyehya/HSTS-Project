@@ -23,6 +23,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class SimpleServer extends AbstractServer {
@@ -294,7 +295,7 @@ public class SimpleServer extends AbstractServer {
 
 			Course course = (Course) objects[0];
 			Teacher teacher = (Teacher) objects[1];
-			String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam WHERE re.exam.course.name = :course AND re.isClone = 'yes' AND re.approved = 'no' AND re.username = : username";
+			String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam WHERE re.exam.course.name = :course AND re.isClone = 'yes' AND re.approved = 'no' AND re.username = : username and re.examType = 'Computerized'";
 			Query query = session.createQuery(hql, ReadyExam.class);
 			query.setParameter("course", course.getName());
 			query.setParameter("username",teacher.getUsername());
@@ -336,7 +337,7 @@ public class SimpleServer extends AbstractServer {
 	public List<ReadyExam> getExamsForCoursePrinciple(Course course) {
 		try (Session session = getSessionFactory().openSession()) {
 			// Create a query to fetch the exams for the given teacher ID
-			String hql = "SELECT e FROM ReadyExam e where e.isClone = 'no' and e.course =: course";
+			String hql = "SELECT e FROM ReadyExam e where e.isClone = 'no' and e.course =: course and e.examType = 'Computerized'";
 			Query query = session.createQuery(hql, ReadyExam.class);
 			query.setParameter("course", course.getName());
 
@@ -352,7 +353,7 @@ public class SimpleServer extends AbstractServer {
 		try (Session session = getSessionFactory().openSession()) {
 			// Create a query to fetch the questions for the given teacher ID
 			//String hql = "FROM Exam e WHERE e.username = :teacherName";
-			String hql = "SELECT e FROM ReadyExam e WHERE e.username = :teacherName and e.isClone = 'no'";
+			String hql = "SELECT e FROM ReadyExam e WHERE e.username = :teacherName and e.isClone = 'no' and e.examType = 'Computerized'";
 
 			Query query = session.createQuery(hql, ReadyExam.class);
 			query.setParameter("teacherName", teacher.getUsername());
@@ -515,6 +516,7 @@ public class SimpleServer extends AbstractServer {
 		System.out.println(message.getTitle());
 		if ("Login".equals(message.getTitle()))
 		{
+			try {
 			if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
 				session = getSessionFactory().openSession();
 				session.beginTransaction();
@@ -536,9 +538,23 @@ public class SimpleServer extends AbstractServer {
 			Message responseMessage = new Message(message.getTitle(), user);
 			client.sendToClient(responseMessage);
 
+		}
+			catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+			finally {
 			if (session != null && session.isOpen()) {
-				session.getTransaction().commit();
-				session.close();
+				try {
+					if (session.getTransaction() != null && session.getTransaction().isActive()) {
+						session.getTransaction().commit();
+					}
+				} catch (Exception ex) {
+					// Handle exceptions during commit if necessary.
+				} finally {
+					session.close();
+				}
+			}
 			}
 		}
 		else if ("NewClient".equals(message.getTitle()))
@@ -567,8 +583,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 
@@ -599,8 +622,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -631,8 +661,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -656,8 +693,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -666,6 +710,7 @@ public class SimpleServer extends AbstractServer {
 			Object[] objects = (Object[])message.getBody();
 			List<String> students = (List<String>)objects[0];
 			ReadyExam readyExam = (ReadyExam)objects[1];
+			Teacher teacher = (Teacher) objects[2];
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
 					session = getSessionFactory().openSession();
@@ -688,6 +733,7 @@ public class SimpleServer extends AbstractServer {
 				Query query = session.createQuery(hql, ReadyExam.class);
 				query.setParameter("id", readyExam.getId());
 				ReadyExam re = (ReadyExam) query.getSingleResult();
+				List<String> studentlistt = new ArrayList<String>();
 				for (String str : students)
 				{
 					hql = "SELECT s FROM Student s WHERE s.username = :username";
@@ -701,27 +747,55 @@ public class SimpleServer extends AbstractServer {
 						session.update(student);
 						session.flush();
 
+						Notification notification = new Notification("Exam has been sent to you by "+ teacher.getFirstName() + " " + teacher.getLastName() + ", ExecutionCode: " + readyExam.getExecutionCode(), LocalDateTime.now(), false);
+						student.getNotificationList().add(notification);
+						session.update(student);
+						session.flush();
+
 						re.getListOfStudents().add(student);
 						session.update(re);
 						session.flush();
-						Message responseMessage = new Message("sendToStudent", re);
-						client.sendToClient(responseMessage);
+
+						hql = "SELECT n from Notification n where n.user.id =: id and n.isRead = false";
+						Query query4 = session.createQuery(hql, Notification.class);
+						query4.setParameter("id", student.getId());
+						List<Notification> notifications = (List<Notification>) query4.getResultList();
+						System.out.println("studentid: " + student.getId());
+						Object object = new Object[]{notifications,student.getId()};
+						Message message1 = new Message("RefreshStudentBell", object);
+						sendToAllClients(message1);
+
 					}
 					else
 					{
-						Message responseMessage = new Message("sendToStudent", null);
-						client.sendToClient(responseMessage);
+						studentlistt.add(student.getFirstName() + " " + student.getLastName());
+
 					}
 				}
-				//session.save(readyExam1);
+				if (studentlistt.size() == students.size())
+				{
+					re = null;
+				}
+				Object object = new Object[]{re, studentlistt};
+				Message responseMessage = new Message("sendToStudent", object);
+				client.sendToClient(responseMessage);
+
+
 			} catch (HibernateException e)
 			{
 				e.printStackTrace();
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 
@@ -793,8 +867,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -849,8 +930,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -872,8 +960,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -899,8 +994,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -925,8 +1027,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -955,8 +1064,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -981,7 +1097,17 @@ public class SimpleServer extends AbstractServer {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				session.close();
+				if (session != null && session.isOpen()) {
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
+				}
 			}
 			System.out.println("logout");
 		}
@@ -1072,7 +1198,15 @@ public class SimpleServer extends AbstractServer {
 				e.printStackTrace();
 			} finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1093,10 +1227,17 @@ public class SimpleServer extends AbstractServer {
 					session.getTransaction().rollback();
 				}
 				e.printStackTrace();
-			} finally {
-				// Close the session
+			}  finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1238,7 +1379,15 @@ public class SimpleServer extends AbstractServer {
 				e.printStackTrace();
 			} finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1331,7 +1480,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1363,11 +1520,19 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
-		else if(message.getTitle().equals("finishExam"))
+		else if(message.getTitle().equals("InTime") || message.getTitle().equals("NotInTime"))
 		{
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive())
@@ -1433,6 +1598,24 @@ public class SimpleServer extends AbstractServer {
 				readyExam2.getListOfStudents().remove(student1);
 				session.update(readyExam2);
 				session.flush();
+
+				Notification notification = new Notification("New exam has been submitted, go and approve it.", LocalDateTime.now(), false);
+				hql = "SELECT t FROM Teacher t WHERE t.username = :username";
+				Query query5 = session.createQuery(hql, Teacher.class);
+				query5.setParameter("username", readyExam.getUsername());
+				Teacher teacher = (Teacher) query5.getSingleResult();
+				teacher.getNotificationList().add(notification);
+				session.update(teacher);
+				session.flush();
+
+				hql = "SELECT n from Notification n where n.user.id =: id and n.isRead = false";
+				Query query7 = session.createQuery(hql, Notification.class);
+				query7.setParameter("id", teacher.getId());
+				List<Notification> notifications = (List<Notification>) query7.getResultList();
+				System.out.println("studentid: " + teacher.getId());
+				Object object = new Object[]{notifications,teacher.getId()};
+				Message message1 = new Message("RefreshTeacherBell", object);
+				sendToAllClients(message1);
 				client.sendToClient(message);
 
 			} catch (Exception e)
@@ -1441,7 +1624,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1468,7 +1659,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1484,6 +1683,7 @@ public class SimpleServer extends AbstractServer {
 				int grade = Integer.parseInt((String)objects[1]);
 				String teacherComments = (String)objects[2];
 				String studentComments = (String) objects[3];
+				Integer studentId = (Integer)objects[4];
 
 				String hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam where re.id = :id";
 				Query query1 = session.createQuery(hql, ReadyExam.class);
@@ -1531,7 +1731,7 @@ public class SimpleServer extends AbstractServer {
 				session.update(readyExam1);
 				session.flush();
 
-				hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam where re.readyExamOriginalID = :id and re.approved = 'yes' and re.isClone = 'yes'";
+				hql = "SELECT re FROM ReadyExam re JOIN FETCH re.exam where re.readyExamOriginalID = :id and re.approved = 'yes' and re.isClone = 'yes' AND re.examType = 'Computerized'";
 				Query query6 = session.createQuery(hql, ReadyExam.class);
 				query6.setParameter("id", readyExam1.getId());
 				List<ReadyExam> readyExamList = (List<ReadyExam>) query6.getResultList();
@@ -1575,6 +1775,23 @@ public class SimpleServer extends AbstractServer {
 				session.update(readyExam.getExam());
 				session.flush();
 
+				Notification notification = new Notification("New grade has been published", LocalDateTime.now(), false);
+				session.save(notification);
+				session.flush();
+
+				student.getNotificationList().add(notification);
+				session.update(student);
+				session.flush();
+
+				hql = "SELECT n from Notification n where n.user.id =: id and n.isRead = false";
+				Query query7 = session.createQuery(hql, Notification.class);
+				query7.setParameter("id", student.getId());
+				List<Notification> notifications = (List<Notification>) query7.getResultList();
+				System.out.println("studentid: " + student.getId());
+				Object object = new Object[]{notifications,student.getId()};
+				Message message1 = new Message("RefreshStudentBell", object);
+				sendToAllClients(message1);
+
 //				readyExam.getListOfStudents().add(student);
 //				session.update(readyExam);
 //				session.flush();
@@ -1597,7 +1814,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1625,7 +1850,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1660,7 +1893,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1695,7 +1936,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1706,7 +1955,7 @@ public class SimpleServer extends AbstractServer {
 					session = getSessionFactory().openSession();
 					session.beginTransaction();
 				}
-				Exam exam = (Exam)message.getBody();
+				ReadyExam exam = (ReadyExam) message.getBody();
 				int id = exam.getId();
 				String hql = "SELECT re FROM ReadyExam re where re.originalId =: id and re.approved = 'yes' and re.isClone = 'yes'";
 				Query query1 = session.createQuery(hql, ReadyExam.class);
@@ -1722,7 +1971,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1744,8 +2001,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1767,8 +2031,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1790,8 +2061,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1813,8 +2091,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1836,8 +2121,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1859,8 +2151,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1886,8 +2185,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1915,8 +2221,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -1943,6 +2256,19 @@ public class SimpleServer extends AbstractServer {
 			{
 				e.printStackTrace();
 			}
+			finally {
+				if (session != null && session.isOpen()) {
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
+				}
+			}
 		}
 		else if("GetExamsForTeacherPrinciple".equals(message.getTitle()))
 		{
@@ -1962,8 +2288,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2025,8 +2358,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2079,8 +2419,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2118,8 +2465,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2159,8 +2513,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2183,8 +2544,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2230,6 +2598,25 @@ public class SimpleServer extends AbstractServer {
 				List<ExtraTime> list2 = (List<ExtraTime>) query1.getResultList();
 
 				Message responseMessage1 = new Message("refreshTablePrinciple",list2);
+
+				Notification notification = new Notification("Extra time has been aprroved for exam " + extraTime.getReadyExam().getOri_idd(), LocalDateTime.now(), false);
+				hql = "SELECT t FROM Teacher t WHERE t.username = :username";
+				Query query5 = session.createQuery(hql, Teacher.class);
+				query5.setParameter("username", extraTime.getTeacherId());
+				Teacher teacher = (Teacher) query5.getSingleResult();
+				teacher.getNotificationList().add(notification);
+				session.update(teacher);
+				session.flush();
+
+				hql = "SELECT n from Notification n where n.user.id =: id and n.isRead = false";
+				Query query7 = session.createQuery(hql, Notification.class);
+				query7.setParameter("id", teacher.getId());
+				List<Notification> notifications = (List<Notification>) query7.getResultList();
+				System.out.println("studentid: " + teacher.getId());
+				Object object = new Object[]{notifications,teacher.getId()};
+				Message message1 = new Message("RefreshTeacherBell", object);
+				sendToAllClients(message1);
+
 				System.out.println(responseMessage.getTitle());
 				sendToAllClients(responseMessage1);
 				sendToAllClients(responseMessage);
@@ -2240,8 +2627,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2273,6 +2667,25 @@ public class SimpleServer extends AbstractServer {
 				List<ExtraTime> list2 = (List<ExtraTime>) query1.getResultList();
 
 				Message responseMessage1 = new Message("refreshTablePrinciple",list2);
+
+				Notification notification = new Notification("Extra time has been denied for exam " + extraTime.getReadyExam().getOri_idd(), LocalDateTime.now(), false);
+				hql = "SELECT t FROM Teacher t WHERE t.username = :username";
+				Query query5 = session.createQuery(hql, Teacher.class);
+				query5.setParameter("username", extraTime.getTeacherId());
+				Teacher teacher = (Teacher) query5.getSingleResult();
+				teacher.getNotificationList().add(notification);
+				session.update(teacher);
+				session.flush();
+
+				hql = "SELECT n from Notification n where n.user.id =: id and n.isRead = false";
+				Query query7 = session.createQuery(hql, Notification.class);
+				query7.setParameter("id", teacher.getId());
+				List<Notification> notifications = (List<Notification>) query7.getResultList();
+				System.out.println("studentid: " + teacher.getId());
+				Object object = new Object[]{notifications,teacher.getId()};
+				Message message1 = new Message("RefreshTeacherBell", object);
+				sendToAllClients(message1);
+
 				sendToAllClients(responseMessage1);
 				sendToAllClients(responseMessage);
 				sendToAllClients(message);
@@ -2281,8 +2694,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2307,8 +2727,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2335,8 +2762,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2367,8 +2801,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2402,8 +2843,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2457,8 +2905,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2482,8 +2937,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2507,8 +2969,15 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
@@ -2532,14 +3001,134 @@ public class SimpleServer extends AbstractServer {
 			}
 			finally {
 				if (session != null && session.isOpen()) {
-					session.getTransaction().commit();
-					session.close();
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
 				}
 			}
 		}
 		else if ("timeIsUp".equals(message.getTitle()))
 		{
 			client.sendToClient(message);
+		}
+		else if("getStudentNotificationList".equals(message.getTitle()) || "getTeacherNotificationList".equals(message.getTitle()) || "getPrincipleNotificationList".equals(message.getTitle()))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				User user = (User) message.getBody();
+				String hql = "select n from Notification  n where n.user.id =: id and n.isRead = false ";
+				Query query1 = session.createQuery(hql, Notification.class);
+				query1.setParameter("id", user.getId());
+				List<Notification> list = (List<Notification>)query1.getResultList();
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
+				}
+			}
+		}
+		else if ("getNotificationForStudent".equals(message.getTitle())) {
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+				Student student = (Student) message.getBody();
+				String hql = "select n from Notification n where n.user.id = :id";
+				Query query1 = session.createQuery(hql, Notification.class);
+				query1.setParameter("id", student.getId());
+				List<Notification> list = (List<Notification>) query1.getResultList();
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+			} catch (Exception e) {
+				e.printStackTrace(); // Consider using a logging framework here.
+			} finally {
+				if (session != null && session.isOpen()) {
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
+				}
+			}
+		}
+		else if(message.getTitle().equals("setToRead") || message.getTitle().equals("setToReadTeacher"))
+		{
+			try {
+				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
+					session = getSessionFactory().openSession();
+					session.beginTransaction();
+				}
+
+				Object[] objects = (Object[]) message.getBody();
+				User user = (User) objects[0];
+				Notification notification = (Notification) objects[1];
+
+				String hql = "select u from User  u where u.id =: id";
+				Query query1 = session.createQuery(hql, User.class);
+				query1.setParameter("id", user.getId());
+				User user1  = (User) query1.getSingleResult();
+
+
+				hql = "select n from Notification  n where n.id =: id";
+				Query query3 = session.createQuery(hql, Notification.class);
+				query3.setParameter("id", notification.getId());
+				Notification notification1 = (Notification)query3.getSingleResult();
+
+				notification1.setRead(true);
+				session.update(notification1);
+				session.flush();
+
+				hql = "select n from Notification  n where n.user.id =: id and n.isRead = false";
+				Query query2 = session.createQuery(hql, Notification.class);
+				query2.setParameter("id", user1.getId());
+				List<Notification> list = (List<Notification>)query2.getResultList();
+
+				Message resMessage = new Message(message.getTitle(), list);
+				client.sendToClient(resMessage);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (session != null && session.isOpen()) {
+					try {
+						if (session.getTransaction() != null && session.getTransaction().isActive()) {
+							session.getTransaction().commit();
+						}
+					} catch (Exception ex) {
+						// Handle exceptions during commit if necessary.
+					} finally {
+						session.close();
+					}
+				}
+			}
 		}
 //		if ("Get all Students".equals(message.getOperation())) {
 //			try {
@@ -2609,6 +3198,7 @@ public class SimpleServer extends AbstractServer {
 		configuration.addAnnotatedClass(ReadyExam.class);
 		configuration.addAnnotatedClass(Principle.class);
 		configuration.addAnnotatedClass(ExtraTime.class);
+		configuration.addAnnotatedClass(Notification.class);
 
 
 		StandardServiceRegistry serviceRegistry= new StandardServiceRegistryBuilder()

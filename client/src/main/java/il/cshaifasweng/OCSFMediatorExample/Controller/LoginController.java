@@ -58,6 +58,8 @@ public class LoginController
                             try {
 //                                handleUserTypeSelection("Student");
                                 SimpleChatClient.switchScreen("studentBoundry");
+                                Message newMessage = new Message("getStudentNotificationList", SimpleClient.getClient().getUser());
+                                SimpleClient.getClient().sendToServer(newMessage);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -66,6 +68,8 @@ public class LoginController
                             try {
 //                                handleUserTypeSelection("Teacher");
                                 SimpleChatClient.switchScreen("teacherBoundry");
+                                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                                SimpleClient.getClient().sendToServer(newMessage);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -75,6 +79,8 @@ public class LoginController
 //                                handleUserTypeSelection("Principle");
 
                                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                                SimpleClient.getClient().sendToServer(newMessage);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

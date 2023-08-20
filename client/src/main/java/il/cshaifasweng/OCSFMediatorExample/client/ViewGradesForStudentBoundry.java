@@ -51,6 +51,8 @@ public class ViewGradesForStudentBoundry {
     @FXML
     private Button backBtn;
 
+    @FXML
+    private Button notificationBtn;
 
     private ViewGradesForStudentController viewGradesForStudentController;
 
@@ -73,6 +75,8 @@ public class ViewGradesForStudentBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("studentBoundry");
+                Message newMessage = new Message("getStudentNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -80,7 +84,24 @@ public class ViewGradesForStudentBoundry {
 
     }
 
-
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(viewGradesForStudentController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("StudentNotifications");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        Message message = new Message("getNotificationForStudent", SimpleClient.getClient().getUser());
+        try {
+            SimpleClient.getClient().sendToServer(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
     void logoutAction(ActionEvent event) throws IOException {
         Message msg = new Message("LogoutVGS", SimpleClient.getClient().getUser());

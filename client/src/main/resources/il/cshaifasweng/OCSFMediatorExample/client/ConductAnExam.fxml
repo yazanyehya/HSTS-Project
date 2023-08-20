@@ -25,7 +25,10 @@
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect></Button>
+                     </effect>
+                     <font>
+                        <Font name="American Typewriter" size="20.0" />
+                     </font></Button>
                   <Button fx:id="ConductAnExamBTN" layoutY="82.0" mnemonicParsing="false" onAction="#conductAnExamAction" prefWidth="209.0" style="-fx-background-color: #e9692c;" stylesheets="@Sbutton.css" text="Conduct an exam" textFill="WHITE">
                      <effect>
                         <InnerShadow>
@@ -33,15 +36,21 @@
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect></Button>
-                  <Button fx:id="viewGradesBTN" layoutY="158.0" mnemonicParsing="false" onAction="#viewGradesAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="ViewGrades" textFill="WHITE">
+                     </effect>
+                     <font>
+                        <Font name="American Typewriter" size="19.0" />
+                     </font></Button>
+                  <Button fx:id="viewGradesBTN" layoutY="158.0" mnemonicParsing="false" onAction="#viewGradesAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="View Grades" textFill="WHITE">
                      <effect>
                         <InnerShadow>
                            <color>
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect></Button>
+                     </effect>
+                     <font>
+                        <Font name="American Typewriter" size="16.0" />
+                     </font></Button>
                   <Button fx:id="logoutBtn" layoutY="436.0" mnemonicParsing="false" onAction="#logoutAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Logout" textFill="WHITE">
                      <effect>
                         <InnerShadow>
@@ -49,7 +58,22 @@
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect></Button>
+                     </effect>
+                     <font>
+                        <Font name="American Typewriter" size="19.0" />
+                     </font></Button>
+                  <Button fx:id="notificationBtn" layoutY="235.0" mnemonicParsing="false" onAction="#notificationAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Notifications" textFill="WHITE">
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect>
+                     <font>
+                        <Font name="American Typewriter" size="16.0" />
+                     </font>
+                  </Button>
                </children>
             </AnchorPane>
          </children>
@@ -60,12 +84,15 @@
          <children>
             <AnchorPane layoutY="2.0" prefHeight="514.0" prefWidth="691.0">
                <children>
-                  <Button fx:id="startExamBtn1" layoutX="238.0" layoutY="300.0" mnemonicParsing="false" onAction="#startExamAction" prefHeight="28.0" prefWidth="157.0" stylesheets="@sbuttun1.css" text="Start Exam" />
+                  <Button fx:id="startExamBtn1" layoutX="238.0" layoutY="300.0" mnemonicParsing="false" onAction="#startExamAction" prefHeight="28.0" prefWidth="157.0" stylesheets="@sbuttun1.css" text="Start Exam ">
+                     <font>
+                        <Font name="American Typewriter" size="14.0" />
+                     </font></Button>
                   <TextField fx:id="executionCode" layoutX="238.0" layoutY="217.0" onAction="#executionCodeAction" prefHeight="28.0" prefWidth="157.0" promptText="Enter Execution Code" style="-fx-border-color: #ffa500; -fx-background-color: transparent; -fx-background-radius: 90; -fx-border-radius: 90; -fx-border-width: 2;" />
                   <TextField fx:id="id" layoutX="238.0" layoutY="261.0" onAction="#idAction" prefHeight="28.0" prefWidth="157.0" promptText="Enter Your ID" style="-fx-border-color: #ffa500; -fx-background-color: transparent; -fx-background-radius: 90; -fx-border-radius: 90; -fx-border-width: 2;" />
                   <Label layoutX="29.0" layoutY="128.0" prefHeight="35.0" prefWidth="178.0" style="-fx-border-color: #000000; -fx-background-color: #ffffff; -fx-background-radius: 90; -fx-border-radius: 90; -fx-border-width: 2;" text="  2. Enter your Id.">
                      <font>
-                        <Font name="System Bold" size="11.0" />
+                        <Font name="American Typewriter" size="13.0" />
                      </font>
                      <effect>
                         <DropShadow>
@@ -87,14 +114,14 @@
                         </DropShadow>
                      </effect>
                   </Label>
-                  <ImageView fitHeight="165.0" fitWidth="195.0" layoutX="484.0" layoutY="102.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="209.0" fitWidth="260.0" layoutX="419.0" layoutY="102.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../../images/orangeHSTS.png" />
                      </image>
                   </ImageView>
                   <Label layoutX="445.0" layoutY="372.0" prefHeight="123.0" prefWidth="212.0" text="Good Luck !!" textFill="ORANGE">
                      <font>
-                        <Font name="Algerian" size="31.0" />
+                        <Font name="American Typewriter" size="31.0" />
                      </font>
                   </Label>
                   <Label fx:id="timeLabel" layoutX="484.0" layoutY="28.0" prefHeight="67.0" prefWidth="173.0" textFill="ORANGE">

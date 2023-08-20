@@ -109,7 +109,9 @@ public class StartSolvingManualExamController
         else if (startSolvingManualExamEvent.getMessage().getTitle().equals("StartSolvingManualExam"))
         {
             ReadyExam readyExam = (ReadyExam) startSolvingManualExamEvent.getMessage().getBody();
-            Message message = new Message("SetOnGoingToTrue", readyExam);
+            Object object = new Object[]{readyExam, SimpleClient.getClient().getUser()};
+
+            Message message = new Message("SetOnGoingToTrue", object);
             SimpleClient.getClient().sendToServer(message);
 
             int extra = 0;
@@ -140,13 +142,14 @@ public class StartSolvingManualExamController
                                     SimpleChatClient.switchScreen("ConductAnExam");
                                     Message message2 = new Message("SetOnGoingToFalse", Integer.toString(readyExam.getId()));
                                     SimpleClient.getClient().sendToServer(message2);
+                                    timeline.stop();
+                                    startSolvingManualExamBoundry.getStage().close();
 
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             });
                         }
-
                     }
 
                     else {

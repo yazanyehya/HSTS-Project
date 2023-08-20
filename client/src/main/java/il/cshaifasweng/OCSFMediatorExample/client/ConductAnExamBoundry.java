@@ -46,6 +46,9 @@ public class ConductAnExamBoundry {
     @FXML
     private Button viewGradesBTN;
 
+    @FXML
+    private Button notificationBtn;
+
 
     private ConductAnExamController conductAnExamController;
 
@@ -70,11 +73,31 @@ public class ConductAnExamBoundry {
     }
 
     @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(conductAnExamController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("StudentNotifications");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        Message message = new Message("getNotificationForStudent", SimpleClient.getClient().getUser());
+        try {
+            SimpleClient.getClient().sendToServer(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
     void homeBtnAction(ActionEvent event) {
         EventBus.getDefault().unregister(conductAnExamController);
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("StudentBoundry");
+                Message newMessage = new Message("getStudentNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }

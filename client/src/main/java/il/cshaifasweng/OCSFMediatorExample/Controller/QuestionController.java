@@ -66,7 +66,12 @@ public class QuestionController
                 Platform.runLater(() -> {
                     // Login success
                     showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Question Added Successfully");
-                    //EventBus.getDefault().unregister(this);
+                    EventBus.getDefault().unregister(this);
+                    try {
+                        SimpleChatClient.switchScreen("teacherBoundry");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 });
 
             }

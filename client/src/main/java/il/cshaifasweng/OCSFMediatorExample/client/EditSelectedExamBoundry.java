@@ -81,7 +81,6 @@ public class EditSelectedExamBoundry {
         logo.setImage(logoImage);
         questionListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listOfAllQuestions.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
         chooseCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
             @Override
             public ListCell<Course> call(ListView<Course> param) {
@@ -204,7 +203,7 @@ public class EditSelectedExamBoundry {
                 showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select a course");
             });
         }
-        else if(selectedQuestions.getSelectionModel().isEmpty() && listOfAllQuestions.getSelectionModel().isEmpty())
+        else if(listOfAllQuestions.getSelectionModel().isEmpty() && questionListView.getSelectionModel().isEmpty())
         {
             Platform.runLater(()->
             {

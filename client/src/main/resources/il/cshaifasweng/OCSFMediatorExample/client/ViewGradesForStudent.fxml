@@ -49,6 +49,15 @@
                            </color>
                         </InnerShadow>
                      </effect></Button>
+                  <Button fx:id="notificationBtn" layoutY="225.0" mnemonicParsing="false" onAction="#notificationAction" stylesheets="@Sbutton.css" text="Notifications" textFill="WHITE">
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect>
+                  </Button>
                </children>
             </AnchorPane>
          </children>

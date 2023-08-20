@@ -134,7 +134,7 @@ public class ViewExamsController {
                     Label examTextLabel2 = new Label("Course: " + viewExamsBoundry.getSelectCourse().getSelectionModel().getSelectedItem().getName());
                     Label examTextLabel3 = new Label("Subject: " + viewExamsBoundry.getSelectSubject().getSelectionModel().getSelectedItem().getName());
                     Label examTextLabel4 = new Label("Exam Period: " + exam.getExamPeriod());
-                    Label examTextLabel5 = new Label("Exam ID: " + exam.getId());
+                    Label examTextLabel5 = new Label("Exam ID: " + exam.getIdd());
 
                     //Label examTextLabel3 = new Label(exam.getSubject().getName());
                     // Add additional labels or components for exam details if needed

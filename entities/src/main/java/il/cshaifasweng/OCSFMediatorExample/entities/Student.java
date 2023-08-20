@@ -32,6 +32,7 @@ public class Student  extends User implements Serializable
         this.subjects = new ArrayList<Subject>();
         this.exams = new ArrayList<Exam>();
         this.courses = new ArrayList<Course>();
+
     }
     public Student(){
         this.subjects = new ArrayList<Subject>();

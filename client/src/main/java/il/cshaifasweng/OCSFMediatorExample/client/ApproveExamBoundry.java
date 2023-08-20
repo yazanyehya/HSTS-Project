@@ -168,6 +168,9 @@ public class ApproveExamBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("ExtraTimeTeacher");
+                System.out.println("ahmadddggg");
+                Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -211,6 +214,8 @@ public class ApproveExamBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
+                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }

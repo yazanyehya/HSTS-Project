@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -8,13 +9,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PreviewToApproveBoundry">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" style="-fx-border-color: #273be2; -fx-border-width: 5;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PreviewToApproveBoundry">
    <children>
-      <VBox layoutX="2.0" layoutY="1.0" prefHeight="800.0" prefWidth="800.0">
+      <VBox layoutX="2.0" layoutY="1.0" prefHeight="500.0" prefWidth="900.0">
          <children>
-            <ScrollPane fx:id="scrollPane" prefHeight="639.0" prefWidth="682.0">
+            <ScrollPane fx:id="scrollPane" prefHeight="500.0" prefWidth="900.0">
               <content>
-                <AnchorPane fx:id="pane" minHeight="0.0" minWidth="0.0" prefHeight="798.0" prefWidth="798.0">
+                <AnchorPane fx:id="pane" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="883.0" style="-fx-border-color: #273be2; -fx-border-width: 6; -fx-background-color: #ffffff;">
                      <children>
                         <VBox fx:id="teacherContainer" layoutX="170.0" layoutY="73.0" prefHeight="177.0" prefWidth="164.0">
                            <children>
@@ -29,12 +30,16 @@
                            </children>
                         </VBox>
                         <TextField fx:id="grade" layoutX="327.0" layoutY="629.0" />
+                        <Button fx:id="backBtn" layoutX="395.0" layoutY="374.0" mnemonicParsing="false" onAction="#backAction" stylesheets="@ButtonCss.css" text="back" />
+                        <Button fx:id="approveBtn" layoutX="200.0" layoutY="426.0" mnemonicParsing="false" onAction="#approveAction" text="Approve">
+                           <stylesheets>
+                              <URL value="@button1.css" />
+                              <URL value="@ButtonCss.css" />
+                           </stylesheets></Button>
                      </children></AnchorPane>
               </content>
             </ScrollPane>
          </children>
       </VBox>
-      <Button fx:id="approveBtn" layoutX="126.0" layoutY="659.0" mnemonicParsing="false" onAction="#approveAction" text="Approve" />
-      <Button fx:id="backBtn" layoutX="264.0" layoutY="660.0" mnemonicParsing="false" onAction="#backAction" text="back" />
    </children>
 </AnchorPane>

@@ -215,7 +215,11 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new LogoutForStudentEvent((Message)msg));
 		}
-		else if(message.getTitle().equals("finishExam") || message.getTitle().equals("timeIsUp"))
+		else if(message.getTitle().equals("NotInTime"))
+		{
+			EventBus.getDefault().post(new TimeIsUpEvent((Message)msg));
+		}
+		else if(message.getTitle().equals("InTime") || message.getTitle().equals("saveManualExam"))
 		{
 			EventBus.getDefault().post(new FinishExamEvent((Message)msg));
 		}
@@ -244,7 +248,7 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new ViewGradesForTeacherIIBoundryEvent((Message)msg));
 		}
-		else if(message.getTitle().equals("StartSolvingManualExam") || message.getTitle().equals("saveManualExam"))
+		else if(message.getTitle().equals("StartSolvingManualExam"))
 		{
 			EventBus.getDefault().post(new StartSolvingManualExamEvent((Message)msg));
 		}
@@ -347,14 +351,36 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new GetStudentsForPrincipleEvent((Message) msg));
 		}
+		else if (message.getTitle().equals("getStudentNotificationList") ||message.getTitle().equals("setToRead") || message.getTitle().equals("RefreshStudentBell"))
+		{
+			EventBus.getDefault().post(new StudentEvent((Message) msg));
+		}
+		else if (message.getTitle().equals("getTeacherNotificationList") ||message.getTitle().equals("setToReadTeacher") || message.getTitle().equals("RefreshTeacherBell"))
+		{
+			EventBus.getDefault().post(new TeacherEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getNotificationForStudent"))
+		{
+			EventBus.getDefault().post(new NotificationForStudentEvent((Message) msg));
+		}
 
 	}
 	public static SimpleClient getClient() {
-		if (client == null) {
-			client = new SimpleClient("localhost", 3000);
-		}
 		return client;
 	}
+	public static boolean newClinet(String hostIP)
+	{
+		client = new SimpleClient(hostIP,3000);
+		try {
+			client.openConnection();
+			return true;
+		}
+		catch (IOException e)
+		{
+			return false;
+		}
+	}
+
 
 }
  

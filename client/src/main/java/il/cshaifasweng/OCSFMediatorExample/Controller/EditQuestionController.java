@@ -96,10 +96,16 @@ public class EditQuestionController {
             List<Question> list = (List<Question>) getSubjectsForTeacherEvent.getMessage().getBody();
             ObservableList<Question> questionList = FXCollections.observableArrayList(list);
             Platform.runLater(() -> {
-                editQuestionBoundry.getListViewQ().setItems(questionList);
-                editQuestionBoundry.getListViewQ().setCellFactory(param -> {
-                    return new EditQuestionController.QuestionListCell(false);
-                });
+                if (list.isEmpty())
+                {
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "No available questions for this subject");
+                }
+                else {
+                    editQuestionBoundry.getListViewQ().setItems(questionList);
+                    editQuestionBoundry.getListViewQ().setCellFactory(param -> {
+                        return new EditQuestionController.QuestionListCell(false);
+                    });
+                }
             });
         }
         else if("getQuestionsForSubjectAndCourse".equals(getSubjectsForTeacherEvent.getMessage().getTitle()))
@@ -107,10 +113,17 @@ public class EditQuestionController {
             List<Question> list = (List<Question>) getSubjectsForTeacherEvent.getMessage().getBody();
             ObservableList<Question> questionList = FXCollections.observableArrayList(list);
             Platform.runLater(() -> {
-                editQuestionBoundry.getListViewQ().setItems(questionList);
-                editQuestionBoundry.getListViewQ().setCellFactory(param -> {
-                    return new EditQuestionController.QuestionListCell(false);
-                });
+                if (list.isEmpty())
+                {
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "No available questions for this course");
+                }
+                else
+                {
+                    editQuestionBoundry.getListViewQ().setItems(questionList);
+                    editQuestionBoundry.getListViewQ().setCellFactory(param -> {
+                        return new EditQuestionController.QuestionListCell(false);
+                    });
+                }
             });
         }
         else

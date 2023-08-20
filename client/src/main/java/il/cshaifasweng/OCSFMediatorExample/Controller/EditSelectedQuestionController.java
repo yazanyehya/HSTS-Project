@@ -31,6 +31,7 @@ public class EditSelectedQuestionController
             Subject subject = (Subject) objects[0];
             ObservableList<Subject> subjectObservableList= FXCollections.observableArrayList(subject);
             editSelectedQuestionBoundry.getSelectSubject().setItems(subjectObservableList);
+            editSelectedQuestionBoundry.getSelectSubject().setValue(subject);
             Question question = (Question) objects[1];
             editSelectedQuestionBoundry.getQuestionTextTXT().setText(question.getQText());
             editSelectedQuestionBoundry.getAnswerA().setText(question.getAnswer1());
@@ -79,7 +80,12 @@ public class EditSelectedQuestionController
             Platform.runLater(() -> {
                 // Login success
                 showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Question Edited and Saved Successfully");
-                //EventBus.getDefault().unregister(this);
+                EventBus.getDefault().unregister(this);
+                try {
+                    SimpleChatClient.switchScreen("EditQuestion");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
 
         }

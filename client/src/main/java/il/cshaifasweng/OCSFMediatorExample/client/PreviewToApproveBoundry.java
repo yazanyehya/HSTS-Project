@@ -48,13 +48,15 @@ public class PreviewToApproveBoundry {
 
         private Integer examID;
 
+        private Integer studentID;
+
         private PreviewToApproveController previewToApproveController;
 
         @FXML
         void approveAction(ActionEvent event) throws IOException
         {
                 System.out.println("lolllllllapprove");
-                Object object = new Object[]{examID, getGrade().getText(), teacherComments.getText(), studentComments.getText()};
+                Object object = new Object[]{examID, getGrade().getText(), teacherComments.getText(), studentComments.getText(), studentID};
                 Message message = new Message("approveExam", object);
                 SimpleClient.getClient().sendToServer(message);
         }
@@ -137,6 +139,14 @@ public class PreviewToApproveBoundry {
         public Integer getExamID()
         {
                 return examID;
+        }
+
+        public Integer getStudentID() {
+                return studentID;
+        }
+
+        public void setStudentID(Integer studentID) {
+                this.studentID = studentID;
         }
 }
  

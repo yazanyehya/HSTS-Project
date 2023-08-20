@@ -146,6 +146,9 @@ public class ViewGradesForTeacherBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("ExtraTimeTeacher");
+                System.out.println("ahmadddggg");
+                Message message = new Message("GetOnGoingExamsForExtraTime", SimpleClient.getClient().getUser().getUsername());
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -182,6 +185,8 @@ public class ViewGradesForTeacherBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("teacherBoundry");
+                Message newMessage = new Message("getTeacherNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -192,8 +197,8 @@ public class ViewGradesForTeacherBoundry {
     @FXML
     void selectCourseAction(ActionEvent event) throws IOException {
 
-        examList.getItems().clear();
         Object obj = new Object[]{SimpleClient.getClient().getUser(), getSelectCourse().getSelectionModel().getSelectedItem()};
+        examList.getItems().clear();
         Message message = new Message("showExamsForTeacherCourses", obj);
         SimpleClient.getClient().sendToServer(message);
     }
@@ -285,6 +290,7 @@ public class ViewGradesForTeacherBoundry {
             if (event.getClickCount() == 2) {
                 ReadyExam selectedExam = examList.getSelectionModel().getSelectedItem();
                 if (selectedExam != null) {
+                    System.out.println("lol");
                     // Perform your double-click action here
                     try {
                         EventBus.getDefault().unregister(viewGradesForTeacherController);
