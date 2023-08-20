@@ -13,19 +13,19 @@ import java.net.Socket;
 public class SimpleClient extends AbstractClient {
 
 	private static SimpleClient client = null;
-	private Socket clientSocket;
-	private ObjectOutputStream outputStream;
+	//private Socket clientSocket;
+	//private ObjectOutputStream outputStream;
 
 	private static User user = null;
 
 	private SimpleClient(String localhost, int port) {
-		super(port);
-		try {
-			clientSocket = new Socket(localhost, port);
-			outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		super(localhost,port);
+//		try {
+//			clientSocket = new Socket(localhost, port);
+//			outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public User getUser() {
@@ -370,7 +370,7 @@ public class SimpleClient extends AbstractClient {
 	}
 	public static boolean newClinet(String hostIP)
 	{
-		client = new SimpleClient(hostIP,3000);
+		client = new SimpleClient(hostIP,12136);
 		try {
 			client.openConnection();
 			return true;
@@ -380,6 +380,7 @@ public class SimpleClient extends AbstractClient {
 			return false;
 		}
 	}
+
 
 
 }

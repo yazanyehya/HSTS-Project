@@ -33,7 +33,7 @@ class AdaptableClient extends AbstractClient
    */
   public AdaptableClient(String host, int port, ObservableClient client)
   {
-    super(port);
+    super(host,port);
     this.client = client;
   }
 

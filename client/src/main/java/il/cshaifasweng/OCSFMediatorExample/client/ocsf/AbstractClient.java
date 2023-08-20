@@ -107,7 +107,7 @@ public abstract class AbstractClient implements Runnable
    *
    * @param  port  the port number.
    */
-  public AbstractClient(int port)
+  public AbstractClient(String host, int port)
   {
     // Initialize variables
     this.host = host;
