@@ -9,6 +9,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.Controller.CourseReportsController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.TeacherReportsController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -22,6 +23,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.hibernate.Hibernate;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class CourseReportsBoundry {
@@ -101,6 +104,10 @@ public class CourseReportsBoundry {
     @FXML
     private Button viewQuestionsBtn;
 
+    @FXML
+    private Label timeLabel;
+
+    private AnimationTimer animationTimer;
 
     @FXML
     void teacherReportsAction(ActionEvent event) {
@@ -177,6 +184,8 @@ public class CourseReportsBoundry {
             try {
                 EventBus.getDefault().unregister(courseReportsController);
                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -281,6 +290,15 @@ public class CourseReportsBoundry {
         courseReportsController = new CourseReportsController(this);
         this.setCourseReportsController(courseReportsController);
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+
+
         System.out.println("before getting courses");
         listViewExams.setItems(null);
         coursesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -350,7 +368,22 @@ public class CourseReportsBoundry {
             });
         });
     }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
     private void populateCoursesList() {
         // Set the cell factory to display the course name
         coursesList.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {

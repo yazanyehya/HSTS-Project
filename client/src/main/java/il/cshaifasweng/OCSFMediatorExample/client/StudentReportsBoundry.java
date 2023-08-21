@@ -2,6 +2,7 @@
 
 import il.cshaifasweng.OCSFMediatorExample.Controller.StudentReportsController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -19,6 +20,8 @@ import org.greenrobot.eventbus.EventBus;
 import javafx.util.Callback;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +75,13 @@ public class StudentReportsBoundry {
 
     @FXML
     private Button compare;
+
+
+    @FXML
+    private Label timeLabel;
+
+    private AnimationTimer animationTimer;
+
     @FXML
     void teacherReportsAction(ActionEvent event) {
         Platform.runLater(() -> {
@@ -142,6 +152,8 @@ public class StudentReportsBoundry {
             try {
                 EventBus.getDefault().unregister(studentReportsController);
                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -237,7 +249,13 @@ public class StudentReportsBoundry {
         studentReportsController = new StudentReportsController(this);
         this.setStudentReportsController(studentReportsController);
 
-
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
 
 
         System.out.println("before getting students");
@@ -313,6 +331,22 @@ public class StudentReportsBoundry {
 //                }
 
         });
+    }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
     }
     private class GradeData {
         private String gradeRange;

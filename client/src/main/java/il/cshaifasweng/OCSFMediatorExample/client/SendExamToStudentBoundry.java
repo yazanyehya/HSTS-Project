@@ -91,7 +91,26 @@ public class SendExamToStudentBoundry {
 
     private SendExamToStudentController sendExamToStudentController;
 
-
+    @FXML
+    private Button notificationBtn;
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(sendExamToStudentController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("TeacherNotifications");
+                Message message = new Message("getNotificationForTeacher", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
     @FXML
     void SendToStudentsAction(ActionEvent event) throws IOException {
         if (acquiredExams.getSelectionModel().isEmpty())

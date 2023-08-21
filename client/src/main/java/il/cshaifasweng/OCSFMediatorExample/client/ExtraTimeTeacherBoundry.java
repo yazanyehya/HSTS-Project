@@ -89,6 +89,26 @@ public class ExtraTimeTeacherBoundry {
     private ExtraTimeTeacherController extraTimeController;
 
     @FXML
+    private Button notificationBtn;
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(extraTimeController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("TeacherNotifications");
+                Message message = new Message("getNotificationForTeacher", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
     void logoutAction(ActionEvent event) throws IOException
     {
         extraTimeController.logOut();

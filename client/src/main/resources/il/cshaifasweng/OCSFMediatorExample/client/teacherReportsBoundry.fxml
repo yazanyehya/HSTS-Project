@@ -7,9 +7,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.TeacherReportsBoundry">
    <left>
@@ -39,7 +42,7 @@
    <right>
       <AnchorPane prefHeight="500.0" prefWidth="783.0" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0">
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="693.0">
                <children>
                   <TextField fx:id="medianTextField" layoutX="76.0" layoutY="165.0" onAction="#medianTextFieldAction" prefHeight="30.0" prefWidth="100.0" stylesheets="@Pbutuun.css">
                      <effect>
@@ -82,6 +85,16 @@
                         <URL value="@rami.css" />
                      </stylesheets></Label>
                   <Label layoutX="75.0" layoutY="43.0" minWidth="101.0" prefHeight="30.0" prefWidth="100.0" stylesheets="@rami.css" text="    The Average" textFill="WHITE" />
+                  <ImageView fitHeight="132.0" fitWidth="186.0" layoutX="482.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../images/finallogop.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="timeLabel" layoutX="472.0" layoutY="25.0" prefHeight="67.0" prefWidth="173.0" textFill="MEDIUMSLATEBLUE">
+                     <font>
+                        <Font name="Algerian" size="24.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
             <Button fx:id="compare" layoutX="500.0" layoutY="335.0" mnemonicParsing="false" onAction="#compareAction" stylesheets="@Pbuttun1.css" text="Compare" />

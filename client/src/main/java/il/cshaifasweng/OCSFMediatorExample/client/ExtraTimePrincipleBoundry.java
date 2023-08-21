@@ -7,15 +7,19 @@ import il.cshaifasweng.OCSFMediatorExample.Controller.ExtraTimeTeacherController
 import il.cshaifasweng.OCSFMediatorExample.entities.ExtraTime;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Principle;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.event.ActionEvent;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ExtraTimePrincipleBoundry {
 
@@ -65,7 +69,10 @@ public class ExtraTimePrincipleBoundry {
 
     @FXML
     private Button viewQuestionsBtn;
+    @FXML
+    private Label timeLabel;
 
+    private AnimationTimer animationTimer;
 
     @FXML
     void teacherReportsAction(ActionEvent event) {
@@ -129,6 +136,8 @@ public class ExtraTimePrincipleBoundry {
             try {
                 EventBus.getDefault().unregister(extraTimePrincipleController);
                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -195,6 +204,31 @@ public class ExtraTimePrincipleBoundry {
     {
         extraTimePrincipleController= new ExtraTimePrincipleController(this);
         this.setExtraTimePrincipleController(extraTimePrincipleController);
+
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+
+    }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
     }
     public TableColumn<ExtraTime, Button> getPressCol() {
         return pressCol;

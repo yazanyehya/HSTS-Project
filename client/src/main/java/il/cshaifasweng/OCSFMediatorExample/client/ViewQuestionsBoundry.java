@@ -9,6 +9,7 @@
 import il.cshaifasweng.OCSFMediatorExample.Controller.EditQuestionController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ViewQuestionsController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +19,8 @@ import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ViewQuestionsBoundry {
     @FXML
@@ -64,7 +67,10 @@ public class ViewQuestionsBoundry {
 
     @FXML // fx:id="showQuestionsBtn"
     private Button showQuestionsBtn; // Value injected by FXMLLoader
+    @FXML
+    private Label timeLabel;
 
+    private AnimationTimer animationTimer;
     @FXML
     void teacherReportsAction(ActionEvent event) {
         Platform.runLater(() -> {
@@ -127,6 +133,8 @@ public class ViewQuestionsBoundry {
             try {
                 EventBus.getDefault().unregister(viewQuestionsController);
                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -302,9 +310,32 @@ public class ViewQuestionsBoundry {
         viewQuestionsController = new ViewQuestionsController(this);
         this.setViewQuestionsController(viewQuestionsController);
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
         System.out.println("before getting subjects");
         viewQuestionsController.getSubjects();
         populateCourseComboBox();
+    }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
     }
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {

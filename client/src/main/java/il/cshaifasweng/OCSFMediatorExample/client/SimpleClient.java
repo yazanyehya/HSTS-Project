@@ -206,7 +206,7 @@ public class SimpleClient extends AbstractClient {
 		}
 		else if(message.getTitle().equals("Logout")||message.getTitle().equals("LogoutEB")
 				||message.getTitle().equals("LogoutEEB")||message.getTitle().equals("LogoutEQB") ||message.getTitle().equals("LogoutAE")
-				||message.getTitle().equals("LogoutSE")||message.getTitle().equals("LogoutET")||message.getTitle().equals("LogoutAP")||message.getTitle().equals("LogoutVG"))
+				||message.getTitle().equals("LogoutSE")||message.getTitle().equals("LogoutET")||message.getTitle().equals("LogoutAP")||message.getTitle().equals("LogoutVG") || message.getTitle().equals("LogoutNoti"))
 		{
 			System.out.println("event bus logout");
 			EventBus.getDefault().post(new LogoutEvent((Message)msg));
@@ -359,9 +359,17 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new TeacherEvent((Message) msg));
 		}
+		else if(message.getTitle().equals("getPrincipleNotificationList") || message.getTitle().equals("RefreshPrincipleBell")||message.getTitle().equals("setToReadPrinciple"))
+		{
+			EventBus.getDefault().post(new PrincipleEvent((Message) msg));
+		}
 		else if(message.getTitle().equals("getNotificationForStudent"))
 		{
 			EventBus.getDefault().post(new NotificationForStudentEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getNotificationForTeacher"))
+		{
+			EventBus.getDefault().post(new NotificationForTeacherEvent((Message) msg));
 		}
 
 	}

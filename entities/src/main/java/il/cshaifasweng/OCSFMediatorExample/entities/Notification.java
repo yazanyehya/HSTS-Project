@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 @Entity
@@ -17,6 +18,7 @@ public class Notification implements Serializable {
     private LocalDateTime timestamp;
     private boolean isRead;
     private String readOrNot;
+    private String date;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "notification_id")
@@ -28,6 +30,12 @@ public class Notification implements Serializable {
        this.timestamp = timestamp;
        this.isRead = isRead;
        this.readOrNot = isRead ? "Read" : "Unread";
+
+       // Format the date and time as desired (change the pattern as needed)
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+               "HH:mm:ss");
+       String dateTimeString = timestamp.format(formatter);
+       this.date = dateTimeString;
    }
     public Notification(){};
     public LocalDateTime getTimestamp() {
@@ -45,6 +53,10 @@ public class Notification implements Serializable {
     public void setRead(boolean read) {
         isRead = read;
         this.readOrNot = read ? "Read" : "Unread";
+    }
+
+    public String getDate() {
+        return date;
     }
 
     public void setTimestamp(LocalDateTime timestamp) {

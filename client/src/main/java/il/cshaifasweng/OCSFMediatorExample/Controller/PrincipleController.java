@@ -1,6 +1,9 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.PrincipleBoundry;
+import il.cshaifasweng.OCSFMediatorExample.entities.Notification;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.greenrobot.eventbus.EventBus;
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
@@ -9,6 +12,7 @@ import javafx.scene.control.Alert;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
+import java.util.List;
 
 
 public class PrincipleController {
@@ -72,6 +76,40 @@ public class PrincipleController {
             });
             Message message = new Message("ExtraTimeRequest", extraTimeEvent.getMessage().getBody());
             SimpleClient.getClient().sendToServer(message);
+        }
+    }
+    @Subscribe
+    public void handlePrincipleEvents(PrincipleEvent principleEvent)
+    {
+        if ("getPrincipleNotificationList".equals(principleEvent.getMessage().getTitle()) || "setToReadPrinciple".equals(principleEvent.getMessage().getTitle()))
+        {
+            Platform.runLater(()->{
+                List<Notification> list = (List<Notification>) principleEvent.getMessage().getBody();
+                ObservableList<Notification> notifications = FXCollections.observableArrayList(list);
+                principleBoundry.getNotificationList().setItems(notifications);
+                principleBoundry.getNotificationCountLabel().setText(Integer.toString(notifications.size()));
+            });
+        }
+        else if (principleEvent.getMessage().getTitle().equals("RefreshPrincipleBell"))
+        {
+            System.out.println("RefreshStudentBell");
+            Platform.runLater(()->{
+                Object[] objects = (Object[]) principleEvent.getMessage().getBody();
+                List<Notification> list = (List<Notification>) objects[0];
+                int id = (Integer)objects[1];
+                if (id == SimpleClient.getClient().getUser().getId())
+                {
+                    principleBoundry.getNotificationList().getItems().clear();
+                    ObservableList<Notification> notifications = FXCollections.observableArrayList(list);
+                    principleBoundry.getNotificationList().setItems(notifications);
+                    principleBoundry.getNotificationCountLabel().setText(Integer.toString(notifications.size()));
+
+                    showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification");
+                }
+//                studentBoundry.getNotificationList().getItems().addAll(notifications);
+//                studentBoundry.getNotificationCountLabel().setText(Integer.toString(notifications.size()));
+            });
+
         }
     }
     public void showAlertDialog(Alert.AlertType alertType, String title, String message) {

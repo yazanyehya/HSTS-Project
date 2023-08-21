@@ -8,6 +8,8 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -97,7 +99,7 @@
                         </DropShadow>
                      </effect>
                   </ListView>
-                  <Button fx:id="showQuestionsBtn" layoutX="240.0" layoutY="86.0" mnemonicParsing="false" onAction="#showQuestionsAction" prefHeight="54.0" prefWidth="120.0" text="Show the selected&#10;exam quesions" textAlignment="CENTER">
+                  <Button fx:id="showQuestionsBtn" layoutX="183.0" layoutY="82.0" mnemonicParsing="false" onAction="#showQuestionsAction" prefHeight="54.0" prefWidth="120.0" text="Show the selected&#10;exam quesions" textAlignment="CENTER">
                      <effect>
                         <DropShadow>
                            <color>
@@ -198,6 +200,16 @@
                      </color>
                   </DropShadow>
                </effect>
+            </Label>
+            <ImageView fitHeight="90.0" fitWidth="198.0" layoutX="322.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../images/finallogop.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="timeLabel" layoutX="469.0" layoutY="23.0" prefHeight="67.0" prefWidth="173.0" textFill="MEDIUMSLATEBLUE">
+               <font>
+                  <Font name="Algerian" size="24.0" />
+               </font>
             </Label>
          </children>
       </AnchorPane>
