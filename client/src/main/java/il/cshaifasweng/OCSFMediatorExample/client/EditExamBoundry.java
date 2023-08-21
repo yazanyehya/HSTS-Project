@@ -73,6 +73,26 @@ public class EditExamBoundry {
     private Button sendExamsToStudentsBtn;
 
     @FXML
+    private Button notificationBtn;
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(editExamController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("TeacherNotifications");
+                Message message = new Message("getNotificationForTeacher", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    @FXML
     void createAnExamAction(ActionEvent event) {
         EventBus.getDefault().unregister(editExamController);
 

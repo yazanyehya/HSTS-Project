@@ -11,6 +11,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import il.cshaifasweng.OCSFMediatorExample.entities.Principle;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
 import il.cshaifasweng.OCSFMediatorExample.entities.Student;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +21,8 @@ import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class ViewGradesBoundry {
@@ -77,6 +80,11 @@ public class ViewGradesBoundry {
 
     @FXML
     private TableView<ReadyExam> table;
+
+    @FXML
+    private Label timeLabel;
+
+    private AnimationTimer animationTimer;
 
     @FXML
     void selectStudentAction(ActionEvent event) throws IOException {
@@ -147,6 +155,8 @@ public class ViewGradesBoundry {
             try {
                 EventBus.getDefault().unregister(viewGradesController);
                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -222,12 +232,33 @@ public class ViewGradesBoundry {
 
         viewGradesController = new ViewGradesController(this);
         this.setViewGradesController(viewGradesController);
-
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
         System.out.println("before getting students");
         viewGradesController.getStudents();
         populateStudentsComboBox();
     }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
+    }
     private void populateStudentsComboBox() {
         // Set the cell factory to display the course name
         selectStudent.setCellFactory(new Callback<ListView<Student>, ListCell<Student>>() {

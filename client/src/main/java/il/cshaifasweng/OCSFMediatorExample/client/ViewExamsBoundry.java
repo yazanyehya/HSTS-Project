@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.Controller.EditExamController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.ViewExamsController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +20,8 @@ import javafx.util.StringConverter;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ViewExamsBoundry {
@@ -75,6 +78,11 @@ public class ViewExamsBoundry {
     @FXML // fx:id="showExamsBtn"
     private Button showExamsBtn; // Value injected by FXMLLoader
     private ViewExamsController viewExamsController;
+
+    @FXML
+    private Label timeLabel;
+
+    private AnimationTimer animationTimer;
 
     @FXML
     void teacherReportsAction(ActionEvent event) {
@@ -138,6 +146,8 @@ public class ViewExamsBoundry {
             try {
                 EventBus.getDefault().unregister(viewExamsController);
                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -404,6 +414,14 @@ public class ViewExamsBoundry {
         viewExamsController = new ViewExamsController(this);
         this.setViewExamsController(viewExamsController);
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+
         viewExamsController.getSubjects();
 
         selectCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
@@ -469,6 +487,22 @@ public class ViewExamsBoundry {
             }
         });
 
+    }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
     }
 
 }

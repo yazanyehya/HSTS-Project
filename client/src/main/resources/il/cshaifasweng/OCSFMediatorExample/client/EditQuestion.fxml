@@ -50,7 +50,7 @@
                                  </color>
                               </InnerShadow>
                            </effect></Button>
-                        <Button fx:id="logoutBtn" layoutY="439.0" mnemonicParsing="false" onAction="#logoutAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Logout" textFill="WHITE">
+                        <Button fx:id="logoutBtn" layoutY="450.0" mnemonicParsing="false" onAction="#logoutAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Logout" textFill="WHITE">
                            <effect>
                               <InnerShadow>
                                  <color>
@@ -107,6 +107,15 @@
                               </InnerShadow>
                            </effect></Button>
                         <Button fx:id="editQuestionBtn" layoutY="121.0" mnemonicParsing="false" onAction="#EditQuestionsAction" prefHeight="30.0" prefWidth="209.0" style="-fx-background-color: #273be2;" stylesheets="@ButtonCss.css" text="Edit Question" textFill="WHITE">
+                           <effect>
+                              <InnerShadow>
+                                 <color>
+                                    <Color red="1.0" green="1.0" blue="1.0" />
+                                 </color>
+                              </InnerShadow>
+                           </effect>
+                        </Button>
+                        <Button fx:id="notificationBtn" layoutY="395.0" mnemonicParsing="false" onAction="#notificationAction" prefWidth="140.0" stylesheets="@ButtonCss.css" text="Notifications" textFill="WHITE">
                            <effect>
                               <InnerShadow>
                                  <color>

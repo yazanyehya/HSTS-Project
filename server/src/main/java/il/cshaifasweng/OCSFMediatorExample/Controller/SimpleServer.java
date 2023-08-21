@@ -1079,7 +1079,7 @@ public class SimpleServer extends AbstractServer {
 		else if  ("Logout".equals(message.getTitle()) || "LogoutForStudent".equals(message.getTitle())|| "Logout principle".equals(message.getTitle())||"LogoutQB".equals(message.getTitle())
 				||"LogoutEB".equals((message.getTitle()))||"LogoutEEB".equals((message.getTitle()))||"LogoutEQB".equals((message.getTitle()))||"LogoutAE".equals((message.getTitle()))
 				||"LogoutSE".equals((message.getTitle()))||"LogoutET".equals((message.getTitle()))||"LogoutAP".equals((message.getTitle()))||"LogoutVG".equals((message.getTitle()))||
-				"LogoutCE".equals((message.getTitle())) || "LogoutVGS".equals((message.getTitle())))
+				"LogoutCE".equals((message.getTitle())) || "LogoutVGS".equals((message.getTitle())) || "LogoutNoti".equals(message.getTitle()))
 		{
 			SubscribersList.remove(message.getBody());
 			User temp = (User) message.getBody();
@@ -1878,7 +1878,7 @@ public class SimpleServer extends AbstractServer {
 				{
 					id = course.getId();
 				}
-				String hql = "SELECT e FROM ReadyExam e where e.username = :username and e.course =: id and e.isClone = 'no'";
+				String hql = "SELECT e FROM ReadyExam e where e.username = :username and e.course =: id and e.isClone = 'no' and e.examType = 'Computerized'";
 				Query query1 = session.createQuery(hql, ReadyExam.class);
 				query1.setParameter("username", username);
 				query1.setParameter("id", course.getName());
@@ -1921,7 +1921,7 @@ public class SimpleServer extends AbstractServer {
 				{
 					id = subject.getId();
 				}
-				String hql = "SELECT e FROM ReadyExam e where e.username = :username and e.subject =: id and e.isClone = 'no'";
+				String hql = "SELECT e FROM ReadyExam e where e.username = :username and e.subject =: id and e.isClone = 'no' and e.examType = 'Computerized'";
 				Query query1 = session.createQuery(hql, ReadyExam.class);
 				query1.setParameter("username", username);
 				query1.setParameter("id", subject.getName());
@@ -1957,7 +1957,7 @@ public class SimpleServer extends AbstractServer {
 				}
 				ReadyExam exam = (ReadyExam) message.getBody();
 				int id = exam.getId();
-				String hql = "SELECT re FROM ReadyExam re where re.originalId =: id and re.approved = 'yes' and re.isClone = 'yes'";
+				String hql = "SELECT re FROM ReadyExam re where re.readyExamOriginalID =: id and re.approved = 'yes' and re.isClone = 'yes'";
 				Query query1 = session.createQuery(hql, ReadyExam.class);
 				query1.setParameter("id", id);
 				List<ReadyExam> list = (List<ReadyExam>) query1.getResultList();
@@ -2508,6 +2508,24 @@ public class SimpleServer extends AbstractServer {
 				System.out.println(responseMessage.getTitle());
 				sendToAllClients(responseMessage1);
 
+				Notification notification = new Notification("New extra time request has been arrived for exam: " + extraTime.getReadyExam().getOri_idd(), LocalDateTime.now(), false);
+				hql = "SELECT p FROM Principle p WHERE p.username = :username";
+				Query query5 = session.createQuery(hql, Principle.class);
+				query5.setParameter("username", "haifa");
+				Principle principle = (Principle) query5.getSingleResult();
+				principle.getNotificationList().add(notification);
+				session.update(principle);
+				session.flush();
+
+				hql = "SELECT n from Notification n where n.user.id =: id and n.isRead = false";
+				Query query7 = session.createQuery(hql, Notification.class);
+				query7.setParameter("id", principle.getId());
+				List<Notification> notifications = (List<Notification>) query7.getResultList();
+				System.out.println("studentid: " + principle.getId());
+				Object object = new Object[]{notifications,principle.getId()};
+				Message message1 = new Message("RefreshPrincipleBell", object);
+				sendToAllClients(message1);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -3049,16 +3067,16 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if ("getNotificationForStudent".equals(message.getTitle())) {
+		else if ("getNotificationForStudent".equals(message.getTitle()) || "getNotificationForTeacher".equals(message.getTitle())) {
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
 					session = getSessionFactory().openSession();
 					session.beginTransaction();
 				}
-				Student student = (Student) message.getBody();
+				User user = (User) message.getBody();
 				String hql = "select n from Notification n where n.user.id = :id";
 				Query query1 = session.createQuery(hql, Notification.class);
-				query1.setParameter("id", student.getId());
+				query1.setParameter("id", user.getId());
 				List<Notification> list = (List<Notification>) query1.getResultList();
 				Message resMessage = new Message(message.getTitle(), list);
 				client.sendToClient(resMessage);
@@ -3078,7 +3096,7 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if(message.getTitle().equals("setToRead") || message.getTitle().equals("setToReadTeacher"))
+		else if(message.getTitle().equals("setToRead") || message.getTitle().equals("setToReadTeacher") || message.getTitle().equals("setToReadPrinciple"))
 		{
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {

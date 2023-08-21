@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.Controller.CourseReportsController;
 import il.cshaifasweng.OCSFMediatorExample.Controller.TeacherReportsController;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,8 @@ import javafx.util.Callback;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TeacherReportsBoundry {
 
@@ -60,6 +63,11 @@ public class TeacherReportsBoundry {
     public int flag = 0;
 
     private TeacherReportsController teacherReportsController;
+
+    @FXML
+    private Label timeLabel;
+
+    private AnimationTimer animationTimer;
 
 
     @FXML
@@ -110,6 +118,8 @@ public class TeacherReportsBoundry {
             try {
                 EventBus.getDefault().unregister(teacherReportsController);
                 SimpleChatClient.switchScreen("PrincipleBoundry");
+                Message newMessage = new Message("getPrincipleNotificationList", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -178,6 +188,14 @@ public class TeacherReportsBoundry {
         teacherReportsController = new TeacherReportsController(this);
         setTeacherReportsController(teacherReportsController);
 
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateDateTime();
+            }
+        };
+        animationTimer.start();
+
         System.out.println("before getting courses");
         listViewExams.setItems(null);
         teachersList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -243,6 +261,22 @@ public class TeacherReportsBoundry {
 
             });
         });
+    }
+    private void updateDateTime() {
+        // Get the current date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+
+
+        // Format the date and time as desired (change the pattern as needed)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\n " +
+                "HH:mm:ss");
+        String dateTimeString = currentDateTime.format(formatter);
+
+
+
+        // Update the label text
+        timeLabel.setText(dateTimeString);
     }
     private void populateCoursesList() {
         // Set the cell factory to display the course name

@@ -76,10 +76,30 @@ public class TeacherBoundry {
     @FXML
     private ListView<Notification> notificationList;
 
-    private  Label notificationCountLabel = new Label("0");
     private TeacherController teacherController;
     private boolean pressBell = false;
+    private  Label notificationCountLabel = new Label("0");
 
+    @FXML
+    private Button notificationBtn;
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(teacherController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("TeacherNotifications");
+                Message message = new Message("getNotificationForTeacher", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
     @FXML
     void logoutAction(ActionEvent event) throws IOException
     {
