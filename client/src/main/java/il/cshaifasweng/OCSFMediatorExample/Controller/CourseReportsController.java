@@ -334,7 +334,7 @@ public class CourseReportsController {
                     Label examTextLabel3 = new Label("Subject: " + exam.getExam().getSubject().getName());
                     Label examTextLabel4 = new Label("Exam Period: " + exam.getExam().getExamPeriod());
                     Label examTextLabel6 = new Label("Exam Type: " + exam.getExamType());
-                    Label examTextLabel5 = new Label("Exam ID: " + exam.getOri_idd());
+                    Label examTextLabel5 = new Label("Exam ID: " + exam.getIdd());
 
                     //Label examTextLabel3 = new Label(exam.getSubject().getName());
                     // Add additional labels or components for exam details if needed

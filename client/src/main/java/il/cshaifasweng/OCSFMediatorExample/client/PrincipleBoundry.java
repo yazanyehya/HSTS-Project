@@ -161,6 +161,29 @@ public class PrincipleBoundry {
     }
 
     @FXML
+    private Button notificationBtn;
+
+
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(principleController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("PrincipleNotifications");
+                Message message = new Message("getNotificationForPrinciple", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
     public void initialize()
     {
         principleController = new PrincipleController(this);

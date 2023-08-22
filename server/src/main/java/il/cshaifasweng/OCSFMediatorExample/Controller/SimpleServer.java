@@ -2508,7 +2508,7 @@ public class SimpleServer extends AbstractServer {
 				System.out.println(responseMessage.getTitle());
 				sendToAllClients(responseMessage1);
 
-				Notification notification = new Notification("New extra time request has been arrived for exam: " + extraTime.getReadyExam().getOri_idd(), LocalDateTime.now(), false);
+				Notification notification = new Notification("New extra time request has been arrived for exam: " + extraTime.getReadyExam().getIdd(), LocalDateTime.now(), false);
 				hql = "SELECT p FROM Principle p WHERE p.username = :username";
 				Query query5 = session.createQuery(hql, Principle.class);
 				query5.setParameter("username", "haifa");
@@ -2617,7 +2617,7 @@ public class SimpleServer extends AbstractServer {
 
 				Message responseMessage1 = new Message("refreshTablePrinciple",list2);
 
-				Notification notification = new Notification("Extra time has been aprroved for exam " + extraTime.getReadyExam().getOri_idd(), LocalDateTime.now(), false);
+				Notification notification = new Notification("Extra time has been aprroved for exam " + extraTime.getReadyExam().getIdd(), LocalDateTime.now(), false);
 				hql = "SELECT t FROM Teacher t WHERE t.username = :username";
 				Query query5 = session.createQuery(hql, Teacher.class);
 				query5.setParameter("username", extraTime.getTeacherId());
@@ -2686,7 +2686,7 @@ public class SimpleServer extends AbstractServer {
 
 				Message responseMessage1 = new Message("refreshTablePrinciple",list2);
 
-				Notification notification = new Notification("Extra time has been denied for exam " + extraTime.getReadyExam().getOri_idd(), LocalDateTime.now(), false);
+				Notification notification = new Notification("Extra time has been denied for exam " + extraTime.getReadyExam().getIdd(), LocalDateTime.now(), false);
 				hql = "SELECT t FROM Teacher t WHERE t.username = :username";
 				Query query5 = session.createQuery(hql, Teacher.class);
 				query5.setParameter("username", extraTime.getTeacherId());
@@ -3067,7 +3067,7 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if ("getNotificationForStudent".equals(message.getTitle()) || "getNotificationForTeacher".equals(message.getTitle())) {
+		else if ("getNotificationForStudent".equals(message.getTitle()) || "getNotificationForTeacher".equals(message.getTitle()) || "getNotificationForPrinciple".equals(message.getTitle())) {
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
 					session = getSessionFactory().openSession();

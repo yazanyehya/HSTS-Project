@@ -110,6 +110,29 @@ public class CourseReportsBoundry {
     private AnimationTimer animationTimer;
 
     @FXML
+    private Button notificationBtn;
+
+
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(courseReportsController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("PrincipleNotifications");
+                Message message = new Message("getNotificationForPrinciple", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
     void teacherReportsAction(ActionEvent event) {
         Platform.runLater(() -> {
             try {
