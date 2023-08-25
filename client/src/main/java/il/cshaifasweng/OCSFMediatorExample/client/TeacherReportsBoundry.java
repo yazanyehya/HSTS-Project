@@ -235,7 +235,16 @@ public class TeacherReportsBoundry {
                 if (teacher != null)
                 {
                     try {
-                        teacherReportsController.getExams(teacher);
+                        if (teachersList.getSelectionModel().isEmpty())
+                        {
+                            Platform.runLater(()->{
+                                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please choose a teacher!");
+                            });
+                        }
+                        else
+                        {
+                            teacherReportsController.getExams(teacher);
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

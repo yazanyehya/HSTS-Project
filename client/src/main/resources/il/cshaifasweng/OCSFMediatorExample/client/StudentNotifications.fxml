@@ -101,9 +101,10 @@
                   </Label>
                   <TableView fx:id="table" layoutX="8.0" layoutY="136.0" prefHeight="200.0" prefWidth="674.0" style="-fx-border-color: #000000; -fx-border-width: 3;">
                     <columns>
-                      <TableColumn fx:id="notificationID" prefWidth="103.0" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Num Notification" />
-                      <TableColumn fx:id="notificationContent" prefWidth="511.50433349609375" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Content" />
-                        <TableColumn fx:id="statuscol" prefWidth="51.0042724609375" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Status" />
+                      <TableColumn fx:id="notificationID" prefWidth="93.0" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Notification ID" />
+                      <TableColumn fx:id="notificationContent" prefWidth="408.0" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Content" />
+                        <TableColumn fx:id="statuscol" prefWidth="74.5" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Status" />
+                        <TableColumn fx:id="date" maxWidth="93.0" minWidth="-1.0" prefWidth="90.0" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Date" />
                     </columns>
                      <effect>
                         <DropShadow>

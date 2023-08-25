@@ -2,14 +2,18 @@ package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.Notification;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
 import il.cshaifasweng.OCSFMediatorExample.entities.Student;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class ConductAnExamController
@@ -97,7 +101,14 @@ public class ConductAnExamController
     @Subscribe
     public void handleStudentEvents(StudentEvent studentEvent)
     {
-        showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) studentEvent.getMessage().getBody();
+            List<Notification> list = (List<Notification>) objects[0];
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");            }
+        });
     }
     @Subscribe
     public void handleLogoutEvent(LogoutForStudentEvent logoutForStudentEvent) {

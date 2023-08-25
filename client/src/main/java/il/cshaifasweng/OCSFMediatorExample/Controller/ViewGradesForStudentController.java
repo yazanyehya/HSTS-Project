@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.*;
+import il.cshaifasweng.OCSFMediatorExample.entities.Notification;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
 import il.cshaifasweng.OCSFMediatorExample.entities.Student;
@@ -33,7 +34,14 @@ public class ViewGradesForStudentController
     @Subscribe
     public void handleStudentEvents(StudentEvent studentEvent)
     {
-        showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) studentEvent.getMessage().getBody();
+            List<Notification> list = (List<Notification>) objects[0];
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");            }
+        });
     }
     @Subscribe
     public void handleViewGradesForStudent(ViewGradesForStudentEvent viewGradesForStudentEvent)

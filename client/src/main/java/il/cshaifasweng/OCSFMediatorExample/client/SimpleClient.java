@@ -365,6 +365,7 @@ public class SimpleClient extends AbstractClient {
 		}
 		else if(message.getTitle().equals("getNotificationForStudent"))
 		{
+			System.out.println("lollllllll");
 			EventBus.getDefault().post(new NotificationForStudentEvent((Message) msg));
 		}
 		else if(message.getTitle().equals("getNotificationForTeacher"))

@@ -298,7 +298,8 @@ public class StartSolvingComputerizedExamController
             VBox.setVgrow(region3, Priority.ALWAYS);
             VBox.setVgrow(region4, Priority.ALWAYS);
             VBox.setVgrow(region5, Priority.ALWAYS);
-            VBox vBox = new VBox(hBox, region5, studentDetails, region4, questions, region3,startSolvingExamBoundry.getFinishExamBtn());
+            Label label = new Label("Comments: \n" + readyExam.getExam().getStudentComments());
+            VBox vBox = new VBox(hBox, region5, studentDetails, region4, questions, region3,label,startSolvingExamBoundry.getFinishExamBtn());
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setContent(vBox);
             scrollPane.setFitToHeight(true);

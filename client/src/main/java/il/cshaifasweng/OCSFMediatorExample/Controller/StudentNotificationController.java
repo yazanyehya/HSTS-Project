@@ -32,7 +32,7 @@ public class StudentNotificationController
             studentNotificationBoundry.getNotificationID().setCellValueFactory(new PropertyValueFactory<Notification, Integer>("id"));
             studentNotificationBoundry.getNotificationContent().setCellValueFactory(new PropertyValueFactory<Notification, String>("message"));
             studentNotificationBoundry.getStatuscol().setCellValueFactory(new PropertyValueFactory<Notification, String>("readOrNot"));
-
+            studentNotificationBoundry.getDate().setCellValueFactory(new PropertyValueFactory<Notification, String>("date"));
             studentNotificationBoundry.getTable().getItems().addAll(list);
         });
     }
@@ -79,6 +79,16 @@ public class StudentNotificationController
     @Subscribe
     public void handleStudentEvents(StudentEvent studentEvent)
     {
-        showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go check the home page");
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) studentEvent.getMessage().getBody();
+            List<Notification> list = (List<Notification>) objects[0];
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification");
+                studentNotificationBoundry.getTable().getItems().clear();
+                studentNotificationBoundry.getTable().getItems().addAll(list);
+            }
+        });
     }
 }

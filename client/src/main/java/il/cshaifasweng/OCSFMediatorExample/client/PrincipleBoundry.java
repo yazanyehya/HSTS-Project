@@ -282,12 +282,12 @@ private void updateDateTime() {
                 HBox cellLayout = new HBox();
                 //cellLayout.setStyle("-fx-background-radius: 40; -fx-border-color:  #000000; -fx-border-radius: 40; -fx-border-width: 3; -fx-background-color:  #ffa500;");
                 Button markAsReadButton = new Button("Mark as Read");
-                markAsReadButton.setStyle("    -fx-background-color:  #273be2;\n" +
+                markAsReadButton.setStyle("    -fx-background-color:  #7b68ee;\n" +
                         "    -fx-background-radius: 30 30 30 30;\n" +
                         "    -fx-border-radius: 30 30 30 30;\n" +
                         "    -fx-border-color: #000000;\n" +
                         "    -fx-border-width: 2px 2px 2px 2px;\n" +
-                        "    -fx-effect: dropshadow(gaussian, #273be2, 6, 0.5, 0, 0);");
+                        "    -fx-effect: dropshadow(gaussian, #7b68ee, 6, 0.5, 0, 0);");
                 markAsReadButton.setOnAction(e -> {
                     try {
                         markNotificationAsRead(item);

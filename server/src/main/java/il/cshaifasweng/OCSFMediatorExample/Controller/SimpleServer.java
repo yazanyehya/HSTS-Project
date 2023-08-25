@@ -28,9 +28,29 @@ import java.util.*;
 
 public class SimpleServer extends AbstractServer {
 
-	//private static final SessionFactory sessionFactory = getSessionFactory();
+	private static SessionFactory sessionFactory;
 	private static Session session;
 	private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
+	static
+	{
+		Configuration configuration = new Configuration();
+		configuration.addAnnotatedClass(Student.class);
+		configuration.addAnnotatedClass(Exam.class);
+		configuration.addAnnotatedClass(Question.class);
+		configuration.addAnnotatedClass(User.class);
+		configuration.addAnnotatedClass(Teacher.class);
+		configuration.addAnnotatedClass(Subject.class);
+		configuration.addAnnotatedClass(Course.class);
+		configuration.addAnnotatedClass(ReadyExam.class);
+		configuration.addAnnotatedClass(Principle.class);
+		configuration.addAnnotatedClass(ExtraTime.class);
+		configuration.addAnnotatedClass(Notification.class);
+
+
+		StandardServiceRegistry serviceRegistry= new StandardServiceRegistryBuilder()
+				.applySettings(configuration.getProperties()).build();
+		sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+	}
 	public static void generate()
 	{
 
@@ -871,8 +891,9 @@ public class SimpleServer extends AbstractServer {
 						if (session.getTransaction() != null && session.getTransaction().isActive()) {
 							session.getTransaction().commit();
 						}
-					} catch (Exception ex) {
-						// Handle exceptions during commit if necessary.
+					} catch (Exception ex)
+					{
+
 					} finally {
 						session.close();
 					}
@@ -935,7 +956,7 @@ public class SimpleServer extends AbstractServer {
 							session.getTransaction().commit();
 						}
 					} catch (Exception ex) {
-						// Handle exceptions during commit if necessary.
+							ex.printStackTrace();
 					} finally {
 						session.close();
 					}
@@ -3205,24 +3226,7 @@ public class SimpleServer extends AbstractServer {
 
 	public static SessionFactory getSessionFactory()
 	{
-		Configuration configuration = new Configuration();
-		configuration.addAnnotatedClass(Student.class);
-		configuration.addAnnotatedClass(Exam.class);
-		configuration.addAnnotatedClass(Question.class);
-		configuration.addAnnotatedClass(User.class);
-		configuration.addAnnotatedClass(Teacher.class);
-		configuration.addAnnotatedClass(Subject.class);
-		configuration.addAnnotatedClass(Course.class);
-		configuration.addAnnotatedClass(ReadyExam.class);
-		configuration.addAnnotatedClass(Principle.class);
-		configuration.addAnnotatedClass(ExtraTime.class);
-		configuration.addAnnotatedClass(Notification.class);
-
-
-		StandardServiceRegistry serviceRegistry= new StandardServiceRegistryBuilder()
-				.applySettings(configuration.getProperties()).build();
-
-		return configuration.buildSessionFactory(serviceRegistry);
+		return sessionFactory;
 	}
 	public static List<Student> getAllStudentsFromDatabase() {
 		//Session session = sessionFactory.openSession();
