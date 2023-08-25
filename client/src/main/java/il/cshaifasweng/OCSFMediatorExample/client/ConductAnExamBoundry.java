@@ -95,7 +95,7 @@ public class ConductAnExamBoundry {
         EventBus.getDefault().unregister(conductAnExamController);
         Platform.runLater(() -> {
             try {
-                SimpleChatClient.switchScreen("StudentBoundry");
+                SimpleChatClient.switchScreen("studentBoundry");
                 Message newMessage = new Message("getStudentNotificationList", SimpleClient.getClient().getUser());
                 SimpleClient.getClient().sendToServer(newMessage);
             } catch (IOException e) {

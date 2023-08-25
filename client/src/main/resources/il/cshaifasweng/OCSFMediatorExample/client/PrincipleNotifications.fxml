@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PrincipleNotificationBoundry">
+   <left>
+      <AnchorPane prefHeight="500.0" prefWidth="182.0" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane layoutX="-1.0" layoutY="-3.0" prefHeight="502.0" prefWidth="210.0">
+               <children>
+                  <AnchorPane layoutY="2.0" prefHeight="500.0" prefWidth="201.0" style="-fx-background-color: #ccccff;">
+                     <children>
+                        <Button fx:id="homeBtn" layoutY="3.0" mnemonicParsing="false" onAction="#homeBtnAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Home" textFill="WHITE" />
+                        <Button fx:id="extraTimeBtn" layoutY="183.0" mnemonicParsing="false" onAction="#extraTimeAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View Extra Time Requests" textFill="WHITE" />
+                        <Button fx:id="viewQuestionsBtn" layoutY="48.0" mnemonicParsing="false" onAction="#viewQuestionsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View questions" textFill="WHITE" />
+                        <Button fx:id="teacherReportsBtn" layoutY="225.0" mnemonicParsing="false" onAction="#teacherReportsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Teacher Reports" textFill="WHITE" />
+                        <Button fx:id="viewGradesBtn" layoutY="138.0" mnemonicParsing="false" onAction="#viewGradesAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View grades" textFill="WHITE" />
+                        <Button fx:id="logoutBtn" layoutY="442.0" mnemonicParsing="false" onAction="#logoutAction" stylesheets="@Pbutuun.css" text="Logout" textFill="WHITE" />
+                        <Button fx:id="studentReportsBtn" layoutY="315.0" minWidth="139.0" mnemonicParsing="false" onAction="#studentReportsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Student Reports" textFill="WHITE" />
+                        <Button fx:id="courseReportsBtn" layoutY="270.0" mnemonicParsing="false" onAction="#courseReportsAction" prefHeight="32.0" prefWidth="140.0" text="Course Reports" textFill="WHITE">
+                           <stylesheets>
+                              <URL value="@designs.css" />
+                              <URL value="@Pbutuun.css" />
+                           </stylesheets>
+                        </Button>
+                        <Button fx:id="viewExamsBtn" layoutY="93.0" mnemonicParsing="false" onAction="#viewExamsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View exams" textFill="WHITE" />
+                        <Button fx:id="notificationBtn" layoutY="367.0" mnemonicParsing="false" onAction="#notificationAction" prefHeight="32.0" prefWidth="211.0" style="-fx-background-color: #5a4fcf;" stylesheets="@Pbutuun.css" text="Notifications" textFill="WHITE" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane prefHeight="500.0" prefWidth="693.0">
+               <children>
+                  <Label fx:id="timeLabel" layoutX="485.0" layoutY="33.0" prefHeight="67.0" prefWidth="173.0" textFill="#0598ff">
+                     <font>
+                        <Font name="Algerian" size="24.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="428.0" layoutY="336.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../images/finallogop.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+            <TableView fx:id="table" layoutX="22.0" layoutY="132.0" prefHeight="200.0" prefWidth="667.0" style="-fx-border-color: #000000; -fx-border-width: 3;">
+               <columns>
+                  <TableColumn fx:id="notificationID" prefWidth="85.0" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Notifiaction ID" />
+                  <TableColumn fx:id="notificationContent" prefWidth="436.0" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Content" />
+                  <TableColumn fx:id="statuscol" prefWidth="52.5" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Status" />
+                  <TableColumn fx:id="date" prefWidth="86.0" style="-fx-border-color: #000000; -fx-border-width: 1;" text="Date" />
+               </columns>
+               <effect>
+                  <DropShadow>
+                     <color>
+                        <Color red="0.3529411852359772" green="0.30980393290519714" blue="0.8117647171020508" />
+                     </color>
+                  </DropShadow>
+               </effect>
+            </TableView>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

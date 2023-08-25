@@ -185,7 +185,7 @@ public class StartSolvingManualExamController
             run3.setText("HIGH SCHOOL TEST SYSTEM");
             run3.setFontSize(40);
             run3.setText("HSTS");
-            run3.setColor("1B7245");
+            run3.setColor("e9692c");
             run3.setFontFamily("American Typewriter");
 
             // Create a File object with the file name
@@ -195,7 +195,7 @@ public class StartSolvingManualExamController
             run1 = paragraph.createRun();
             run1.setFontSize(20);
             run1.setBold(true);
-            run1.setColor("1B7245");
+            run1.setColor("e9692c");
             run1.setText("Student Name: " + readyExam.getFullName());
             run1.addBreak();
             run1.setText("Student ID: " + SimpleClient.getClient().getUser().getIdd());

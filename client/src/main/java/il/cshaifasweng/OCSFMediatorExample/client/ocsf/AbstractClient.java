@@ -4,6 +4,9 @@
 
 package il.cshaifasweng.OCSFMediatorExample.client.ocsf;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+
 import java.io.*;
 import java.net.*;
 
@@ -131,9 +134,14 @@ public abstract class AbstractClient implements Runnable
     //Create the sockets and the data streams
     try
     {
+      System.out.println("1");
       clientSocket= new Socket(host, port);
+      System.out.println("2");
       output = new ObjectOutputStream(clientSocket.getOutputStream());
+      System.out.println("3");
       input = new ObjectInputStream(clientSocket.getInputStream());
+
+      System.out.println("connection success");
     }
     catch (IOException ex)
     // All three of the above must be closed when there is a failure
@@ -168,13 +176,22 @@ public abstract class AbstractClient implements Runnable
   {
 
     if (clientSocket == null || output == null) {
+      showAlertDialog(Alert.AlertType.ERROR, "Error", "Connection To Server timed out!!!");
       throw new SocketException("socket does not exist");
     }
     output.reset();
     output.writeObject(msg);
   }
 
-
+  public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+    Platform.runLater(() -> {
+      Alert alert = new Alert(alertType);
+      alert.setTitle(title);
+      alert.setHeaderText(null);
+      alert.setContentText(message);
+      alert.showAndWait();
+    });
+  }
 
   /**
    * Closes the connection to the server.

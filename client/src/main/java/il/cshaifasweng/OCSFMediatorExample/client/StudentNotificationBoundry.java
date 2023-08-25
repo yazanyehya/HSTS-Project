@@ -48,6 +48,9 @@ public class StudentNotificationBoundry {
     private TableView<Notification> table;
 
     @FXML
+    private TableColumn<Notification, String> date;
+
+    @FXML
     private Button viewGradesBTN;
     @FXML
     private Button notificationBtn;
@@ -166,5 +169,9 @@ public class StudentNotificationBoundry {
     public TableView<Notification> getTable()
     {
         return table;
+    }
+
+    public TableColumn<Notification, String> getDate() {
+        return date;
     }
 }

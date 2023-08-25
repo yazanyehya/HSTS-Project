@@ -283,7 +283,9 @@ public class ViewGradesController {
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
             courseLabel.setFont(font);
-            courseLabel.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
+            courseLabel.setStyle("-fx-text-fill: #7b68ee;-fx-underline: true;");
+            teacherName.setFont(font);
+            teacherName.setStyle("-fx-text-fill: #7b68ee;-fx-underline: true;");
             examDetails.getChildren().addAll(imageViewLogo, courseLabel, teacherName);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
@@ -297,8 +299,8 @@ public class ViewGradesController {
             studentId.setFont(font);
             grade.setFont(font);
 
-            studentName.setStyle("-fx-font-weight: bold;-fx-underline: true;");
-            studentId.setStyle("-fx-font-weight: bold;-fx-underline: true;");
+            studentName.setStyle("-fx-text-fill: #7b68ee;-fx-underline: true;");
+            studentId.setStyle("-fx-text-fill: #7b68ee;-fx-underline: true;");
             studentDetails.getChildren().addAll(studentName, studentId, grade);
 
             VBox questions = new VBox();
@@ -314,7 +316,7 @@ public class ViewGradesController {
 
                 // Add the question label and RadioButtons VBox to the main VBox
                 vBox1.getChildren().add(0, Qtext); // Add the question label as the first child
-                vBox1.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
+                vBox1.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #7b68ee;");
                 questions.getChildren().addAll(vBox1);
             }
             Region region1 = new Region();
@@ -324,7 +326,7 @@ public class ViewGradesController {
             HBox.setHgrow(region2, Priority.ALWAYS);
             HBox.setHgrow(region3, Priority.ALWAYS);
             hBox.getChildren().addAll(region1, borderPane, region2);
-            region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #87CEFA;");
+            region3.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: #7b68ee;");
             HBox hBox1 = new HBox(region3);
             Label studentComments = new Label("Comments for Student");
             TextField textFieldStudentComments = new TextField(readyExam.getExam().getStudentComments());
@@ -335,8 +337,8 @@ public class ViewGradesController {
             // Create a new stage and set the VBox as its root
             Stage previewStage = new Stage();
             previewStage.setScene(new Scene(scrollPane));
-            previewStage.setHeight(800);
-            previewStage.setWidth(800);
+            previewStage.setHeight(900);
+            previewStage.setWidth(500);
 
 
             // Show the stage

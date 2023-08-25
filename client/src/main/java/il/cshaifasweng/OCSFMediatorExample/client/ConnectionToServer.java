@@ -24,6 +24,7 @@ public class ConnectionToServer {
         } else {
             boolean connection = SimpleClient.newClinet(ipText.getText());
             if (connection) {
+                System.out.println("connection success");
                 SimpleChatClient.switchScreen("LoginController");
             } else {
                 showAlertDialog(Alert.AlertType.ERROR, "Error", "No server has been found with IP: " + ipText.getText());

@@ -4,6 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.client.PrincipleBoundry;
 import il.cshaifasweng.OCSFMediatorExample.entities.Notification;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.greenrobot.eventbus.EventBus;
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;

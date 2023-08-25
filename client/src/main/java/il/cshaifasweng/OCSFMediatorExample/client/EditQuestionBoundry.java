@@ -398,7 +398,7 @@ public class EditQuestionBoundry {
 
     @FXML
     void selectCourseAction(ActionEvent event) throws IOException {
-        showQBtn.setVisible(true);
+        //showQBtn.setVisible(true);
         if (selectSubject.getSelectionModel().isEmpty())
         {
             Platform.runLater(()->{

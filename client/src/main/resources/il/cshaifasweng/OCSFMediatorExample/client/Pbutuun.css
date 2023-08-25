@@ -21,7 +21,8 @@
     -fx-border-radius: 0 30 30 0;
     -fx-background-radius: 0 30 30 0;
     -fx-border-width: 0 0 3 3;
-
+    -fx-min-width: 209px;
+    -fx-min-height:30px ;
 }
 
 .button:pressed {

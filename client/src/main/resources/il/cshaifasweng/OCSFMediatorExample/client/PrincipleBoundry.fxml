@@ -31,6 +31,7 @@
                </stylesheets>
             </Button>
             <Button fx:id="viewExamsBtn" layoutY="93.0" mnemonicParsing="false" onAction="#viewExamsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View exams" textFill="WHITE" />
+            <Button fx:id="notificationBtn" layoutY="357.0" mnemonicParsing="false" onAction="#notificationAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Notifications" textFill="WHITE" />
          </children>
       </AnchorPane>
    </left>

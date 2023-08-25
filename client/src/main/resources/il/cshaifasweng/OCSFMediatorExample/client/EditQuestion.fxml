@@ -146,11 +146,6 @@
                         <URL value="@designs.css" />
                         <URL value="@combobox.css" />
                      </stylesheets></ComboBox>
-                  <Button fx:id="showQBtn" layoutX="99.0" layoutY="60.0" maxHeight="500.0" maxWidth="688.0" minHeight="500.0" minWidth="541.0" mnemonicParsing="false" onAction="#showQuestionsAction" prefHeight="35.0" prefWidth="149.0" styleClass="Label" text="Show Questions">
-                     <stylesheets>
-                        <URL value="@designs.css" />
-                        <URL value="@button1.css" />
-                     </stylesheets></Button>
                   <ListView fx:id="listViewQ" layoutX="14.0" layoutY="104.0" prefHeight="332.0" prefWidth="470.0" style="-fx-border-color: #000000; -fx-border-width: 3;">
                      <effect>
                         <DropShadow>

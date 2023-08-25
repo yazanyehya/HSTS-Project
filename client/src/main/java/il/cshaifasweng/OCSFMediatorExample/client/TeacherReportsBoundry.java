@@ -71,6 +71,29 @@ public class TeacherReportsBoundry {
 
 
     @FXML
+    private Button notificationBtn;
+
+
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(teacherReportsController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("PrincipleNotifications");
+                Message message = new Message("getNotificationForPrinciple", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
     void courseReportsAction(ActionEvent event) {
         Platform.runLater(() -> {
             try {
@@ -212,7 +235,16 @@ public class TeacherReportsBoundry {
                 if (teacher != null)
                 {
                     try {
-                        teacherReportsController.getExams(teacher);
+                        if (teachersList.getSelectionModel().isEmpty())
+                        {
+                            Platform.runLater(()->{
+                                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please choose a teacher!");
+                            });
+                        }
+                        else
+                        {
+                            teacherReportsController.getExams(teacher);
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

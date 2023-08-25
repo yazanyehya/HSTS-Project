@@ -86,6 +86,29 @@ public class ViewGradesBoundry {
 
     private AnimationTimer animationTimer;
 
+
+    @FXML
+    private Button notificationBtn;
+
+
+    @FXML
+    void notificationAction(ActionEvent event)
+    {
+        EventBus.getDefault().unregister(viewGradesController);
+        Platform.runLater(() -> {
+            try {
+                SimpleChatClient.switchScreen("PrincipleNotifications");
+                Message message = new Message("getNotificationForPrinciple", SimpleClient.getClient().getUser());
+                try {
+                    SimpleClient.getClient().sendToServer(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
     @FXML
     void selectStudentAction(ActionEvent event) throws IOException {
         table.getItems().clear();

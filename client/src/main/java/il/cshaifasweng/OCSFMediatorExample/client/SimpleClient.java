@@ -365,11 +365,16 @@ public class SimpleClient extends AbstractClient {
 		}
 		else if(message.getTitle().equals("getNotificationForStudent"))
 		{
+			System.out.println("lollllllll");
 			EventBus.getDefault().post(new NotificationForStudentEvent((Message) msg));
 		}
 		else if(message.getTitle().equals("getNotificationForTeacher"))
 		{
 			EventBus.getDefault().post(new NotificationForTeacherEvent((Message) msg));
+		}
+		else if(message.getTitle().equals("getNotificationForPrinciple"))
+		{
+			EventBus.getDefault().post(new NotificationForPrincipleEvent((Message) msg));
 		}
 
 	}
@@ -378,7 +383,7 @@ public class SimpleClient extends AbstractClient {
 	}
 	public static boolean newClinet(String hostIP)
 	{
-		client = new SimpleClient(hostIP,12136);
+		client = new SimpleClient(hostIP,3000);
 		try {
 			client.openConnection();
 			return true;
