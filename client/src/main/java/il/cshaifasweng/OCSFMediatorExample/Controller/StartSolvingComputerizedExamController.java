@@ -237,6 +237,8 @@ public class StartSolvingComputerizedExamController
 
             courseLabel.setFont(font);
             courseLabel.setStyle("-fx-text-fill: #ffa500;-fx-underline: true;");
+            teacherName.setFont(font);
+            teacherName.setStyle("-fx-text-fill: #ffa500;-fx-underline: true;");
             examDetails.getChildren().addAll(imageViewLogo, courseLabel,teacherName);
             examDetails.setAlignment(Pos.CENTER);
             borderPane.setCenter(examDetails);
@@ -298,7 +300,9 @@ public class StartSolvingComputerizedExamController
             VBox.setVgrow(region3, Priority.ALWAYS);
             VBox.setVgrow(region4, Priority.ALWAYS);
             VBox.setVgrow(region5, Priority.ALWAYS);
-            Label label = new Label("Comments: \n" + readyExam.getExam().getStudentComments());
+            Label label = new Label( readyExam.getExam().getStudentComments());
+            label.setFont(font);
+            label.setStyle("-fx-border-color: #e9692c;");
             VBox vBox = new VBox(hBox, region5, studentDetails, region4, questions, region3,label,startSolvingExamBoundry.getFinishExamBtn());
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setContent(vBox);

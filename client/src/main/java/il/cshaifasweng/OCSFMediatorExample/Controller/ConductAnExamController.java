@@ -73,16 +73,15 @@ public class ConductAnExamController
                 if (readyExam.getExamType().equals("Manual"))
                 {
                     resMessage.setTitle("StartSolvingManualExam");
-                    SimpleClient.getClient().sendToServer(resMessage);
                     SimpleChatClient.switchScreen("StartSolvingManualExam");
-
+                    SimpleClient.getClient().sendToServer(resMessage);
 
                 }
                 else
                 {
                     resMessage.setTitle("StartSolvingComputerizedExam");
-                    SimpleClient.getClient().sendToServer(resMessage);
                     SimpleChatClient.switchScreen("StartSolvingComputerizedExam");
+                    SimpleClient.getClient().sendToServer(resMessage);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

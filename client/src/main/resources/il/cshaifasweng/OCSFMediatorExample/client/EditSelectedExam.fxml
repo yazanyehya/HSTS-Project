@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="500.0" maxWidth="900.0" minHeight="500.0" minWidth="900.0" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.EditSelectedExamBoundry">
-   <top>
+   <bottom>
       <AnchorPane prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
          <children>
             <ComboBox fx:id="chooseCourse" layoutX="39.0" layoutY="23.0" onAction="#chooseCourseAction" prefWidth="150.0" promptText="Choose Course" stylesheets="@combobox.css" />
@@ -39,7 +39,7 @@
                      </color>
                   </DropShadow>
                </effect></ListView>
-            <Button fx:id="showBtn" layoutX="70.0" layoutY="395.0" mnemonicParsing="false" onAction="#showAction" stylesheets="@button1.css" text="Show Question">
+            <Button fx:id="showBtn" layoutX="310.0" layoutY="395.0" mnemonicParsing="false" onAction="#showAction" stylesheets="@button1.css" text="Show Question">
                <effect>
                   <DropShadow>
                      <color>
@@ -47,7 +47,7 @@
                      </color>
                   </DropShadow>
                </effect></Button>
-            <Button fx:id="selectBtn" layoutX="300.0" layoutY="395.0" mnemonicParsing="false" onAction="#ConfirmSelect" stylesheets="@button1.css" text="Confirm Select">
+            <Button fx:id="selectBtn" layoutX="551.0" layoutY="395.0" mnemonicParsing="false" onAction="#ConfirmSelect" stylesheets="@button1.css" text="Confirm Select">
                <effect>
                   <DropShadow>
                      <color>
@@ -55,11 +55,11 @@
                      </color>
                   </DropShadow>
                </effect></Button>
-            <Button fx:id="backbtn" layoutX="297.0" layoutY="456.0" mnemonicParsing="false" onAction="#backAction" prefHeight="29.0" prefWidth="103.0" stylesheets="@button1.css" text="Back">
+            <Button fx:id="backbtn" layoutX="251.0" layoutY="457.0" mnemonicParsing="false" onAction="#backAction" prefHeight="29.0" prefWidth="103.0" stylesheets="@button1.css" text="Back">
                <effect>
                   <DropShadow />
                </effect></Button>
-            <Button fx:id="saveBtn" layoutX="551.0" layoutY="395.0" mnemonicParsing="false" onAction="#saveExam" stylesheets="@button1.css" text="Confirm Edit">
+            <Button fx:id="saveBtn" layoutX="406.0" layoutY="457.0" mnemonicParsing="false" onAction="#saveExam" stylesheets="@button1.css" text="Confirm Edit">
                <effect>
                   <DropShadow>
                      <color>
@@ -170,5 +170,5 @@
             </Label>
          </children>
       </AnchorPane>
-   </top>
+   </bottom>
 </BorderPane>

@@ -174,8 +174,10 @@ public class StartSolvingManualExamController
                 timeline.play();
             });
 
+            System.out.println("lol im hre 5");
             XWPFParagraph paragraph1 = startSolvingManualExamBoundry.getDocument().createParagraph();
             XWPFParagraph paragraph = startSolvingManualExamBoundry.getDocument().createParagraph();
+            System.out.println("lol im hre 6");
 
             //ReadyExam readyExam = (ReadyExam) startSolvingManualExamEvent.getMessage().getBody();
             // Add questions to the Word document

@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +26,18 @@ public class ConnectionToServer {
             boolean connection = SimpleClient.newClinet(ipText.getText());
             if (connection) {
                 System.out.println("connection success");
-                SimpleChatClient.switchScreen("LoginController");
+                Platform.runLater(()->{
+                    try {
+                        SimpleClient.getClient().sendToServer(new Message("NewClient", null));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        SimpleChatClient.switchScreen("LoginController");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
             } else {
                 showAlertDialog(Alert.AlertType.ERROR, "Error", "No server has been found with IP: " + ipText.getText());
             }

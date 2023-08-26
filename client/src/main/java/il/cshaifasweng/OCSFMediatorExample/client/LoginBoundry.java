@@ -14,15 +14,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 
@@ -64,6 +63,8 @@ public class LoginBoundry {
     @FXML
     private AnchorPane anchorPane;
 
+    @FXML
+    private Button dissconnectBtn;
     private LoginController controller;
 
     @FXML
@@ -71,6 +72,15 @@ public class LoginBoundry {
     {
         controller.login(usernameTxt.getText(), passwordHidden.getText());
         System.out.println("hhh");
+    }
+
+    @FXML
+    void dissconnectAction(ActionEvent event) throws IOException {
+        SimpleClient.getClient().closeConnection();
+        Platform.runLater(() -> {
+            Stage stage = (Stage) dissconnectBtn.getScene().getWindow();
+            stage.close();
+        });
     }
 
     @FXML
@@ -182,9 +192,11 @@ public class LoginBoundry {
         users.setImage(image1);
         Image image2 = new Image(getClass().getResourceAsStream("/images/userpas.png"));
         userpassword.setImage(image2);
-//        DatePicker.setValue(LocalDate.now());
-
-
+        Image bellIconImage = new Image(getClass().getResourceAsStream("/images/power-off.png")); // Replace with your icon's path
+        ImageView bellIconImageView = new ImageView(bellIconImage);
+        bellIconImageView.setFitWidth(30); // Adjust the size as needed
+        bellIconImageView.setFitHeight(30);
+        dissconnectBtn.setGraphic(bellIconImageView);
 
         // Start the AnimationTimer to update the time label periodically
         animationTimer = new AnimationTimer() {
@@ -239,10 +251,6 @@ public class LoginBoundry {
 //            });
 //        }
     }
-
-
-
-
 
     private void updateDateTime() {
         // Get the current date and time

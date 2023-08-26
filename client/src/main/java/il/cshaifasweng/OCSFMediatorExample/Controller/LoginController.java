@@ -45,11 +45,6 @@ public class LoginController
 
                 if (user != null && user.isLoggedIn())
                 {
-                    try {
-                        SimpleClient.getClient().sendToServer(new Message("NewClient", null));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
                     Platform.runLater(() -> {
                         // Login success

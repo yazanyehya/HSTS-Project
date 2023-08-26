@@ -190,6 +190,8 @@ public class SendExamToStudentBoundry {
             //HighSchoolNameLabel.setStyle("-fx-text-fill: #87CEFA;-fx-underline: true;");
 
             courseLabel.setFont(font);
+            teacherName.setFont(font);
+            teacherName.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
             courseLabel.setStyle("-fx-text-fill: #1E90FF;-fx-underline: true;");
             examDetails.getChildren().addAll(imageViewLogo, courseLabel, teacherName);
             examDetails.setAlignment(Pos.CENTER);
@@ -240,11 +242,13 @@ public class SendExamToStudentBoundry {
             vBox.setStyle("-fx-background-color: #ffffff");
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setContent(vBox);
+            vBox.setPrefHeight(500);
+            vBox.setPrefWidth(900);
             // Create a new stage and set the VBox as its root
             Stage previewStage = new Stage();
             previewStage.setScene(new Scene(scrollPane));
-            previewStage.setHeight(800);
-            previewStage.setWidth(800);
+            previewStage.setHeight(500);
+            previewStage.setWidth(900);
 
 
             // Show the stage

@@ -22,7 +22,7 @@
                   <AnchorPane layoutY="2.0" prefHeight="500.0" prefWidth="201.0" style="-fx-background-color: #ccccff;">
                      <children>
                         <Button fx:id="homeBtn" layoutY="3.0" mnemonicParsing="false" onAction="#homeBtnAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Home" textFill="WHITE" />
-                        <Button fx:id="extraTimeBtn" layoutY="183.0" mnemonicParsing="false" onAction="#extraTimeAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View Extra Time Requests" textFill="WHITE" />
+                        <Button fx:id="extraTimeBtn" layoutY="183.0" mnemonicParsing="false" onAction="#extraTimeAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Extra Time Requests" textFill="WHITE" />
                         <Button fx:id="viewQuestionsBtn" layoutY="48.0" mnemonicParsing="false" onAction="#viewQuestionsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View questions" textFill="WHITE" />
                         <Button fx:id="teacherReportsBtn" layoutY="225.0" mnemonicParsing="false" onAction="#teacherReportsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Teacher Reports" textFill="WHITE" />
                         <Button fx:id="viewGradesBtn" layoutY="138.0" mnemonicParsing="false" onAction="#viewGradesAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View grades" textFill="WHITE" />

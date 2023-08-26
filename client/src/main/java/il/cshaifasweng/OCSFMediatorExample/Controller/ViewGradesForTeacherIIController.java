@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.Controller;
 
 import il.cshaifasweng.OCSFMediatorExample.client.SimpleClient;
+import il.cshaifasweng.OCSFMediatorExample.client.TeacherEvent;
 import il.cshaifasweng.OCSFMediatorExample.client.ViewGradesForTeacherIIBoundry;
 import il.cshaifasweng.OCSFMediatorExample.client.ViewGradesForTeacherIIBoundryEvent;
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
@@ -289,6 +290,27 @@ public class ViewGradesForTeacherIIController
 
             // Show the stage
             previewStage.show();
+        });
+    }
+    @Subscribe
+    public void handleTeacherEvents(TeacherEvent teacherEvent)
+    {
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) teacherEvent.getMessage().getBody();
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go and check the home page");
+            }
+        });
+    }
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
         });
     }
 }

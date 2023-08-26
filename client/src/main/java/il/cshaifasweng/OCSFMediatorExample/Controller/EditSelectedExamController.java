@@ -173,10 +173,12 @@ public class EditSelectedExamController
         }
         System.out.println(remainingQuestions);
         // Set the remainingQuestions as the items of editSelectedExamBoundry.getListOfAllQuestions()
-        ObservableList<Question> questionList = FXCollections.observableArrayList(remainingQuestions);
-        editSelectedExamBoundry.getListOfAllQuestions().setItems(questionList);
-        editSelectedExamBoundry.getListOfAllQuestions().setCellFactory(param -> {
-            return new EditSelectedExamController.ScoredQuestionListCell(false);
+        Platform.runLater(()->{
+            ObservableList<Question> questionList = FXCollections.observableArrayList(remainingQuestions);
+            editSelectedExamBoundry.getListOfAllQuestions().setItems(questionList);
+            editSelectedExamBoundry.getListOfAllQuestions().setCellFactory(param -> {
+                return new EditSelectedExamController.ScoredQuestionListCell(false);
+            });
         });
     }
 

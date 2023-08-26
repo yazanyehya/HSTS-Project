@@ -430,7 +430,19 @@ public class StudentReportsController {
             }
         }
     }
-
+    @Subscribe
+    public void handllle(PrincipleEvent principleEvent)
+    {
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) principleEvent.getMessage().getBody();
+            List<Notification> list = (List<Notification>) objects[0];
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go and check the home page");
+            }
+        });
+    }
     public Map<List<Integer>, Integer> getMedian_map() {
         return median_map;
     }

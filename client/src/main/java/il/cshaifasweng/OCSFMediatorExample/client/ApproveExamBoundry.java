@@ -258,6 +258,7 @@ public class ApproveExamBoundry {
         else
         {
             SimpleChatClient.switchScreen("PreviewToApprove");
+            EventBus.getDefault().unregister(approveExamController);
             ReadyExam readyExam = getReadyExamList().getSelectionModel().getSelectedItem();
             Message message = new Message("SendToPreview", readyExam);
             SimpleClient.getClient().sendToServer(message);

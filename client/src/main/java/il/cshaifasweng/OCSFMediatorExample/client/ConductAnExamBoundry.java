@@ -72,6 +72,7 @@ public class ConductAnExamBoundry {
         });
     }
 
+
     @FXML
     void notificationAction(ActionEvent event)
     {
@@ -79,16 +80,12 @@ public class ConductAnExamBoundry {
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("StudentNotifications");
+                Message message = new Message("getNotificationForStudent", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-        Message message = new Message("getNotificationForStudent", SimpleClient.getClient().getUser());
-        try {
-            SimpleClient.getClient().sendToServer(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     @FXML
     void homeBtnAction(ActionEvent event) {

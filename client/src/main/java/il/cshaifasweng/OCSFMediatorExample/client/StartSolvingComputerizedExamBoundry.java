@@ -5,9 +5,8 @@ import il.cshaifasweng.OCSFMediatorExample.Controller.StartSolvingComputerizedEx
 import il.cshaifasweng.OCSFMediatorExample.entities.Question;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 
@@ -43,8 +42,27 @@ public class StartSolvingComputerizedExamBoundry
     private AnimationTimer animationTimer;
     @FXML
     void finishExamAction(ActionEvent event) throws IOException {
-        finished = "yes";
-        startSolvingExamController.finish("InTime");
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Confirm Submission");
+        confirmationAlert.setHeaderText("Confirm Submission");
+        confirmationAlert.setContentText("Are you sure you want to submit?");
+        confirmationAlert.getDialogPane().getStylesheets().add(getClass().getResource("Sbutton.css").toExternalForm());
+        ImageView imageView = new ImageView("/images/student_logo.png");
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+        confirmationAlert.getDialogPane().setGraphic(imageView); // Replace with your image path
+        confirmationAlert.getDialogPane().setMinWidth(20);
+        confirmationAlert.getDialogPane().setMinHeight(20);
+        confirmationAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                finished = "yes";
+                try {
+                    startSolvingExamController.finish("InTime");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public Map<Question, RadioButton> getSelectedAnswersMap()
