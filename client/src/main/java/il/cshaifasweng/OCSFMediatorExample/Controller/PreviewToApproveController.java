@@ -276,7 +276,7 @@ public class PreviewToApproveController
             showAlertDialog(Alert.AlertType.INFORMATION, "Success", "Exam Approved Successfully");
             try {
                 EventBus.getDefault().unregister(this);
-                SimpleChatClient.switchScreen("teacherBoundry");
+                SimpleChatClient.switchScreen("ApproveExam");
             } catch (IOException e) {
                 e.printStackTrace();
             }

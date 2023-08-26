@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.Controller;
 import il.cshaifasweng.OCSFMediatorExample.client.*;
 import il.cshaifasweng.OCSFMediatorExample.entities.ExtraTime;
 import il.cshaifasweng.OCSFMediatorExample.entities.Message;
+import il.cshaifasweng.OCSFMediatorExample.entities.Notification;
 import il.cshaifasweng.OCSFMediatorExample.entities.ReadyExam;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -180,6 +181,19 @@ public class ExtraTimePrincipleController
             alert.setHeaderText(null);
             alert.setContentText(message);
             alert.showAndWait();
+        });
+    }
+    @Subscribe
+    public void handllle(PrincipleEvent principleEvent)
+    {
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) principleEvent.getMessage().getBody();
+            List<Notification> list = (List<Notification>) objects[0];
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go and check the home page");
+            }
         });
     }
 }

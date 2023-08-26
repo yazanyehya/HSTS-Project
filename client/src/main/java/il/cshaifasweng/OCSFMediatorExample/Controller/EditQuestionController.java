@@ -216,6 +216,17 @@ public class EditQuestionController {
             });
         });
     }
-
+    @Subscribe
+    public void handleTeacherEvents(TeacherEvent teacherEvent)
+    {
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) teacherEvent.getMessage().getBody();
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go and check the home page");
+            }
+        });
+    }
 }
 

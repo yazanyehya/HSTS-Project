@@ -40,7 +40,7 @@
          <children>
             <AnchorPane layoutX="19.0" prefHeight="500.0" prefWidth="672.0">
                <children>
-                  <Text fx:id="principleName" fill="MEDIUMSLATEBLUE" layoutX="219.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hello Principle" wrappingWidth="234.95361328125">
+                  <Text fx:id="principleName" fill="MEDIUMSLATEBLUE" layoutX="86.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hello Principle" wrappingWidth="423.95361328125">
                      <font>
                         <Font size="26.0" />
                      </font>

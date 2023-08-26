@@ -84,23 +84,19 @@ public class ViewGradesForStudentBoundry {
 
     }
 
+
     @FXML
-    void notificationAction(ActionEvent event)
-    {
+    void notificationAction(ActionEvent event) {
         EventBus.getDefault().unregister(viewGradesForStudentController);
         Platform.runLater(() -> {
             try {
                 SimpleChatClient.switchScreen("StudentNotifications");
+                Message message = new Message("getNotificationForStudent", SimpleClient.getClient().getUser());
+                SimpleClient.getClient().sendToServer(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-        Message message = new Message("getNotificationForStudent", SimpleClient.getClient().getUser());
-        try {
-            SimpleClient.getClient().sendToServer(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     @FXML
     void logoutAction(ActionEvent event) throws IOException {

@@ -20,20 +20,20 @@
          <children>
             <AnchorPane prefHeight="500.0" prefWidth="209.0" style="-fx-background-color: #ccccff;">
                <children>
-                  <Button fx:id="homeBtn" layoutY="3.0" mnemonicParsing="false" onAction="#homeBtnAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Home" />
-                  <Button fx:id="extraTimeBtn" layoutY="183.0" mnemonicParsing="false" onAction="#extraTimeAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View Extra Time Requests" />
-                  <Button fx:id="viewQuestionsBtn" layoutY="48.0" mnemonicParsing="false" onAction="#viewQuestionsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View questions" />
-                  <Button fx:id="teacherReportsBtn" layoutY="225.0" mnemonicParsing="false" onAction="#teacherReportsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Teacher Reports" />
-                  <Button fx:id="viewGradesBtn" layoutY="138.0" mnemonicParsing="false" onAction="#viewGradesAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View grades" />
-                  <Button fx:id="logoutBtn" layoutY="442.0" mnemonicParsing="false" onAction="#logoutAction" stylesheets="@Pbutuun.css" text="Logout" />
-                  <Button fx:id="studentReportsBtn" layoutY="315.0" mnemonicParsing="false" onAction="#studentReportsAction" prefHeight="32.0" prefWidth="209.0" style="-fx-background-color: #5a4fcf;" stylesheets="@Pbutuun.css" text="Student Reports" />
-                  <Button fx:id="courseReportsBtn" layoutY="270.0" mnemonicParsing="false" onAction="#courseReportsAction" prefHeight="32.0" prefWidth="140.0" text="Course Reports">
+                  <Button fx:id="homeBtn" layoutY="3.0" mnemonicParsing="false" onAction="#homeBtnAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Home" textFill="WHITE" />
+                  <Button fx:id="extraTimeBtn" layoutY="183.0" mnemonicParsing="false" onAction="#extraTimeAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Extra Time Requests" textFill="WHITE" />
+                  <Button fx:id="viewQuestionsBtn" layoutY="48.0" mnemonicParsing="false" onAction="#viewQuestionsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View questions" textFill="WHITE" />
+                  <Button fx:id="teacherReportsBtn" layoutY="225.0" mnemonicParsing="false" onAction="#teacherReportsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Teacher Reports" textFill="WHITE" />
+                  <Button fx:id="viewGradesBtn" layoutY="138.0" mnemonicParsing="false" onAction="#viewGradesAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View grades" textFill="WHITE" />
+                  <Button fx:id="logoutBtn" layoutY="442.0" mnemonicParsing="false" onAction="#logoutAction" stylesheets="@Pbutuun.css" text="Logout" textFill="WHITE" />
+                  <Button fx:id="studentReportsBtn" layoutY="315.0" mnemonicParsing="false" onAction="#studentReportsAction" prefHeight="32.0" prefWidth="209.0" style="-fx-background-color: #5a4fcf;" stylesheets="@Pbutuun.css" text="Student Reports" textFill="WHITE" />
+                  <Button fx:id="courseReportsBtn" layoutY="270.0" mnemonicParsing="false" onAction="#courseReportsAction" prefHeight="32.0" prefWidth="140.0" text="Course Reports" textFill="WHITE">
                      <stylesheets>
                         <URL value="@designs.css" />
                         <URL value="@Pbutuun.css" />
                      </stylesheets>
                   </Button>
-                  <Button fx:id="viewExamsBtn" layoutY="93.0" mnemonicParsing="false" onAction="#viewExamsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View exams" />
+                  <Button fx:id="viewExamsBtn" layoutY="93.0" mnemonicParsing="false" onAction="#viewExamsAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="View exams" textFill="WHITE" />
                   <Button fx:id="notificationBtn" layoutY="362.0" mnemonicParsing="false" onAction="#notificationAction" prefHeight="32.0" prefWidth="140.0" stylesheets="@Pbutuun.css" text="Notifications" textFill="WHITE" />
                </children>
             </AnchorPane>

@@ -114,8 +114,10 @@ public class StartSolvingManualExamBoundry {
         };
         animationTimer.start();
 
+        System.out.println("lol im here 3");
         this.document = new XWPFDocument();
         downloadBtn.setOnAction(event -> {
+            System.out.println("lol im here 4");
             downloaded = "yes";
             handleDownload();
         });

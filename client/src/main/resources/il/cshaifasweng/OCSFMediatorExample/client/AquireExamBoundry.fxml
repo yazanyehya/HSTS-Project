@@ -129,23 +129,23 @@
    <right>
       <AnchorPane prefHeight="500.0" prefWidth="693.0" style="-fx-background-color: #0000000;" BorderPane.alignment="CENTER">
          <children>
-            <ComboBox fx:id="selectSubject" layoutX="14.0" layoutY="14.0" onAction="#selectSubjectAction" prefHeight="31.0" prefWidth="126.0" promptText="Select Subject" stylesheets="@combobox.css">
+            <ComboBox fx:id="selectSubject" layoutX="14.0" layoutY="14.0" onAction="#selectSubjectAction" prefHeight="31.0" prefWidth="129.0" promptText="Select Subject" stylesheets="@combobox.css">
                <effect>
                   <InnerShadow />
                </effect></ComboBox>
-            <ComboBox fx:id="selectCourse" layoutX="13.0" layoutY="54.0" onAction="#selectCourseAction" prefHeight="33.0" prefWidth="125.0" promptText="Select Course" stylesheets="@combobox.css">
+            <ComboBox fx:id="selectCourse" layoutX="13.0" layoutY="54.0" onAction="#selectCourseAction" prefHeight="33.0" prefWidth="132.0" promptText="Select Course" stylesheets="@combobox.css">
                <effect>
                   <InnerShadow />
                </effect></ComboBox>
-            <Button fx:id="showExamBtn" layoutX="14.0" layoutY="97.0" mnemonicParsing="false" onAction="#showExamAction" prefHeight="29.0" prefWidth="124.0" stylesheets="@button1.css" text="Show Exams">
+            <Button fx:id="showExamBtn" layoutX="14.0" layoutY="97.0" mnemonicParsing="false" onAction="#showExamAction" prefHeight="29.0" prefWidth="130.0" stylesheets="@button1.css" text="Show Exams">
                <effect>
                   <InnerShadow />
                </effect></Button>
-            <ComboBox fx:id="examType" layoutX="221.0" layoutY="15.0" onAction="#examTypeAction" prefWidth="150.0" promptText="Choose Exam Type" stylesheets="@combobox.css">
+            <ComboBox fx:id="examType" layoutX="221.0" layoutY="15.0" onAction="#examTypeAction" prefHeight="30.0" prefWidth="157.0" promptText="Choose Exam Type" stylesheets="@combobox.css">
                <effect>
                   <InnerShadow />
                </effect></ComboBox>
-            <Button fx:id="showEntireExam" layoutX="221.0" layoutY="72.0" mnemonicParsing="false" onAction="#showEntireExamAction" prefHeight="29.0" prefWidth="149.0" stylesheets="@button1.css" text="Show Entire Exam">
+            <Button fx:id="showEntireExam" layoutX="221.0" layoutY="56.0" mnemonicParsing="false" onAction="#showEntireExamAction" prefHeight="29.0" prefWidth="157.0" stylesheets="@button1.css" text="Show Entire Exam">
                <effect>
                   <InnerShadow />
                </effect></Button>

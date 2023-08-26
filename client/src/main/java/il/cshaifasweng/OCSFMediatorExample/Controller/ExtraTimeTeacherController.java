@@ -114,6 +114,7 @@ public class ExtraTimeTeacherController
 
         // Create a "Send" button to send the details back
         Button sendButton = new Button("Send");
+        //sendButton.getStylesheets().add(getClass().getResource("ButtonCss.css").toExternalForm());
         sendButton.setOnAction(event -> {
             // Get the entered extra time amount and explanation from the TextFields
             String extraTimeAmount = extraTimeAmountField.getText();
@@ -203,6 +204,22 @@ public class ExtraTimeTeacherController
         }
 
     }
+    @Subscribe
+    public void handleTeacherEvents(TeacherEvent teacherEvent)
+    {
+        Platform.runLater(()->{
+            Object[] objects = (Object[]) teacherEvent.getMessage().getBody();
+            int id = (Integer)objects[1];
+            if (id == SimpleClient.getClient().getUser().getId())
+            {
+                showAlertDialog(Alert.AlertType.INFORMATION, "Alert", "You got a new notification, go and check the home page");
+            }
+        });
+    }
+    @Subscribe
+    public void handleStudent(StudentEvent studentEvent)
+    {
 
+    }
 }
 

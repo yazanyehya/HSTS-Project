@@ -46,6 +46,7 @@
                   <Font name="Algerian" size="36.0" />
                </font>
             </Label>
+            <Button fx:id="dissconnectBtn" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" onAction="#dissconnectAction" prefHeight="43.0" prefWidth="47.0" style="-fx-background-color: #ffffff; -fx-border-radius: 90; -fx-border-color: #000000; -fx-background-radius: 90;" />
          </children>
       </AnchorPane>
    </left>

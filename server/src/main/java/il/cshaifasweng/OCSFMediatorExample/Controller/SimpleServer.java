@@ -30,6 +30,7 @@ public class SimpleServer extends AbstractServer {
 
 	private static SessionFactory sessionFactory;
 	private static Session session;
+	private static int numberOfClinets = 0;
 	private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
 	static
 	{
@@ -84,15 +85,18 @@ public class SimpleServer extends AbstractServer {
 		Course football = new Course("Football");
 		Course basketball = new Course("Basketball");
 		Course golf = new Course("Golf");
+		Course gym = new Course("Gym");
+		sports.getCourses().add(gym);
 		sports.getCourses().add(football);
 		sports.getCourses().add(golf);
 		sports.getCourses().add(basketball);
 		football.setSubject(sports);
 		basketball.setSubject(sports);
 		golf.setSubject(sports);
+		gym.setSubject(sports);
 
 
-		Subject math = new Subject("Math");
+		Subject math = new Subject("Mathematics");
 		Course lierarAlgebra = new Course("Linear Algebra");
 		Course calculus = new Course("Calculus");
 		Course geometry = new Course("Geometry");
@@ -105,14 +109,62 @@ public class SimpleServer extends AbstractServer {
 
 
 
-		Teacher cr7 = new Teacher("Cristiano", "Ronaldo", "cr7", "123", 1, "212272751");
+		Subject computerScience = new Subject("Computer Science");
+		Course hardware = new Course("Hardware");
+		Course CLanguage = new Course("C Language");
+		Course softwareEngineering = new Course("Software Engineering");
+		Course OperatingSystem = new Course("Operating System");
+
+		hardware.setSubject(computerScience);
+		CLanguage.setSubject(computerScience);
+		softwareEngineering.setSubject(computerScience);
+		OperatingSystem.setSubject(computerScience);
+
+		computerScience.getCourses().add(hardware);
+		computerScience.getCourses().add(CLanguage);
+		computerScience.getCourses().add(softwareEngineering);
+		computerScience.getCourses().add(OperatingSystem);
+
+
+		Subject physics = new Subject("Physics");
+		Course mechanics = new Course("Mechanics");
+		Course Astrophysics = new Course("Astrophysics");
+		Course NuclearPhysics = new Course("Nuclear Physics");
+
+		physics.getCourses().add(mechanics);
+		physics.getCourses().add(Astrophysics);
+		physics.getCourses().add(NuclearPhysics);
+
+		NuclearPhysics.setSubject(physics);
+		Astrophysics.setSubject(physics);
+		mechanics.setSubject(physics);
+
+		Subject economics = new Subject("Economics");
+		Course PrinciplesOfEconomics = new Course("Principles of Economics");
+		Course FinancialEconomics = new Course("Financial Economics");
+
+		economics.getCourses().add(PrinciplesOfEconomics);
+		economics.getCourses().add(FinancialEconomics);
+		PrinciplesOfEconomics.setSubject(economics);
+		FinancialEconomics.setSubject(economics);
+
+		Teacher cr7 = new Teacher("Cristiano", "Ronaldo", "cr7", "123", 1, "000000001");
 
 		cr7.getSubjects().add(sports);
 		cr7.getSubjects().add(math);
 		cr7.getCourses().add(lierarAlgebra);
 		cr7.getCourses().add(geometry);
 		cr7.getCourses().add(football);
+		cr7.getSubjects().add(computerScience);
+		cr7.getCourses().add(CLanguage);
+		cr7.getCourses().add(OperatingSystem);
+		cr7.getCourses().add(mechanics);
+		cr7.getSubjects().add(physics);
+		cr7.getCourses().add(FinancialEconomics);
+		cr7.getCourses().add(PrinciplesOfEconomics);
+		cr7.getSubjects().add(economics);
 
+		physics.getListOfTeachers().add(cr7);
 		sports.getListOfTeachers().add(cr7);
 		football.getListOfTeachers().add(cr7);
 
@@ -120,17 +172,33 @@ public class SimpleServer extends AbstractServer {
 		lierarAlgebra.getListOfTeachers().add(cr7);
 		geometry.getListOfTeachers().add(cr7);
 
+		computerScience.getListOfTeachers().add(cr7);
+		CLanguage.getListOfTeachers().add(cr7);
+		OperatingSystem.getListOfTeachers().add(cr7);
 
-		Teacher gBale = new Teacher("Gareth", "Bale", "bale11", "123", 1, "322751041");
+
+		mechanics.getListOfTeachers().add(cr7);
+
+		economics.getListOfTeachers().add(cr7);
+		PrinciplesOfEconomics.getListOfTeachers().add(cr7);
+		FinancialEconomics.getListOfTeachers().add(cr7);
+
+
+		Teacher gBale = new Teacher("Gareth", "Bale", "bale11", "123", 1, "000000002");
 		gBale.getSubjects().add(sports);
 		gBale.getCourses().add(golf);
 		gBale.getCourses().add(football);
 		sports.getListOfTeachers().add(gBale);
 		golf.getListOfTeachers().add(gBale);
 		football.getListOfTeachers().add(gBale);
+		physics.getListOfTeachers().add(gBale);
+		gBale.getSubjects().add(physics);
+		gBale.getCourses().add(NuclearPhysics);
+		NuclearPhysics.getListOfTeachers().add(gBale);
 
 
-		Teacher benzema = new Teacher("Karim", "Benzema", "kb9", "123", 1, "314659756");
+
+		Teacher benzema = new Teacher("Karim", "Benzema", "kb9", "123", 1, "000000003");
 		benzema.getSubjects().add(sports);
 		benzema.getCourses().add(football);
 		football.getListOfTeachers().add(benzema);
@@ -139,8 +207,47 @@ public class SimpleServer extends AbstractServer {
 		benzema.getSubjects().add(math);
 		benzema.getCourses().add(calculus);
 		calculus.getListOfTeachers().add(benzema);
+		benzema.getCourses().add(softwareEngineering);
+		benzema.getCourses().add(OperatingSystem);
+		softwareEngineering.getListOfTeachers().add(benzema);
+		OperatingSystem.getListOfTeachers().add(benzema);
+		benzema.getSubjects().add(computerScience);
+		computerScience.getListOfTeachers().add(benzema);
+		physics.getListOfTeachers().add(benzema);
+		benzema.getSubjects().add(physics);
+		benzema.getCourses().add(Astrophysics);
+		Astrophysics.getListOfTeachers().add(benzema);
 
-		Student lucas = new Student("Lucas", "Vazques", "lv17","123",0,"2114038450");
+
+		Teacher sam = new Teacher("Sam", "Sullek", "samS", "123", 1, "000000016");
+
+		sam.getSubjects().add(sports);
+		sam.getSubjects().add(math);
+		sam.getCourses().add(lierarAlgebra);
+		sam.getCourses().add(geometry);
+		sam.getCourses().add(football);
+		sam.getSubjects().add(computerScience);
+		sam.getCourses().add(CLanguage);
+		sam.getCourses().add(OperatingSystem);
+		sam.getCourses().add(mechanics);
+		sam.getSubjects().add(physics);
+
+		physics.getListOfTeachers().add(sam);
+		sports.getListOfTeachers().add(sam);
+		football.getListOfTeachers().add(sam);
+
+		math.getListOfTeachers().add(sam);
+		lierarAlgebra.getListOfTeachers().add(sam);
+		geometry.getListOfTeachers().add(sam);
+
+		computerScience.getListOfTeachers().add(sam);
+		CLanguage.getListOfTeachers().add(sam);
+		OperatingSystem.getListOfTeachers().add(sam);
+
+		physics.getListOfTeachers().add(sam);
+		mechanics.getListOfTeachers().add(sam);
+
+		Student lucas = new Student("Lucas", "Vazques", "lv17","123",0,"000000004");
 		lucas.getCourses().add(football);
 		football.getListOfStudents().add(lucas);
 		lucas.getSubjects().add(sports);
@@ -149,8 +256,26 @@ public class SimpleServer extends AbstractServer {
 		lucas.getCourses().add(calculus);
 		lucas.getCourses().add(lierarAlgebra);
 		lierarAlgebra.getListOfStudents().add(lucas);
+		lucas.getCourses().add(gym);
+		lucas.getCourses().add(OperatingSystem);
+		lucas.getCourses().add(softwareEngineering);
+		lucas.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(lucas);
+		gym.getListOfStudents().add(lucas);
+		OperatingSystem.getListOfStudents().add(lucas);
+		softwareEngineering.getListOfStudents().add(lucas);
+		physics.getListOfStudents().add(lucas);
+		lucas.getSubjects().add(physics);
+		lucas.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(lucas);
+		economics.getListOfStudents().add(lucas);
+		PrinciplesOfEconomics.getListOfStudents().add(lucas);
+		FinancialEconomics.getListOfStudents().add(lucas);
+		lucas.getSubjects().add(economics);
+		lucas.getCourses().add(FinancialEconomics);
+		lucas.getCourses().add(PrinciplesOfEconomics);
 
-		Student mariano = new Student("Mariano", "Diaz", "md25","123",0, "331465371");
+		Student mariano = new Student("Mariano", "Diaz", "md25","123",0, "000000005");
 		mariano.getCourses().add(football);
 		football.getListOfStudents().add(mariano);
 		mariano.getCourses().add(golf);
@@ -164,59 +289,344 @@ public class SimpleServer extends AbstractServer {
 		math.getListOfStudents().add(mariano);
 
 
-		Principle principle1 = new Principle("Haifa", "University","haifa", "123",2, "317548938");
+
+		Student david = new Student("David", "Laid", "dl7","123",0,"000000007");
+		david.getCourses().add(football);
+		football.getListOfStudents().add(david);
+		david.getSubjects().add(sports);
+		sports.getListOfStudents().add(david);
+		calculus.getListOfStudents().add(david);
+		david.getCourses().add(calculus);
+		david.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(david);
+		david.getCourses().add(gym);
+		david.getCourses().add(OperatingSystem);
+		david.getCourses().add(softwareEngineering);
+		david.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(david);
+		gym.getListOfStudents().add(david);
+		OperatingSystem.getListOfStudents().add(david);
+		softwareEngineering.getListOfStudents().add(david);
+		physics.getListOfStudents().add(david);
+		david.getSubjects().add(physics);
+		david.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(david);
+
+		Student alex = new Student("Alex", "Eubank", "ae7","123",0,"000000008");
+		alex.getCourses().add(football);
+		football.getListOfStudents().add(alex);
+		alex.getSubjects().add(sports);
+		sports.getListOfStudents().add(alex);
+		calculus.getListOfStudents().add(alex);
+		alex.getCourses().add(calculus);
+		alex.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(alex);
+		alex.getCourses().add(gym);
+		alex.getCourses().add(OperatingSystem);
+		alex.getCourses().add(softwareEngineering);
+		alex.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(alex);
+		gym.getListOfStudents().add(alex);
+		OperatingSystem.getListOfStudents().add(alex);
+		softwareEngineering.getListOfStudents().add(alex);
+		physics.getListOfStudents().add(alex);
+		alex.getSubjects().add(physics);
+		alex.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(alex);
+
+		Student lexx = new Student("Lexx", "Little", "ll7","123",0,"000000009");
+		lexx.getCourses().add(football);
+		football.getListOfStudents().add(lexx);
+		lexx.getSubjects().add(sports);
+		sports.getListOfStudents().add(lexx);
+		calculus.getListOfStudents().add(lexx);
+		lexx.getCourses().add(calculus);
+		lexx.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(lexx);
+		lexx.getCourses().add(gym);
+		lexx.getCourses().add(OperatingSystem);
+		lexx.getCourses().add(softwareEngineering);
+		lexx.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(lexx);
+		gym.getListOfStudents().add(lexx);
+		OperatingSystem.getListOfStudents().add(lexx);
+		softwareEngineering.getListOfStudents().add(lexx);
+		physics.getListOfStudents().add(lexx);
+		lexx.getSubjects().add(physics);
+		lexx.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(lexx);
+
+		Student maldini = new Student("Paulo", "Maldini", "pm5","123",0,"000000010");
+		maldini.getCourses().add(football);
+		football.getListOfStudents().add(maldini);
+		maldini.getSubjects().add(sports);
+		sports.getListOfStudents().add(maldini);
+		calculus.getListOfStudents().add(maldini);
+		maldini.getCourses().add(calculus);
+		maldini.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(maldini);
+		maldini.getCourses().add(gym);
+		maldini.getCourses().add(OperatingSystem);
+		maldini.getCourses().add(softwareEngineering);
+		maldini.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(maldini);
+		gym.getListOfStudents().add(maldini);
+		OperatingSystem.getListOfStudents().add(maldini);
+		softwareEngineering.getListOfStudents().add(maldini);
+		physics.getListOfStudents().add(maldini);
+		maldini.getSubjects().add(physics);
+		maldini.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(maldini);
+
+		Student marco = new Student("Marco", "Asensio", "ms20","123",0,"000000011");
+		marco.getCourses().add(football);
+		football.getListOfStudents().add(marco);
+		marco.getSubjects().add(sports);
+		sports.getListOfStudents().add(marco);
+		calculus.getListOfStudents().add(marco);
+		marco.getCourses().add(calculus);
+		marco.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(marco);
+		marco.getCourses().add(gym);
+		marco.getCourses().add(OperatingSystem);
+		marco.getCourses().add(softwareEngineering);
+		marco.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(marco);
+		gym.getListOfStudents().add(marco);
+		OperatingSystem.getListOfStudents().add(marco);
+		softwareEngineering.getListOfStudents().add(marco);
+		physics.getListOfStudents().add(marco);
+		marco.getSubjects().add(physics);
+		marco.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(marco);
+
+		Student harry = new Student("Harry", "Kane", "hk9","123",0,"000000012");
+		harry.getCourses().add(football);
+		football.getListOfStudents().add(harry);
+		harry.getSubjects().add(sports);
+		sports.getListOfStudents().add(harry);
+		calculus.getListOfStudents().add(harry);
+		harry.getCourses().add(calculus);
+		harry.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(harry);
+		harry.getCourses().add(gym);
+		harry.getCourses().add(OperatingSystem);
+		harry.getCourses().add(softwareEngineering);
+		harry.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(harry);
+		gym.getListOfStudents().add(harry);
+		OperatingSystem.getListOfStudents().add(harry);
+		softwareEngineering.getListOfStudents().add(harry);
+		physics.getListOfStudents().add(harry);
+		harry.getSubjects().add(physics);
+		harry.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(harry);
+
+		Student ahmad = new Student("Ahmad", "Mohsen", "ahmadM","123",0,"000000013");
+		ahmad.getCourses().add(football);
+		football.getListOfStudents().add(ahmad);
+		ahmad.getSubjects().add(sports);
+		sports.getListOfStudents().add(ahmad);
+		calculus.getListOfStudents().add(ahmad);
+		ahmad.getCourses().add(calculus);
+		ahmad.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(ahmad);
+		ahmad.getCourses().add(gym);
+		ahmad.getCourses().add(OperatingSystem);
+		ahmad.getCourses().add(softwareEngineering);
+		ahmad.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(ahmad);
+		gym.getListOfStudents().add(ahmad);
+		OperatingSystem.getListOfStudents().add(ahmad);
+		softwareEngineering.getListOfStudents().add(ahmad);
+		physics.getListOfStudents().add(ahmad);
+		ahmad.getSubjects().add(physics);
+		ahmad.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(ahmad);
+
+		Student jamal = new Student("Jamal", "Browner", "jamalB","123",0,"000000014");
+		jamal.getCourses().add(football);
+		football.getListOfStudents().add(jamal);
+		jamal.getSubjects().add(sports);
+		sports.getListOfStudents().add(jamal);
+		calculus.getListOfStudents().add(jamal);
+		jamal.getCourses().add(calculus);
+		jamal.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(jamal);
+		jamal.getCourses().add(gym);
+		jamal.getCourses().add(OperatingSystem);
+		jamal.getCourses().add(softwareEngineering);
+		jamal.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(jamal);
+		gym.getListOfStudents().add(jamal);
+		OperatingSystem.getListOfStudents().add(jamal);
+		softwareEngineering.getListOfStudents().add(jamal);
+		physics.getListOfStudents().add(jamal);
+		jamal.getSubjects().add(physics);
+		jamal.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(jamal);
+
+		Student russel = new Student("Russel", "Orhi", "russelO","123",0,"000000015");
+		russel.getCourses().add(football);
+		football.getListOfStudents().add(russel);
+		russel.getSubjects().add(sports);
+		sports.getListOfStudents().add(russel);
+		calculus.getListOfStudents().add(russel);
+		russel.getCourses().add(calculus);
+		russel.getCourses().add(lierarAlgebra);
+		lierarAlgebra.getListOfStudents().add(russel);
+		russel.getCourses().add(gym);
+		russel.getCourses().add(OperatingSystem);
+		russel.getCourses().add(softwareEngineering);
+		russel.getSubjects().add(computerScience);
+		computerScience.getListOfStudents().add(russel);
+		gym.getListOfStudents().add(russel);
+		OperatingSystem.getListOfStudents().add(russel);
+		softwareEngineering.getListOfStudents().add(russel);
+		physics.getListOfStudents().add(russel);
+		russel.getSubjects().add(physics);
+		russel.getCourses().add(mechanics);
+		mechanics.getListOfStudents().add(russel);
+
+		Principle principle1 = new Principle("Florentino", "Perez","fp00", "123",2, "000000006");
 		principle1.getCourses().add(football);
 		principle1.getCourses().add(basketball);
 		principle1.getCourses().add(golf);
 		principle1.getCourses().add(lierarAlgebra);
 		principle1.getCourses().add(calculus);
 		principle1.getCourses().add(geometry);
+		principle1.getCourses().add(softwareEngineering);
+		principle1.getCourses().add(gym);
+		principle1.getCourses().add(CLanguage);
+		principle1.getCourses().add(OperatingSystem);
+		principle1.getCourses().add(hardware);
+		principle1.getCourses().add(mechanics);
+		principle1.getCourses().add(Astrophysics);
+		principle1.getCourses().add(NuclearPhysics);
+		principle1.getCourses().add(PrinciplesOfEconomics);
+		principle1.getCourses().add(FinancialEconomics);
+
+		principle1.getSubjects().add(computerScience);
 		principle1.getSubjects().add(sports);
 		principle1.getSubjects().add(math);
+		principle1.getSubjects().add(physics);
+		principle1.getSubjects().add(economics);
+
 		principle1.getTeachers().add(cr7);
 		principle1.getTeachers().add(gBale);
 		principle1.getTeachers().add(benzema);
+		principle1.getTeachers().add(sam);
+
+		principle1.getStudents().add(lucas);
+		principle1.getStudents().add(mariano);
+		principle1.getStudents().add(lexx);
+		principle1.getStudents().add(alex);
+		principle1.getStudents().add(jamal);
+		principle1.getStudents().add(russel);
+		principle1.getStudents().add(harry);
+		principle1.getStudents().add(ahmad);
+		principle1.getStudents().add(david);
+		principle1.getStudents().add(marco);
+		principle1.getStudents().add(maldini);
+
+
 		football.setPrinciple(principle1);
 		basketball.setPrinciple(principle1);
 		golf.setPrinciple(principle1);
+		gym.setPrinciple(principle1);
 		lierarAlgebra.setPrinciple(principle1);
 		calculus.setPrinciple(principle1);
 		geometry.setPrinciple(principle1);
+		CLanguage.setPrinciple(principle1);
+		hardware.setPrinciple(principle1);
+		softwareEngineering.setPrinciple(principle1);
+		OperatingSystem.setPrinciple(principle1);
+		mechanics.setPrinciple(principle1);
+		Astrophysics.setPrinciple(principle1);
+		NuclearPhysics.setPrinciple(principle1);
+
 		sports.setPrinciple(principle1);
 		math.setPrinciple(principle1);
+		computerScience.setPrinciple(principle1);
+		physics.setPrinciple(principle1);
+		economics.setPrinciple(principle1);
+
 		cr7.setPrinciple(principle1);
 		gBale.setPrinciple(principle1);
 		benzema.setPrinciple(principle1);
+		sam.setPrinciple(principle1);
+
 
 
 		math.setIdd("01");
 		sports.setIdd("02");
+		computerScience.setIdd("03");
+		physics.setIdd("04");
+		economics.setIdd("05");
+
 
 		calculus.setIdd("01");
 		lierarAlgebra.setIdd("02");
 		geometry.setIdd("03");
-
 		football.setIdd("04");
 		basketball.setIdd("05");
 		golf.setIdd("06");
+		gym.setIdd("07");
+		hardware.setIdd("08");
+		CLanguage.setIdd("09");
+		OperatingSystem.setIdd("10");
+		softwareEngineering.setIdd("11");
+		mechanics.setIdd("12");
+		NuclearPhysics.setIdd("13");
+		Astrophysics.setIdd("14");
+		FinancialEconomics.setIdd("15");
+		PrinciplesOfEconomics.setIdd("16");
 
+
+		//users
 		session.save(cr7);
 		session.save(gBale);
 		session.save(benzema);
 		session.save(lucas);
 		session.save(mariano);
 		session.save(principle1);
+		session.save(david);
+		session.save(alex);
+		session.save(lexx);
+		session.save(marco);
+		session.save(maldini);
+		session.save(russel);
+		session.save(jamal);
+		session.save(ahmad);
+		session.save(harry);
+		session.save(sam);
 
 
+
+		//subjects
 		session.save(sports);
 		session.save(math);
+		session.save(computerScience);
+		session.save(physics);
+		session.save(economics);
 
+		//courses
 		session.save(lierarAlgebra);
 		session.save(calculus);
 		session.save(geometry);
 		session.save(football);
 		session.save(basketball);
 		session.save(golf);
+		session.save(gym);
+		session.save(CLanguage);
+		session.save(softwareEngineering);
+		session.save(hardware);
+		session.save(OperatingSystem);
+		session.save(mechanics);
+		session.save(Astrophysics);
+		session.save(NuclearPhysics);
+		session.save(FinancialEconomics);
+		session.save(PrinciplesOfEconomics);
 		session.flush();
 
 
@@ -580,6 +990,7 @@ public class SimpleServer extends AbstractServer {
 		else if ("NewClient".equals(message.getTitle()))
 		{
 			SubscribedClient newSub = new SubscribedClient(client);
+			//numberOfClinets++;
 			SubscribersList.add(newSub);
 		}
 		else if("getSubjects".equals(message.getTitle()))
@@ -1102,7 +1513,6 @@ public class SimpleServer extends AbstractServer {
 				||"LogoutSE".equals((message.getTitle()))||"LogoutET".equals((message.getTitle()))||"LogoutAP".equals((message.getTitle()))||"LogoutVG".equals((message.getTitle()))||
 				"LogoutCE".equals((message.getTitle())) || "LogoutVGS".equals((message.getTitle())) || "LogoutNoti".equals(message.getTitle()))
 		{
-			SubscribersList.remove(message.getBody());
 			User temp = (User) message.getBody();
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
@@ -1620,7 +2030,7 @@ public class SimpleServer extends AbstractServer {
 				session.update(readyExam2);
 				session.flush();
 
-				Notification notification = new Notification("New exam has been submitted, go and approve it.", LocalDateTime.now(), false);
+				Notification notification = new Notification("New exam has been submitted in course " + readyExam.getCourse() + ", go and approve it.", LocalDateTime.now(), false);
 				hql = "SELECT t FROM Teacher t WHERE t.username = :username";
 				Query query5 = session.createQuery(hql, Teacher.class);
 				query5.setParameter("username", readyExam.getUsername());
@@ -3228,55 +3638,35 @@ public class SimpleServer extends AbstractServer {
 	{
 		return sessionFactory;
 	}
-	public static List<Student> getAllStudentsFromDatabase() {
-		//Session session = sessionFactory.openSession();
-//open hibernate session
-		session.beginTransaction();
-//create criteria builder and criteria query objects to build query
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<Student> query = builder.createQuery(Student.class);
-		Root<Student> root = query.from(Student.class);
-		query.select(root);
-//execute query and retrieve all students
-		List<Student> students = session.createQuery(query).getResultList();
-//close transaction and session
-		session.getTransaction().commit();
-		session.close();
 
-		return students;
-	}
-	public  static Student getStudentFromDatabase(int studentId){
-		//Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<Student> query = builder.createQuery(Student.class);
-		Root<Student> root = query.from(Student.class);
-		query.select(root).where(builder.equal(root.get("id"),studentId));
-		Student student = session.createQuery(query).uniqueResult();
-		session.getTransaction().commit();
-		session.close();
-		return student;
-	}
-	public static Student updateStudentGradeInDatabase(int studentId, String subject , int newGrade) {
-		//Session session = sessionFactory.openSession();
-		session.beginTransaction();
+	@Override
+	protected synchronized void clientDisconnected(ConnectionToClient client) {
+		System.out.println("Client disconnected from server");
+		super.clientDisconnected(client);
+		System.out.println("Number of connected client(s): " + --numberOfClinets + "\n");
 
-		Student student = session.get(Student.class, studentId);
-		if (student != null) {
-			if(subject.equals("English")){
-				//student.setEnglishScore(newGrade);
-			}else if(subject.equals("Math")){
-				//student.setMathScore(newGrade);
+		if (numberOfClinets == 0) {
+
+			System.out.print("Do you want to close the server? (Yes \\ No): ");
+
+			try (Scanner input = new Scanner(System.in)) {
+				String stringInput = input.nextLine().toLowerCase();
+				if (stringInput.equals("yes")) {
+					try {
+						this.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else
+					System.out.println("Server ready!");
 			}
-			session.update(student);
-			session.getTransaction().commit();
-			System.out.println("Student grade updated successfully.");
 		}
-
-		else {
-			System.out.println("Student with ID " + studentId + " not found in the database.");
-		}
-		session.close();
-		return student;
 	}
+	@Override
+	protected void clientConnected(ConnectionToClient client) {
+		System.out.println("New client connected.");
+		super.clientConnected(client);
+		System.out.println("Number of connected client(s): " + ++numberOfClinets + "\n");
+	}
+
 }

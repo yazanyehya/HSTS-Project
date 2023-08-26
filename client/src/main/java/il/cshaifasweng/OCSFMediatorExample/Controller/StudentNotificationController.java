@@ -21,6 +21,7 @@ public class StudentNotificationController
     public StudentNotificationController (StudentNotificationBoundry studentNotificationBoundry)
     {
         EventBus.getDefault().register(this);
+        System.out.println("im here bitch");
         this.studentNotificationBoundry = studentNotificationBoundry;
     }
     @Subscribe
