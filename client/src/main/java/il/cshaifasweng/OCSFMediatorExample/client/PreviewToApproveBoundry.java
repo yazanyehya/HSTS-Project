@@ -7,10 +7,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Message;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.greenrobot.eventbus.EventBus;
@@ -49,16 +46,42 @@ public class PreviewToApproveBoundry {
         private Integer examID;
 
         private Integer studentID;
+        private int tempGade;
+        private String old;
 
         private PreviewToApproveController previewToApproveController;
 
+        public void setTempGade(int tempGade) {
+                this.tempGade = tempGade;
+        }
+
+        public void setOld(String old) {
+                this.old = old;
+        }
+        public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+                Platform.runLater(() -> {
+                        Alert alert = new Alert(alertType);
+                        alert.setTitle(title);
+                        alert.setHeaderText(null);
+                        alert.setContentText(message);
+                        alert.showAndWait();
+                });
+        }
         @FXML
         void approveAction(ActionEvent event) throws IOException
         {
-                System.out.println("lolllllllapprove");
-                Object object = new Object[]{examID, getGrade().getText(), teacherComments.getText(), studentComments.getText(), studentID};
-                Message message = new Message("approveExam", object);
-                SimpleClient.getClient().sendToServer(message);
+                if (tempGade != Integer.parseInt(grade.getText()) && studentComments.getText().equals(old))
+                {
+                        Platform.runLater(()->{
+                                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please enter explanation for changing the grade");
+                        });
+                }
+                else
+                {
+                        Object object = new Object[]{examID, getGrade().getText(), teacherComments.getText(), studentComments.getText(), studentID};
+                        Message message = new Message("approveExam", object);
+                        SimpleClient.getClient().sendToServer(message);
+                }
         }
 
         @FXML

@@ -355,37 +355,44 @@ public class CourseReportsBoundry {
 
             compare.setOnMouseClicked(event->
             {
-                courseReportsController.getMedian_map().clear();
-                courseReportsController.getMap().clear();
-                ObservableList<ReadyExam> selectedExams = listViewExams.getSelectionModel().getSelectedItems();
-                flag = selectedExams.size();
-                double curr_avg = 0;
-                int curr_size = 0;
-                for (ReadyExam exam : selectedExams)
+                if (listViewExams.getSelectionModel().isEmpty())
                 {
-                    curr_avg += exam.getAvg()*exam.getSize();
-                    curr_size+= exam.getSize();
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select an exam");
                 }
-                double final_avg = curr_avg/curr_size;
-                averageTextField.setText(Double.toString(final_avg));
-                for (ReadyExam readyExam : selectedExams)
+                else
                 {
-                    Message message = new Message("getListGradeForCourse", readyExam);
-                    try {
-                        SimpleClient.getClient().sendToServer(message);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    courseReportsController.getMedian_map().clear();
+                    courseReportsController.getMap().clear();
+                    ObservableList<ReadyExam> selectedExams = listViewExams.getSelectionModel().getSelectedItems();
+                    flag = selectedExams.size();
+                    double curr_avg = 0;
+                    int curr_size = 0;
+                    for (ReadyExam exam : selectedExams)
+                    {
+                        curr_avg += exam.getAvg()*exam.getSize();
+                        curr_size+= exam.getSize();
                     }
+                    double final_avg = curr_avg/curr_size;
+                    averageTextField.setText(Double.toString(final_avg));
+                    for (ReadyExam readyExam : selectedExams)
+                    {
+                        Message message = new Message("getListGradeForCourse", readyExam);
+                        try {
+                            SimpleClient.getClient().sendToServer(message);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 //                for (Integer grade1 : readyExam.getListOfGrades())
 //                o
 //                    median_list.add(grade1);
 //                }
-                }
+                    }
 
 
-                for (ReadyExam exam : selectedExams)
-                {
-                    courseReportsController.getResults(exam);
+                    for (ReadyExam exam : selectedExams)
+                    {
+                        courseReportsController.getResults(exam);
+                    }
                 }
 
             });

@@ -161,6 +161,8 @@ public class PreviewToApproveController
             imageViewLogo.setFitHeight(150); // Set the height
             Font font = new Font("American Typewriter", 24);
             previewToApproveBoundry.getGrade().setText(Integer.toString(readyExam.getGrade()));
+            previewToApproveBoundry.setTempGade(readyExam.getGrade());
+            previewToApproveBoundry.setOld(readyExam.getExam().getStudentComments());
             //Label HighSchoolNameLabel = new Label("High School Test System");
             Label courseLabel = new Label("Exam in " + readyExam.getCourse() + " course, " + readyExam.getExam().getSubject().getName());
             Label teacherName = new Label((readyExam.getExam().getTeacherFullName()));

@@ -25,10 +25,7 @@
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect>
-                     <font>
-                        <Font name="American Typewriter" size="20.0" />
-                     </font></Button>
+                     </effect></Button>
                   <Button fx:id="ConductAnExamBTN" layoutY="82.0" mnemonicParsing="false" onAction="#conductAnExamAction" prefWidth="209.0" style="-fx-background-color: #e9692c;" stylesheets="@Sbutton.css" text="Conduct an exam" textFill="WHITE">
                      <effect>
                         <InnerShadow>
@@ -36,10 +33,7 @@
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect>
-                     <font>
-                        <Font name="American Typewriter" size="19.0" />
-                     </font></Button>
+                     </effect></Button>
                   <Button fx:id="viewGradesBTN" layoutY="158.0" mnemonicParsing="false" onAction="#viewGradesAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="View Grades" textFill="WHITE">
                      <effect>
                         <InnerShadow>
@@ -47,10 +41,7 @@
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect>
-                     <font>
-                        <Font name="American Typewriter" size="16.0" />
-                     </font></Button>
+                     </effect></Button>
                   <Button fx:id="logoutBtn" layoutY="436.0" mnemonicParsing="false" onAction="#logoutAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Logout" textFill="WHITE">
                      <effect>
                         <InnerShadow>
@@ -58,10 +49,7 @@
                               <Color red="1.0" green="1.0" blue="1.0" />
                            </color>
                         </InnerShadow>
-                     </effect>
-                     <font>
-                        <Font name="American Typewriter" size="19.0" />
-                     </font></Button>
+                     </effect></Button>
                   <Button fx:id="notificationBtn" layoutY="235.0" mnemonicParsing="false" onAction="#notificationAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Notifications" textFill="WHITE">
                      <effect>
                         <InnerShadow>
@@ -70,9 +58,6 @@
                            </color>
                         </InnerShadow>
                      </effect>
-                     <font>
-                        <Font name="American Typewriter" size="16.0" />
-                     </font>
                   </Button>
                </children>
             </AnchorPane>

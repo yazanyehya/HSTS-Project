@@ -27,9 +27,6 @@
                            </color>
                         </InnerShadow>
                      </effect>
-                     <font>
-                        <Font name="American Typewriter" size="16.0" />
-                     </font>
                   </Button>
                   <Button fx:id="ConductAnExamBTN" layoutY="82.0" minWidth="138.0" mnemonicParsing="false" onAction="#conductAnExamAction" prefHeight="50.0" prefWidth="157.0" stylesheets="@Sbutton.css" text="Conduct an exam" textFill="WHITE">
                      <effect>
@@ -39,9 +36,6 @@
                            </color>
                         </InnerShadow>
                      </effect>
-                     <font>
-                        <Font name="American Typewriter" size="15.0" />
-                     </font>
                   </Button>
                   <Button fx:id="viewGradesBTN" layoutY="158.0" mnemonicParsing="false" onAction="#viewGradesAction" prefHeight="50.0" prefWidth="156.0" stylesheets="@Sbutton.css" text="View Grades" textFill="WHITE">
                      <effect>
@@ -51,9 +45,6 @@
                            </color>
                         </InnerShadow>
                      </effect>
-                     <font>
-                        <Font name="American Typewriter" size="16.0" />
-                     </font>
                   </Button>
                   <Button fx:id="logoutBtn" layoutY="436.0" mnemonicParsing="false" onAction="#logoutAction" prefWidth="140.0" stylesheets="@Sbutton.css" text="Logout" textFill="WHITE">
                      <effect>
@@ -63,9 +54,6 @@
                            </color>
                         </InnerShadow>
                      </effect>
-                     <font>
-                        <Font name="American Typewriter" size="19.0" />
-                     </font>
                   </Button>
                   <Button fx:id="notificationBtn" layoutX="-2.0" layoutY="228.0" mnemonicParsing="false" onAction="#notificationAction" prefHeight="50.0" prefWidth="211.0" style="-fx-background-color: #e9692c;" stylesheets="@Sbutton.css" text="Notifications" textFill="WHITE">
                      <effect>
@@ -75,9 +63,6 @@
                            </color>
                         </InnerShadow>
                      </effect>
-                     <font>
-                        <Font name="American Typewriter" size="16.0" />
-                     </font>
                   </Button>
                </children>
             </AnchorPane>

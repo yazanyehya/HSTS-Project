@@ -4,6 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.Controller.ViewGradesForTeacherContro
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -64,6 +65,27 @@ public class ViewGradesForTeacherBoundry {
     private Button sendExamsToStudentsBtn;
     @FXML
     private Button notificationBtn;
+    @FXML
+    private TextField averageTextField;
+    @FXML
+    private Button compare;
+    @FXML
+    private TextField medianTextField;
+    public int flag = 0;
+
+    @FXML
+    void averageTextFieldAction(ActionEvent event) {
+
+    }
+
+    @FXML
+    void compareAction(ActionEvent event) {
+
+    }
+    @FXML
+    void medianTextFieldAction(ActionEvent event) {
+
+    }
     @FXML
     void notificationAction(ActionEvent event)
     {
@@ -241,6 +263,7 @@ public class ViewGradesForTeacherBoundry {
 
         viewGradesForTeacherController.getSubjects();
 
+        examList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         selectCourse.setCellFactory(new Callback<ListView<Course>, ListCell<Course>>() {
             @Override
@@ -327,6 +350,51 @@ public class ViewGradesForTeacherBoundry {
             }
         });
 
+        compare.setOnMouseClicked(event->
+        {
+            if (examList.getSelectionModel().isEmpty())
+            {
+                showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select an exam");
+            }
+            else
+            {
+                viewGradesForTeacherController.getMedian_map().clear();
+                viewGradesForTeacherController.getMap().clear();
+                ObservableList<ReadyExam> selectedExams = examList.getSelectionModel().getSelectedItems();
+                flag = selectedExams.size();
+                double curr_avg = 0;
+                int curr_size = 0;
+                for (ReadyExam exam : selectedExams)
+                {
+                    curr_avg += exam.getAvg()*exam.getSize();
+                    curr_size+= exam.getSize();
+                }
+                double final_avg = curr_avg/curr_size;
+                averageTextField.setText(Double.toString(final_avg));
+                for (ReadyExam readyExam : selectedExams)
+                {
+                    Message message = new Message("getListGradeForTeacherIN", readyExam);
+                    try {
+                        SimpleClient.getClient().sendToServer(message);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+//                for (Integer grade1 : readyExam.getListOfGrades())
+//                o
+//                    median_list.add(grade1);
+//                }
+                }
+
+
+                for (ReadyExam exam : selectedExams)
+                {
+                    viewGradesForTeacherController.getResults(exam);
+                }
+            }
+
+        });
+
+
         animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -399,5 +467,22 @@ public class ViewGradesForTeacherBoundry {
 
     public ComboBox<Subject> getSelectSubject() {
         return selectSubject;
+    }
+
+    public TextField getAverageTextField() {
+        return averageTextField;
+    }
+
+    public TextField getMedianTextField() {
+        return medianTextField;
+    }
+    public void showAlertDialog(Alert.AlertType alertType, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(alertType);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 }

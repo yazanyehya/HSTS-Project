@@ -310,40 +310,47 @@ public class StudentReportsBoundry {
 //            ObservableList<? extends ReadyExam> selectedItems = change.getList();
 
             compare.setOnMouseClicked(event -> {
-                studentReportsController.getMedian_map().clear();
-                studentReportsController.getMap().clear();
-                ObservableList<ReadyExam> selectedExams = listViewExams.getSelectionModel().getSelectedItems();
-                flag = selectedExams.size();
-                double avg = 0;
-
-                List<Integer> list = new ArrayList<>(); // Changed from List<Integer> to List<Number>
-                CategoryAxis xAxis = new CategoryAxis();
-                NumberAxis yAxis = new NumberAxis();
-                BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
-                barChart.setTitle("Selected Exams Grades");
-
-                for (ReadyExam readyExam : selectedExams) {
-                    list.add(readyExam.getGrade());
-                    avg += readyExam.getGrade();
-
-                    // Create a new series for the BarChart
-                    XYChart.Series<String, Number> series = new XYChart.Series<>();
-                    series.setName(" Exam ID = " + readyExam.getOri_idd());
-                    series.getData().add(new XYChart.Data<>("Grade", readyExam.getGrade()));
-
-                    // Add the series to the BarChart
-                    barChart.getData().add(series);
+                if (listViewExams.getSelectionModel().isEmpty())
+                {
+                    showAlertDialog(Alert.AlertType.ERROR, "Error", "Please select an exam");
                 }
+                else
+                {
+                    studentReportsController.getMedian_map().clear();
+                    studentReportsController.getMap().clear();
+                    ObservableList<ReadyExam> selectedExams = listViewExams.getSelectionModel().getSelectedItems();
+                    flag = selectedExams.size();
+                    double avg = 0;
 
-                avg = avg / selectedExams.size();
-                getAverageTextField().setText(Double.toString(avg));
-                getMedianTextField().setText(Double.toString(list.get(list.size() / 2)));
+                    List<Integer> list = new ArrayList<>(); // Changed from List<Integer> to List<Number>
+                    CategoryAxis xAxis = new CategoryAxis();
+                    NumberAxis yAxis = new NumberAxis();
+                    BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+                    barChart.setTitle("Selected Exams Grades");
 
-                // Create a new stage to show the BarChart
-                Stage stage = new Stage();
-                stage.setTitle("Exams Comparison");
-                stage.setScene(new Scene(new StackPane(barChart), 600, 400));
-                stage.show();
+                    for (ReadyExam readyExam : selectedExams) {
+                        list.add(readyExam.getGrade());
+                        avg += readyExam.getGrade();
+
+                        // Create a new series for the BarChart
+                        XYChart.Series<String, Number> series = new XYChart.Series<>();
+                        series.setName(" Exam ID = " + readyExam.getOri_idd());
+                        series.getData().add(new XYChart.Data<>("Grade", readyExam.getGrade()));
+
+                        // Add the series to the BarChart
+                        barChart.getData().add(series);
+                    }
+
+                    avg = avg / selectedExams.size();
+                    getAverageTextField().setText(Double.toString(avg));
+                    getMedianTextField().setText(Double.toString(list.get(list.size() / 2)));
+
+                    // Create a new stage to show the BarChart
+                    Stage stage = new Stage();
+                    stage.setTitle("Exams Comparison");
+                    stage.setScene(new Scene(new StackPane(barChart), 600, 400));
+                    stage.show();
+                }
             });
 
 
