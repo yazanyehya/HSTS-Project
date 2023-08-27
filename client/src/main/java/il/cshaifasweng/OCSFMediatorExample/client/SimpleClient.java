@@ -355,7 +355,7 @@ public class SimpleClient extends AbstractClient {
 		{
 			EventBus.getDefault().post(new StudentEvent((Message) msg));
 		}
-		else if (message.getTitle().equals("getTeacherNotificationList") ||message.getTitle().equals("setToReadTeacher") || message.getTitle().equals("RefreshTeacherBell"))
+		else if (message.getTitle().equals("getTeacherNotificationList") ||message.getTitle().equals("setToReadTeacher") || message.getTitle().equals("RefreshTeacherBell") || "getReadyExamsForTeacherReportsIN".equals(message.getTitle()) || "getListGradeForTeacherIN".equals(message.getTitle()))
 		{
 			EventBus.getDefault().post(new TeacherEvent((Message) msg));
 		}

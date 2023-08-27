@@ -4,6 +4,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
@@ -154,6 +155,27 @@
                   <Font name="Algerian" size="24.0" />
                </font>
             </Label>
+            <Button fx:id="compare" layoutX="541.0" layoutY="235.0" mnemonicParsing="false" onAction="#compareAction" stylesheets="@button1.css" text="compare" />
+            <Label layoutX="532.0" layoutY="279.0" prefHeight="30.0" prefWidth="85.0" stylesheets="@rami1.css" text="  The Median" />
+            <TextField fx:id="medianTextField" layoutX="530.0" layoutY="319.0" onAction="#medianTextFieldAction" prefHeight="26.0" prefWidth="88.0">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="0.12870000302791595" green="0.47321999073028564" blue="0.9900000095367432" />
+                     </color>
+                  </InnerShadow>
+               </effect>
+            </TextField>
+            <Label layoutX="533.0" layoutY="368.0" prefHeight="30.0" prefWidth="85.0" stylesheets="@rami1.css" text=" The Average" />
+            <TextField fx:id="averageTextField" layoutX="535.0" layoutY="407.0" onAction="#averageTextFieldAction" prefHeight="26.0" prefWidth="82.0">
+               <effect>
+                  <InnerShadow>
+                     <color>
+                        <Color red="0.12156862765550613" green="0.4588235318660736" blue="0.9960784316062927" />
+                     </color>
+                  </InnerShadow>
+               </effect>
+            </TextField>
          </children>
       </AnchorPane>
    </right>

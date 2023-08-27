@@ -306,8 +306,7 @@ public class StartSolvingComputerizedExamController
             VBox vBox = new VBox(hBox, region5, studentDetails, region4, questions, region3,label,startSolvingExamBoundry.getFinishExamBtn());
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setContent(vBox);
-            scrollPane.setFitToHeight(true);
-            scrollPane.setFitToWidth(true);
+
             startSolvingExamBoundry.getExamContainer().getChildren().addAll(scrollPane);
 
             // Set the cycle count to indefinite so the timer continues running

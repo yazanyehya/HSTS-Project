@@ -152,7 +152,7 @@ public class ExamController
                 HBox.setHgrow(region2, Priority.ALWAYS);
                 HBox.setHgrow(region3, Priority.ALWAYS);
 
-                container.getChildren().addAll(region2, questionVBox, region3, scoreField);
+                container.getChildren().addAll(questionVBox, region3, scoreField);
 
                 setGraphic(container);
             }

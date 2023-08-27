@@ -1268,7 +1268,7 @@ public class SimpleServer extends AbstractServer {
 //						re = readyExam;
 //					}
 //				}
-				if (re != null && Objects.equals(id, Integer.toString(student.getId())))
+				if (re != null && Objects.equals(id, student.getIdd()))
 				{
 					Message resMessage = new Message("changeToStartExam", re);
 					client.sendToClient(resMessage);
@@ -1276,7 +1276,7 @@ public class SimpleServer extends AbstractServer {
 				else
 				{
 					String s = "";
-					if (re == null && Objects.equals(id, Integer.toString(student.getId())))// no available exam
+					if (re == null && Objects.equals(id, student.getIdd()))// no available exam
 					{
 						s = "1";
 					}
@@ -2942,7 +2942,7 @@ public class SimpleServer extends AbstractServer {
 				Notification notification = new Notification("New extra time request has been arrived for exam: " + extraTime.getReadyExam().getIdd(), LocalDateTime.now(), false);
 				hql = "SELECT p FROM Principle p WHERE p.username = :username";
 				Query query5 = session.createQuery(hql, Principle.class);
-				query5.setParameter("username", "haifa");
+				query5.setParameter("username", "fp00");
 				Principle principle = (Principle) query5.getSingleResult();
 				principle.getNotificationList().add(notification);
 				session.update(principle);
@@ -3155,7 +3155,7 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if("getReadyExamsForCoursesReports".equals(message.getTitle()) || "getReadyExamsForTeacherReports".equals(message.getTitle()))
+		else if("getReadyExamsForCoursesReports".equals(message.getTitle()) || "getReadyExamsForTeacherReports".equals(message.getTitle())|| "getReadyExamsForTeacherReportsIN".equals(message.getTitle()))
 		{
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
@@ -3223,7 +3223,7 @@ public class SimpleServer extends AbstractServer {
 				}
 			}
 		}
-		else if("getListGradeForCourse".equals(message.getTitle()) || "getListGradeForTeacher".equals(message.getTitle()))
+		else if("getListGradeForCourse".equals(message.getTitle()) || "getListGradeForTeacher".equals(message.getTitle()) || "getListGradeForTeacherIN".equals(message.getTitle()))
 		{
 			try {
 				if (session == null || !session.isOpen() || session.getTransaction() == null || !session.getTransaction().isActive()) {
@@ -3639,6 +3639,9 @@ public class SimpleServer extends AbstractServer {
 		return sessionFactory;
 	}
 
+	// Declare the Scanner as an instance variable
+	private Scanner inputScanner = new Scanner(System.in);
+
 	@Override
 	protected synchronized void clientDisconnected(ConnectionToClient client) {
 		System.out.println("Client disconnected from server");
@@ -3646,22 +3649,21 @@ public class SimpleServer extends AbstractServer {
 		System.out.println("Number of connected client(s): " + --numberOfClinets + "\n");
 
 		if (numberOfClinets == 0) {
-
 			System.out.print("Do you want to close the server? (Yes \\ No): ");
 
-			try (Scanner input = new Scanner(System.in)) {
-				String stringInput = input.nextLine().toLowerCase();
-				if (stringInput.equals("yes")) {
-					try {
-						this.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else
-					System.out.println("Server ready!");
+			String stringInput = inputScanner.nextLine().toLowerCase();
+			if (stringInput.equals("yes")) {
+				try {
+					this.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("Server ready!");
 			}
 		}
 	}
+
 	@Override
 	protected void clientConnected(ConnectionToClient client) {
 		System.out.println("New client connected.");
